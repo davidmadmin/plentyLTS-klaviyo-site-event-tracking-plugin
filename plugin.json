@@ -1,0 +1,20 @@
+{
+  "name": "KlaviyoSiteEventTracking",
+  "namespace": "KlaviyoSiteEventTracking",
+  "type": "template",
+  "version": "0.1.0",
+  "license": "AGPL-3.0",
+  "description": "Basic plugin scaffold for Klaviyo on-site event tracking in plentyShop LTS.",
+  "author": "Project Contributors",
+  "email": "dev@example.com",
+  "serviceProvider": "KlaviyoSiteEventTracking\\Providers\\KlaviyoSiteEventTrackingServiceProvider",
+  "authorIcon": "icon_author_xs.png",
+  "pluginIcon": "icon_plugin_xs.png",
+  "dataProviders": [
+    {
+      "key": "KlaviyoSiteEventTracking\\Containers\\KlaviyoTrackingContainer",
+      "name": "Klaviyo Tracking Script Placeholder",
+      "description": "Injects the placeholder Klaviyo tracking entrypoint into a selected plentyShop container."
+    }
+  ]
+}
