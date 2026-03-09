@@ -1,0 +1,850 @@
+\### \*\*Profiles API overview\*\*
+
+
+
+\## \*\*Before you begin\*\*
+
+
+
+Check out our general \[API overview](https://developers.klaviyo.com/en/reference/api\_overview) to make sure you’re ready to get started with specific endpoints.
+
+
+
+You can use our \[Profiles API](https://developers.klaviyo.com/en/reference/get\_profiles) to create unique experiences based on profile data. A profile represents a person’s contact stored in your Klaviyo account. There are two types of profiles captured in Klaviyo which can be accessed via the Profiles API:
+
+
+
+\- \*\*Active profiles\*\*
+
+&nbsp;   
+
+&nbsp;   Profiles that can be messaged via email or SMS. For example, a profile that has subscribed to marketing updates via sign-up form.
+
+&nbsp;   
+
+\- \*\*Suppressed profiles\*\*
+
+&nbsp;   
+
+&nbsp;   Profiles that cannot receive emails, even if they have provided consent. Learn more about \[suppressed email profiles](https://help.klaviyo.com/hc/en-us/articles/115005246108).
+
+&nbsp;   
+
+
+
+> \*\*📘\*\*
+
+> 
+
+> 
+
+> Active profiles also include profiles representing customers who have not opted-in to marketing updates - for example, a profile that has provided an email for order confirmation and tracking purposes. Learn about \[collecting consent and best practices](https://developers.klaviyo.com/en/docs/collect\_email\_and\_sms\_consent\_via\_api).
+
+> 
+
+
+
+\## \*\*Use cases\*\*
+
+
+
+> \*\*📘\*\*
+
+> 
+
+> 
+
+> To delete profiles, use Klaviyo's \[Data Privacy API](https://developers.klaviyo.com/en/reference/request\_profile\_deletion).
+
+> 
+
+
+
+Here are some example use cases supported by the Profiles API:
+
+
+
+\- Create a profile with a set of profile attributes, and if it already exists, update the existing profile.
+
+\- Add custom fields to profiles that can be used for segmentation, flows, and template personalization.
+
+\- Retrieve profile data, consent status, and predictive analytics.
+
+\- Subscribe/unsubscribe profiles to email and/or SMS marketing.
+
+\- Suppress/unsuppress profiles for email marketing.
+
+
+
+You can find example code for all of these use cases in our \[api-examples](https://github.com/klaviyo-labs/api-examples/tree/main/profiles) repo.
+
+
+
+\## \*\*Data model\*\*
+
+
+
+\### \*\*Profile identifiers\*\*
+
+
+
+Profile identifiers are important for fetching profiles and merging shared data associated with a profile. A profile must have at least 1 profile identifier:
+
+
+
+\- `email`(recommended for use as the primary identifier)
+
+&nbsp;   
+
+&nbsp;   The profile’s valid email address (must be <= 100 characters). We recommend using \[regex for email validation](https://emailregex.com/index.html).
+
+&nbsp;   
+
+\- `phone\_number`
+
+&nbsp;   
+
+&nbsp;   The profile’s phone number (a valid E.164 number, e.g., +15005550006).
+
+&nbsp;   
+
+&nbsp;   > \*\*🚧Phone numbers must be in E.164 format\*\*
+
+&nbsp;   > 
+
+&nbsp;   > 
+
+&nbsp;   > We recommend using a library like \[libphonenumber](https://github.com/google/libphonenumber) to ensure numbers are valid and properly formatted prior to sending.
+
+&nbsp;   > 
+
+\- `external\_id`
+
+&nbsp;   
+
+&nbsp;   A unique identifier to associate Klaviyo profiles with profiles in an external system. Usually set via integrations or API.
+
+&nbsp;   
+
+&nbsp;   > \*\*🚧\*\*
+
+&nbsp;   > 
+
+&nbsp;   > 
+
+&nbsp;   > `external\_id` is not involved in profile merging, so its use can lead to duplicate profiles. This identifier should only be used if you are aware of its \[impact on profile duplication](https://developers.klaviyo.com/en/docs/custom\_integration\_faqs#should-i-use-emailphone-or-external-id-as-my-unique-identifier).
+
+&nbsp;   > 
+
+
+
+\### \*\*Additional attributes\*\*
+
+
+
+A profile can contain additional personal information, including:
+
+
+
+\- `first\_name` and `last\_name`
+
+&nbsp;   
+
+&nbsp;   The profile’s first and last names.
+
+&nbsp;   
+
+\- `organization` and `title`
+
+&nbsp;   
+
+&nbsp;   The profile’s organization and their job title.
+
+&nbsp;   
+
+\- `image`
+
+&nbsp;   
+
+&nbsp;   The profile image’s URL.
+
+&nbsp;   
+
+\- `locale`
+
+&nbsp;   
+
+&nbsp;   The locale of the profile, in the IETF BCP 47 language tag format `ISO 639-1/2)-(ISO 3166 alpha-2` e.g., `en-US`.
+
+&nbsp;   
+
+\- `location`
+
+&nbsp;   
+
+&nbsp;   An object containing location-related information.
+
+&nbsp;   
+
+&nbsp;   - `address1` and `address2`
+
+&nbsp;       
+
+&nbsp;       First and second lines of the profile’s street address.
+
+&nbsp;       
+
+&nbsp;   - `city, country, region,` and `zip`
+
+&nbsp;       
+
+&nbsp;       Fields for the profile’s city, country, region (e.g., state), and zip code.
+
+&nbsp;       
+
+&nbsp;   - `latitude` and `longitude`
+
+&nbsp;       
+
+&nbsp;       The profile’s latitude and longitude coordinates.
+
+&nbsp;       
+
+&nbsp;   - `timezone`
+
+&nbsp;       
+
+&nbsp;       The profile’s timezone name. Names from the \[IANA Time Zone Database](https://www.iana.org/time-zones) are recommended.
+
+&nbsp;       
+
+&nbsp;   - `ip`
+
+&nbsp;       
+
+&nbsp;       The profile’s IP address.
+
+&nbsp;       
+
+
+
+\### \*\*Profile properties\*\*
+
+
+
+A profile has a `properties` object for storing custom properties. Some use cases of these properties include:
+
+
+
+\- \*\*Segmentation\*\*
+
+&nbsp;   
+
+&nbsp;   Use non-object property values to segment your audience and target customers with personalized content, e.g., create a segment for profiles who identify as women and share brand preferences.
+
+&nbsp;   
+
+\- \*\*Flows\*\*
+
+&nbsp;   
+
+&nbsp;   Filter flows based on profile properties, e.g., store a `birthday` field collected via form to use in a \[date property-triggered flow](https://help.klaviyo.com/hc/en-us/articles/360002732652).
+
+&nbsp;   
+
+\- \*\*Reporting\*\*
+
+&nbsp;   
+
+&nbsp;   Generate reports to analyze customer behavior based on profile property, e.g., create a report that details performance of the "Clicked Email" metric for a campaign that contains dynamic content based on gender.
+
+&nbsp;   
+
+
+
+\### \*\*Setting the `locale` property\*\*
+
+
+
+We have expanded support for the `$locale` property and added `$locale`, `$locale\_language`, and `$locale\_country` to the \[profile properties reference](https://help.klaviyo.com/hc/en-us/articles/115005074627).
+
+
+
+Klaviyo generates `$locale\_language` and `$locale\_country` on a profile by default. The `$locale` property can be updated with the \[Update Profile](https://developers.klaviyo.com/en/reference/update\_profile) endpoint. When setting this property via API, use the IETF BCP 47 language tag format `ISO 639-1/2)-(ISO 3166 alpha-2`. For example, `en-US` includes the language subtag for English and the region subtag for United States.
+
+
+
+The `locale` property can be updated from a variety of sources, such as from a custom integration.
+
+
+
+\### \*\*Additional fields\*\*
+
+
+
+When you make a Get Profile(s) request, there are additional fields that are not returned by default in the response. You might want to access subscription data to filter out profiles that have been suppressed for a particular reason and/or from a specific list. Use \[additional fields](https://developers.klaviyo.com/en/docs/sparse\_fieldsets#additional-fields) as a query parameter if you’d like to retrieve subscription data and/or predictive analytics that can help you monitor your business’s performance.
+
+
+
+\## \*\*Subscription data\*\*
+
+
+
+It’s best practice to collect consent from profiles to subscribe them to email and SMS marketing (e.g., via sign-up forms). When subscriptions-related data is collected (such as consent or list suppressions) it is stored in a profile’s subscriptions object. You must use `?additional-fields\[profile]=subscriptions` as a query parameter to include this data in your response.
+
+
+
+We recommend including a given profile in no more than one subscribe job every 30 minutes to ensure the profiles' subscription status is not impacted by additional rate limits.
+
+
+
+> \*\*🚧\*\*
+
+> 
+
+> 
+
+> You cannot subscribe a profile and edit custom properties with one API request. If you would like to subscribe a profile and modify the profile's properties, you need to first subscribe the profile with \[Subscribe Profiles](https://developers.klaviyo.com/en/reference/subscribe\_profiles). Then, make a subsequent call to \[update custom profile properties](https://developers.klaviyo.com/en/reference/update\_profile) if desired.
+
+> 
+
+
+
+The `subscriptions` object should look like the example object shown below:
+
+
+
+JSON
+
+
+
+&nbsp;`"subscriptions": {
+
+&nbsp;   "email": {
+
+&nbsp;        "marketing": {
+
+&nbsp;            "can\_receive\_email\_marketing": true,
+
+&nbsp;            "consent": "SUBSCRIBED",
+
+&nbsp;            "consent\_timestamp": "2023-02-21T20:07:38+00:00",
+
+&nbsp;            "last\_updated": "2023-02-21T20:07:38+00:00",
+
+&nbsp;            "method": "PREFERENCE\_PAGE",
+
+&nbsp;            "method\_detail": "mydomain.com/signup",
+
+&nbsp;            "custom\_method\_detail": "marketing drive",
+
+&nbsp;            "double\_optin": "True",
+
+&nbsp;            "suppression": \[
+
+&nbsp;             {
+
+&nbsp;               "reason": "HARD\_BOUNCE",
+
+&nbsp;               "timestamp": "2023-02-21T20:07:38+00:00"
+
+&nbsp;             }
+
+&nbsp;            ],
+
+&nbsp;            "list\_suppressions": \[
+
+&nbsp;             {
+
+&nbsp;              "list\_id": "Y6nRLr",
+
+&nbsp;              "reason": "USER\_SUPPRESSED",
+
+&nbsp;              "timestamp": "2023-02-21T20:07:38+00:00"
+
+&nbsp;             }
+
+&nbsp;           ]
+
+&nbsp;         }
+
+&nbsp;       },
+
+&nbsp;   "sms": {
+
+&nbsp;     "marketing": {
+
+&nbsp;         "can\_receive\_sms\_marketing": true,
+
+&nbsp;         "consent": "SUBSCRIBED",
+
+&nbsp;         "consent\_timestamp": "2023-02-21T20:07:38+00:00",
+
+&nbsp;         "method": "TEXT",
+
+&nbsp;         "method\_detail": "JOIN",
+
+&nbsp;         "last\_updated": "2023-02-21T20:07:38+00:00"
+
+&nbsp;       }
+
+&nbsp;    }
+
+},`
+
+
+
+Note that the `subscriptions` object contains `email` and `sms` objects, for email and sms marketing data respectively. In addition to consent information, the `email` object includes suppression-related data with reasons for suppression, timestamps, and any lists a profile may be suppressed from.
+
+
+
+> \*\*🚧\*\*
+
+> 
+
+> 
+
+> When subscribing a profile to SMS while age-gating is enabled, `age\_gated\_date\_of\_birth` is a required field. If this field is not included or the DOB provided does not meet the region's requirements, the call returns a `400` error.
+
+> 
+
+
+
+In the following example request to \[Get Profiles](https://developers.klaviyo.com/en/reference/get\_profiles), the `subscriptions` object is included as an additional field. This object is useful for fetching suppression data, such as the exact time (within a given timeframe) a list or overall marketing suppression took place (see \*Available `subscriptions` filters\*):
+
+
+
+Request
+
+
+
+`curl --get 'https://a.klaviyo.com/api/profiles/' \\
+
+--data-urlencode 'additional-fields\[profile]=subscriptions' \\
+
+--header 'Authorization: Klaviyo-API-Key your-private-api-key' \\
+
+--header 'revision: 2023-12-15'`
+
+
+
+\### \*\*Fetching suppressed profiles\*\*
+
+
+
+You may want to retrieve profiles that have recently been suppressed from marketing. To fetch suppressed profiles, your request to Get Profiles should look a little like the request below:
+
+
+
+Request
+
+
+
+`curl --get 'https://a.klaviyo.com/api/profiles/' \\
+
+--data-urlencode 'additional-fields\[profile]=subscriptions' \\
+
+--data-urlencode 'filter=greater-than(subscriptions.email.marketing.suppression.timestamp,2023-12-05T00:00:00Z)' \\
+
+--header 'Authorization: Klaviyo-API-Key your-private-api-key' \\
+
+--header 'revision: 2023-12-15'`
+
+
+
+> \*\*📘\*\*
+
+> 
+
+> 
+
+> You do not need to include the `subscriptions` object in your response to filter profiles by suppression fields.
+
+> 
+
+
+
+\### \*\*Fetching suppressed profiles from a list\*\*
+
+
+
+The following Get Profiles request fetches any profiles who were recently suppressed \*from a specific list\*:
+
+
+
+Request
+
+
+
+`curl --get 'https://a.klaviyo.com/api/profiles/' \\
+
+--data-urlencode 'additional-fields\[profile]=subscriptions' \\
+
+--data-urlencode 'filter=and(equals(subscriptions.email.marketing.list\_suppressions.list\_id,"LIST\_ID"),greater-than(subscriptions.email.marketing.list\_suppressions.timestamp,2023-12-05T00:00:00Z))' \\
+
+--header 'Authorization: Klaviyo-API-Key your-private-api-key' \\
+
+--header 'revision: 2023-12-15'`
+
+
+
+\### \*\*Suppression data filters\*\*
+
+
+
+You can apply the following filters to fetch profiles by suppression data including suppression reason, timestamp, and list ID. For example, you can fetch excluded profiles by list suppression and time of suppression with the following query:
+
+
+
+`?filter=greater-than(subscriptions.email.marketing.list\_suppressions.timestamp,YYYY-MM-DD),equals(subscriptions.email.marketing.list\_suppressions.list\_id,"LIST\_ID")`.
+
+
+
+| \*\*Filter description\*\* | \*\*Filter structure\*\* | \*\*Available filters\*\* | \*\*Example\*\* |
+
+| --- | --- | --- | --- |
+
+| Get excluded profiles by timestamp of suppression | `subscriptions.email.marketing.suppression.timestamp` | • `greater-than`
+
+• `greater-or-equal`
+
+• `less-than`
+
+• `less-or-equal` | `?filter=greater-or-equal(subscriptions.email.marketing.suppression.timestamp,YYYY-MM-DD)` |
+
+| Get excluded profiles by suppression reason | `subscriptions.email.marketing.suppression.reason` | `equals` | `?filter=equals(subscriptions.email.marketing.suppression.reason,"UNSUBSCRIBE")`Suppression reasons: `UNSUBSCRIBE`, `SPAM\_COMPLAINT`, `HARD\_BOUNCE`, `INVALID\_EMAIL`, `USER\_SUPPRESSED`. |
+
+| Get excluded profiles by timestamp of list suppression | `subscriptions.email.marketing.list\_suppressions.timestamp` | • `greater-than`
+
+• `greater-or-equal`
+
+• `less-than`
+
+• `less-or-equal` | `?filter=less-or-equal(subscriptions.email.marketing.list\_suppressions.timestamp,YYYY-MM-DD)` |
+
+| Get excluded profiles by list suppression reason | `subscriptions.email.marketing.list\_suppressions.reason` | `equals` | `?filter=equals(subscriptions.email.marketing.list\_suppressions.reason,"UNSUBSCRIBE")`Suppression reasons: `UNSUBSCRIBE`, `SPAM\_COMPLAINT`, `HARD\_BOUNCE`, `INVALID\_EMAIL`, `USER\_SUPPRESSED`. |
+
+| Get excluded profiles by list ID | `subscriptions.email.marketing.list\_suppressions.list\_id` | `equals` | `?filter=greater-or-equal(subscriptions.email.marketing.list\_suppressions.list\_id,"LIST\_ID")` |
+
+
+
+\## \*\*Predictive analytics\*\*
+
+
+
+You can also retrieve \[predictive analytics](https://help.klaviyo.com/hc/en-us/articles/360020919731) with the additional fields query parameter (`?additional-fields\[profile]=predictive\_analytics`). Note that there are some \[conditions](https://developers.klaviyo.com/en/docs/sparse\_fieldsets#predictive-analytics) your account must meet in order for predictive analytics to be calculated.
+
+
+
+If your account is eligible for predictive analytics, the above query should return a `predictive\_analytics` object like the example object below:
+
+
+
+JSON
+
+
+
+`"predictive\_analytics": {
+
+&nbsp;   "historic\_clv": 93.87,
+
+&nbsp;   "predicted\_clv": 27.24,
+
+&nbsp;   "total\_clv": 121.11,
+
+&nbsp;   "historic\_number\_of\_orders": 2,
+
+&nbsp;   "predicted\_number\_of\_orders": 0.54,
+
+&nbsp;   "average\_days\_between\_orders": 189,
+
+&nbsp;   "average\_order\_value": 46.94,
+
+&nbsp;   "churn\_probability": 0.89,
+
+&nbsp;   "expected\_date\_of\_next\_order": "2022-11-08T00:00:00",
+
+&nbsp;   "ranked\_channel\_affinity": \["sms", "email", "push"]
+
+&nbsp; }`
+
+
+
+For more information about each field, please review the sparse fieldset guidance for \[predictive analytics](https://developers.klaviyo.com/en/docs/sparse\_fieldsets#predictive-analytics).
+
+
+
+\## \*\*Create or Update Profile\*\*
+
+
+
+> \*\*📘\*\*
+
+> 
+
+> 
+
+> Check out our \[YouTube tutorial on creating and updating Klaviyo profiles via API](https://www.youtube.com/watch?v=Lir9g0pQfCM\&list=PLHkNfHgtxcUanrkMnKPdkRzuWU7MGv\_xM\&index=1).
+
+> 
+
+
+
+To create a profile or update an existing one, you’ll need at least one profile identifier. Your request payload for \[Create or Update Profile](https://developers.klaviyo.com/en/reference/create\_or\_update\_profile) should be formatted like the example below:
+
+
+
+Request
+
+
+
+`{
+
+&nbsp;   "data": {
+
+&nbsp;       "type": "profile",
+
+&nbsp;       "attributes": {
+
+&nbsp;           "email": "sarah.mason@klaviyo-demo.com",
+
+&nbsp;           "first\_name": "Sarah",
+
+&nbsp;           "last\_name": "Mason"
+
+&nbsp;       },
+
+&nbsp;       "properties": {
+
+&nbsp;           "birthday": "1989-12-13T00:00:00Z"
+
+&nbsp;       }
+
+&nbsp;   }
+
+}`
+
+
+
+> \*\*🚧\*\*
+
+> 
+
+> 
+
+> Note that setting a field to `null` will clear out the field, whereas not including a field in your request will leave it unchanged.
+
+> 
+
+
+
+> \*\*📘\*\*
+
+> 
+
+> 
+
+> When creating a profile, note that if you use a phone number as a profile identifier and you haven’t \[set up SMS in your Klaviyo account](https://help.klaviyo.com/hc/en-us/articles/4404274419355), you’ll need to include at least one other identifier (`email` or `external\_id`) for the API call to work.
+
+> 
+
+
+
+\## \*\*Bulk Import Profiles API\*\*
+
+
+
+Our Profiles API has support for creating and updating profiles via \[Bulk Import Profiles](https://developers.klaviyo.com/en/reference/bulk\_import\_profiles). To learn more, see our \[Bulk Import Profiles API guide](https://developers.klaviyo.com/en/docs/use\_klaviyos\_bulk\_profile\_import\_api).
+
+
+
+\## \*\*Get Profile(s)\*\*
+
+
+
+> \*\*📘\*\*
+
+> 
+
+> 
+
+> Check out our \[YouTube tutorial on retrieving and filtering customer profile data](https://www.youtube.com/watch?v=bHXJlV7wP0Q\&list=PLHkNfHgtxcUanrkMnKPdkRzuWU7MGv\_xM) with the Get Profiles API.
+
+> 
+
+
+
+When making a \[Get Profile](https://developers.klaviyo.com/en/reference/get\_profile) or \[Get Profiles](https://developers.klaviyo.com/en/reference/get\_profiles) request, here’s an example of how a profile should look in your response:
+
+
+
+JSON
+
+
+
+`{
+
+&nbsp;   "type": "profile",
+
+&nbsp;   "id": "01H260JDT1NJVY1EF61ET64Z7F",
+
+&nbsp;   "attributes": {
+
+&nbsp;       "email": "henry.downing@klaviyo-demo.com",
+
+&nbsp;       "first\_name": "Henry",
+
+&nbsp;       "last\_name": "Downing",
+
+&nbsp;       "created": "2023-06-05T14:49:54+00:00",
+
+&nbsp;       "updated": "2023-07-17T14:36:25+00:00",
+
+&nbsp;       "last\_event\_date": "2023-06-05T14:49:56+00:00",
+
+&nbsp;       "location": {
+
+&nbsp;           "address1": "225 Franklin St",
+
+&nbsp;           "address2": "6th floor",
+
+&nbsp;           "city": "Boston",
+
+&nbsp;           ...
+
+&nbsp;       },
+
+&nbsp;       "properties": {
+
+&nbsp;           "FavoriteColors": \["blue","yellow"],
+
+&nbsp;           ...
+
+&nbsp;       }
+
+&nbsp;   },
+
+&nbsp;   "relationships": {
+
+&nbsp;       "lists": {
+
+&nbsp;           "links": {
+
+&nbsp;               "self": "https://a.klaviyo.com/api/profiles/01H260JDT1NJVY1EF61ET64Z7F/relationships/lists/",
+
+&nbsp;               "related": "https://a.klaviyo.com/api/profiles/01H260JDT1NJVY1EF61ET64Z7F/lists/"
+
+&nbsp;           }
+
+&nbsp;       },
+
+&nbsp;       "segments": {
+
+&nbsp;           "links": {
+
+&nbsp;               "self": "https://a.klaviyo.com/api/profiles/01H260JDT1NJVY1EF61ET64Z7F/relationships/segments/",
+
+&nbsp;               "related": "https://a.klaviyo.com/api/profiles/01H260JDT1NJVY1EF61ET64Z7F/segments/"
+
+&nbsp;           }
+
+&nbsp;       }
+
+&nbsp;   },
+
+&nbsp;   "links": {
+
+&nbsp;       "self": "https://a.klaviyo.com/api/profiles/01H260JDT1NJVY1EF61ET64Z7F/"
+
+&nbsp;   }
+
+},`
+
+
+
+Note that the `updated` field represents the last time any profile property has been changed, including changes to a profile's timestamps like `last\_event\_date` (a timestamp representing when a profile was last active).
+
+
+
+\## \*\*Querying profiles\*\*
+
+
+
+Querying profiles with the Profiles API is useful for monitoring valuable information like the time a profile has last been updated, collected email and SMS consent, and average order value. Check out the supported query parameters below and \[test them out with our latest Postman collection](https://developers.klaviyo.com/en/docs/use\_klaviyos\_postman\_collections). Note that support for given operators and fields is endpoint-specific. Review the \[API reference documentation](https://developers.klaviyo.com/en/reference/get\_profiles) for more information on allowed fields and query operators.
+
+
+
+| \*\*Parameter\*\* | \*\*Description\*\* | \*\*Query example\*\* |
+
+| --- | --- | --- |
+
+| `filter` | Retrieve a subset of profiles, e.g., profiles created within a given time frame. Learn about the \[filter query parameter](https://developers.klaviyo.com/en/docs/filtering\_). | `GET /api/profiles?filter=equals(email,"sarah.mason@klaviyo-demo.com")GET /api/profiles?filter=equals(phone\_number,"+15005550006")GET /api/profiles?filter=greater-than(created,"2023-06-05T12:30:00+00:00")` |
+
+| `sort` | Sort profiles, e.g., by updated datetime in descending order (newest to oldest). Learn about the \[sort query parameter](https://developers.klaviyo.com/en/docs/sorting\_). | `GET /api/profiles?sort=-updated` |
+
+| `fields` | Request for only specified profile data (e.g., emails). Learn more about \[sparse fieldsets](https://developers.klaviyo.com/en/docs/sparse\_fieldsets). | `GET /api/profiles?fields\[profile]=email, phone\_number` |
+
+| `additional-fields` | Request for fields not returned by default (e.g., subscriptions). Learn about \[additional fields](https://developers.klaviyo.com/en/docs/sparse\_fieldsets#additional-fields). | `GET /api/profiles?additional-fields\[profile]=subscriptions` |
+
+
+
+\## \*\*Limitations\*\*
+
+
+
+A set limit is allotted for each unique data identifier or digested piece of information. In most instances, if you reach the maximum data limit for a set category, the overflow information will not be processed and messages will be rejected. The following table provides the data limits for each profile property so you can ensure successful delivery and storage.
+
+
+
+| \*\*ID\*\* | \*\*Category\*\* | \*\*Definition\*\* | \*\*Limit\*\* |
+
+| --- | --- | --- | --- |
+
+| 1 | Profile payload size | Profile payloads submitted via any mode (Profile APIs, Event APIs, SFTP upload, via the Klaviyo UI, etc); payloads that exceed this limit will be rejected | 100 kB |
+
+
+
+\## \*\*Next steps\*\*
+
+
+
+Using your Klaviyo test account and \[Postman](https://www.postman.com/klaviyo), try out the following:
+
+
+
+\- Create profiles with \[Create Profile](https://developers.klaviyo.com/en/reference/create\_profile) and \[Bulk Import Profiles](https://developers.klaviyo.com/en/reference/bulk\_import\_profiles).
+
+\- Use a filter on \[Get Profiles](https://developers.klaviyo.com/en/reference/get\_profiles) to retrieve a profile with a given identifier, e.g., email. Use the profile’s ID to update its custom properties with \[Update Profile](https://developers.klaviyo.com/en/reference/update\_profile).
+
+\- Subscribe profiles to an existing list in your test account.
+
+\- Retrieve subscriptions data from a call to \[Get Profiles](https://developers.klaviyo.com/en/reference/get\_profiles) with the `additional-fields` query parameter.
+
+\- Try out some of the query parameters above to customize your response.
+
+
+
+\## \*\*Troubleshooting\*\*
+
+
+
+Below are error status codes you may encounter with the Profiles API, including the corresponding reasons for these errors to help you resolve them.
+
+
+
+| \*\*Status code\*\* | \*\*Reasons\*\* |
+
+| --- | --- |
+
+| 400 | Profile(s) are missing 1 or more required fields.Profile(s) have an invalid email address.Profile(s) have an invalid phone number without a valid email address.The provided list is invalid, e.g., the list ID does not exist in the account. |
+
+| 401 | Missing auth information. See details on \[key authentication](https://developers.klaviyo.com/en/reference/api\_overview#authentication). |
+
+| 403 | API key is missing required API scopes. This endpoint requires both `profiles:write` and `lists:write`. |
+
+| 409 | A profile already exists with one of the identifiers provided. We recommend using \[Create or Update Profile](https://developers.klaviyo.com/en/reference/create\_or\_update\_profile), which creates a given profile only if it does not already exist and otherwise updates the profile matching the provided identifiers. |
+
+| 413 | Request payload size is too large (> 5 MB), see \*Limitations\* above. |
+
+| 429 | Rate limit exceeded. |
+

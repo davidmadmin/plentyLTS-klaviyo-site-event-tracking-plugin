@@ -1,0 +1,1480 @@
+\### \*\*Integrate an ecommerce platform without a pre-built Klaviyo integration\*\*Learn how to integrate a platform without a pre-built Klaviyo integration.
+
+
+
+If you’re using an ecommerce platform not currently supported by one of Klaviyo’s \[pre-built integrations](https://help.klaviyo.com/hc/en-us/categories/115000032731-Ecommerce-Integrations) or \[partner integrations](https://connect.klaviyo.com/integrations), or you’ve built your own custom solution, you can integrate with Klaviyo using our APIs, which enable, for example:
+
+
+
+\- Onsite activity tracking with the \[JavaScript API](https://developers.klaviyo.com/en/docs/javascript\_api).
+
+\- Managing lists and segments with the \[server-side API](https://developers.klaviyo.com/en/reference/api\_overview).
+
+\- Creating and managing custom \[catalogs](https://developers.klaviyo.com/en/docs/guide\_to\_syncing\_a\_custom\_catalog\_feed\_to\_klaviyo).
+
+
+
+> \*\*📘\*\*
+
+> 
+
+> 
+
+> Check out our video on how to \[use Klaviyo's JavaScript for onsite tracking](https://www.youtube.com/watch?v=O2oHTGpBdlQ\&list=PLHkNfHgtxcUanrkMnKPdkRzuWU7MGv\_xM\&index=3).
+
+> 
+
+
+
+\## \*\*Key integration components\*\*
+
+
+
+The key components of integrating this type of ecommerce solution are:
+
+
+
+\- \*\*Customer data\*\*Tracking information such as name, email, phone number, or other profile attributes.
+
+\- \*\*Website activity\*\*Tracking who is active on your site, what products they view, etc.
+
+\- \*\*Order activity\*\*Tracking when a customer places an order, what products are ordered, etc.
+
+\- \*\*Products\*\*The items in your catalog.
+
+
+
+\## \*\*About JavaScript and server-side event APIs\*\*
+
+
+
+This guide focuses on how to sync important metrics, or key customer activities, to Klaviyo. These events can be created in the browser with the \[JavaScript API](https://developers.klaviyo.com/en/docs/javascript\_api) and on the backend with the \[server-side API](https://developers.klaviyo.com/en/reference/api\_overview).
+
+
+
+> \*\*🚧\*\*
+
+> 
+
+> 
+
+> It's important that you map your metrics for event tracking in the \[account-level mapping section](https://help.klaviyo.com/hc/en-us/articles/25829057055899). Klaviyo's predictive analytics for measuring \[customer lifetime value](https://help.klaviyo.com/hc/en-us/articles/17797865070235) (CLV) and Benchmarks tool rely on this mapping to calculate predictive analytics and revenue-based performance.
+
+> 
+
+
+
+Use our JavaScript API to track customer actions during a browsing session:
+
+
+
+\- \*\*Active on Site\*\*When someone visits your website.
+
+\- \*\*Viewed Product\*\*When someone views a product.
+
+\- \*\*Added to Cart\*\*When someone adds an item to their cart.
+
+\- \*\*Started Checkout\*\*When someone lands on the checkout page.
+
+
+
+Use our server-side API for events that happen on the backend, starting with when a customer places an order:
+
+
+
+\- \*\*Placed Order\*\*When an order successfully processes on your system.
+
+\- \*\*Ordered Product\*\*An event for each item in a processed order.
+
+\- \*\*Fulfilled Order\*\*When an order is sent to the customer.
+
+\- \*\*Canceled Order\*\*When an order is canceled.
+
+\- \*\*Refunded Order\*\*When a customer’s order is refunded.
+
+
+
+Use our custom catalog feed for the following:
+
+
+
+\- \*\*Catalog Feed\*\*An XML or JSON feed of your product catalog.
+
+
+
+> \*\*🚧\*\*
+
+> 
+
+> 
+
+> For populating your Klaviyo product catalog, you can use either a custom catalog feed or the new \[catalog API](https://developers.klaviyo.com/en/reference/get\_catalog\_items). You can only populate products using one option. To shift from a custom catalog feed to the new catalog API you must first disable the existing custom catalog feed before using the API.
+
+> 
+
+
+
+The level of detail in the data you send within these events will determine how you can filter and segment based on these events in Klaviyo. To understand how data must be structured so that key event details are available for segmentation, check out our articles on \[segment conditions](https://help.klaviyo.com/hc/en-us/articles/115005062847-Understand-the-Data-Available-for-Segmentation) and \[how to structure your data for segment and flow filters](https://developers.klaviyo.com/en/docs/custom\_integration\_faqs#how-should-i-structure-my-data-for-segmentation-and-flow-filtering).
+
+
+
+> \*\*🚧\*\*
+
+> 
+
+> 
+
+> Note that the code snippets in this guide use example data. You will need to update the values of the JSON properties in these snippets so that they dynamically pull from the relevant information needed for that property.
+
+> 
+
+
+
+Check out our \[Custom integration FAQ](https://developers.klaviyo.com/en/docs/custom\_integration\_faqs) for questions about custom integrations.
+
+
+
+\## \*\*JavaScript Track API for onsite metrics\*\*
+
+
+
+\### \*\*Active on Site tracking snippet\*\*
+
+
+
+To be able to publish forms directly from Klaviyo to your site, add the following JavaScript snippet so it appears on every page on your website (the end of the footer is often a good place to add it). Make sure to replace `PUBLIC\_API\_KEY` with your Klaviyo account's six character \[public API key](https://help.klaviyo.com/hc/en-us/articles/115005062267-How-to-Manage-Your-Account-s-API-Keys):
+
+
+
+JavaScript
+
+
+
+`<script type="text/javascript" async=""
+
+src="https://static.klaviyo.com/onsite/js/PUBLIC\_API\_KEY/klaviyo.js"></script>;`
+
+
+
+Once you’ve added the snippet above, an \*Active on Site\* metric will trigger for any person who is cookied. A browser can be cookied in any of the ways listed in our \[article on Klaviyo onsite tracking](https://help.klaviyo.com/hc/en-us/articles/115005076767-Klaviyo-Web-Tracking#who-klaviyo-tracks1).
+
+
+
+\### \*\*Initialize the klaviyo object\*\*
+
+
+
+Ensure that you have \[initialized the klaviyo object](https://developers.klaviyo.com/en/docs/introduction\_to\_the\_klaviyo\_object#how-to-load-the-klaviyo-object) on your page before executing any of the following code snippets.
+
+
+
+\### \*\*Viewed Product tracking snippet\*\*
+
+
+
+If you'd like to set up a \[browse abandonment flow](https://help.klaviyo.com/hc/en-us/articles/115002775252-Create-a-Browse-Abandonment-Flow) or build segments based on product browsing activity, you'll need to add JavaScript event tracking for the \*Viewed Product\* metric. All \*Viewed Product\* metrics are tied to user profiles. Add the following snippet to your product page template or associated JavaScript:
+
+
+
+> \*\*📘\*\*
+
+> 
+
+> 
+
+> Make sure to replace `item.\_\_\_` in the below code snippet with whatever item object your platform uses for product properties.
+
+> 
+
+
+
+JavaScript
+
+
+
+`<script type="text/javascript">
+
+&nbsp;  var item = {
+
+&nbsp;    "ProductName": item.ProductName,
+
+&nbsp;    "ProductID": item.ProductID,
+
+&nbsp;    "SKU": item.SKU,
+
+&nbsp;    "Categories": item.Categories,
+
+&nbsp;    "ImageURL": item.ImageURL,
+
+&nbsp;    "URL": item.URL,
+
+&nbsp;    "Brand": item.Brand,
+
+&nbsp;    "Price": item.Price,
+
+&nbsp;    "CompareAtPrice": item.CompareAtPrice
+
+&nbsp;  };
+
+&nbsp;  klaviyo.track("Viewed Product", item);
+
+</script>`
+
+
+
+Make sure to update the values of the JSON properties in the snippet so that they dynamically pull from the relevant information needed for that property.
+
+
+
+Additionally, there is another snippet that allows entries to be added to a “Recently Viewed Items” table for a profile. Calling the Klaviyo object's `trackViewedItem` function below will populate a product feed of recently viewed products that can be included in emails. For more information on how to use the “Recently Viewed Items” feature in a template, check out our article on \[inserting recently viewed items into an email](https://help.klaviyo.com/hc/en-us/articles/360019921772-How-to-Insert-Recently-Viewed-Items-into-an-Email).
+
+
+
+The following snippet can be added directly below the \*Viewed Product\* snippet:
+
+
+
+JavaScript
+
+
+
+`<script type="text/javascript">
+
+&nbsp;  klaviyo.trackViewedItem({
+
+&nbsp;    "Title": item.ProductName,
+
+&nbsp;    "ItemId": item.ProductID,
+
+&nbsp;    "Categories": item.Categories,
+
+&nbsp;    "ImageUrl": item.ImageURL,
+
+&nbsp;    "Url": item.URL,
+
+&nbsp;    "Metadata": {
+
+&nbsp;      "Brand": item.Brand,
+
+&nbsp;      "Price": item.Price,
+
+&nbsp;      "CompareAtPrice": item.CompareAtPrice
+
+&nbsp;    }
+
+&nbsp;  });
+
+</script>`
+
+
+
+\### \*\*Added to Cart tracking snippet\*\*
+
+
+
+If you’d like to send abandoned cart emails to visitors who add items to their cart, but don’t make it to the checkout page, you’ll need to track an \*Added to Cart\* metric. A customer must be identified, (i.e., cookied), to track this event. For the payload, you should include all of the cart information (like \*Started Checkout\* below) and information about the item that was just added (like \*Viewed Product\* above).
+
+
+
+You can add as many key/value pairs as you’d like to the JSON payload, with one restriction: you can only use top-level properties in the JSON when adding \[filters to segments](https://help.klaviyo.com/hc/en-us/articles/115005237908-Getting-started-with-segments#filtering-a-segment-condition4) based on this event (\*Added to Cart\* in this case). That is why there is a top-level property `AddedItemCategories` in the below example that is the union of unique `ProductCategories` values of each of the products in the Items array. With this top-level property, you can create a segment of profiles who have viewed products in specific categories.
+
+
+
+Here's an example Track request where the cart already contained one item (\*Winnie the Pooh\*) and another item was just added to the cart (\*A Tale of Two Cities\*):
+
+
+
+JavaScript
+
+
+
+`<script type="text/javascript">
+
+&nbsp;  klaviyo.track("Added to Cart", {
+
+&nbsp;    "$value": 29.98,
+
+&nbsp;    "AddedItemProductName": "A Tale of Two Cities",
+
+&nbsp;    "AddedItemProductID": "1112",
+
+&nbsp;    "AddedItemSKU": "TALEOFTWO",
+
+&nbsp;    "AddedItemCategories": \["Fiction", "Classics", "Children"],
+
+&nbsp;    "AddedItemImageURL": "http://www.example.com/path/to/product/image2.png",
+
+&nbsp;    "AddedItemURL": "http://www.example.com/path/to/product2",
+
+&nbsp;    "AddedItemPrice": 19.99,
+
+&nbsp;    "AddedItemQuantity": 1,
+
+&nbsp;    "ItemNames": \["Winnie the Pooh", "A Tale of Two Cities"],
+
+&nbsp;    "CheckoutURL": "http://www.example.com/path/to/checkout",
+
+&nbsp;    "Items": \[{
+
+&nbsp;        "ProductID": "1111",
+
+&nbsp;        "SKU": "WINNIEPOOH",
+
+&nbsp;        "ProductName": "Winnie the Pooh",
+
+&nbsp;        "Quantity": 1,
+
+&nbsp;        "ItemPrice": 9.99,
+
+&nbsp;        "RowTotal": 9.99,
+
+&nbsp;        "ProductURL": "http://www.example.com/path/to/product",
+
+&nbsp;        "ImageURL": "http://www.example.com/path/to/product/image.png",
+
+&nbsp;        "ProductCategories": \["Fiction", "Children"]
+
+&nbsp;      },
+
+&nbsp;      {
+
+&nbsp;        "ProductID": "1112",
+
+&nbsp;        "SKU": "TALEOFTWO",
+
+&nbsp;        "ProductName": "A Tale of Two Cities",
+
+&nbsp;        "Quantity": 1,
+
+&nbsp;        "ItemPrice": 19.99,
+
+&nbsp;        "RowTotal": 19.99,
+
+&nbsp;        "ProductURL": "http://www.example.com/path/to/product2",
+
+&nbsp;        "ImageURL": "http://www.example.com/path/to/product/image2.png",
+
+&nbsp;        "ProductCategories": \["Fiction", "Classics"]
+
+&nbsp;      }
+
+&nbsp;    ]
+
+&nbsp;  });
+
+&nbsp;</script>`
+
+
+
+\### \*\*Started Checkout\*\*
+
+
+
+Checkout data is important if you'd like to send \[abandoned cart emails](https://help.klaviyo.com/hc/en-us/articles/115002779411-Guide-to-Creating-an-Abandoned-Cart-Flow) once a person makes it to the checkout page. Abandoned cart emails based on \*Started Checkout\*, as opposed to \*Added to Cart\*, will target shoppers who are potentially more serious about completing their purchase. When someone starts the checkout process, you'll send Klaviyo a metric indicating they’ve started checking out. The best place to trigger this event is either:
+
+
+
+\- When someone visits the checkout page after they’ve been identified.
+
+\- When they enter their email address on the checkout page if they have not already been identified.
+
+
+
+Include all line item details so your abandoned checkout emails can be customized to include pictures, links, and other information about the products in someone’s cart. Here’s an example call to track a the \*Started Checkout\* event:
+
+
+
+JavaScript
+
+
+
+`<script type="text/javascript">
+
+&nbsp;  klaviyo.track("Started Checkout", {
+
+&nbsp;    "$event\_id": "1000123\_1387299423",
+
+&nbsp;    "$value": 29.98,
+
+&nbsp;    "ItemNames": \["Winnie the Pooh", "A Tale of Two Cities"],
+
+&nbsp;    "CheckoutURL": "http://www.example.com/path/to/checkout",
+
+&nbsp;    "Categories": \["Fiction", "Children", "Classics"],
+
+&nbsp;    "Items": \[{
+
+&nbsp;        "ProductID": "1111",
+
+&nbsp;        "SKU": "WINNIEPOOH",
+
+&nbsp;        "ProductName": "Winnie the Pooh",
+
+&nbsp;        "Quantity": 1,
+
+&nbsp;        "ItemPrice": 9.99,
+
+&nbsp;        "RowTotal": 9.99,
+
+&nbsp;        "ProductURL": "http://www.example.com/path/to/product",
+
+&nbsp;        "ImageURL": "http://www.example.com/path/to/product/image.png",
+
+&nbsp;        "ProductCategories": \["Fiction", "Children"]
+
+&nbsp;      },
+
+&nbsp;      {
+
+&nbsp;        "ProductID": "1112",
+
+&nbsp;        "SKU": "TALEOFTWO",
+
+&nbsp;        "ProductName": "A Tale of Two Cities",
+
+&nbsp;        "Quantity": 1,
+
+&nbsp;        "ItemPrice": 19.99,
+
+&nbsp;        "RowTotal": 19.99,
+
+&nbsp;        "ProductURL": "http://www.example.com/path/to/product2",
+
+&nbsp;        "ImageURL": "http://www.example.com/path/to/product/image2.png",
+
+&nbsp;        "ProductCategories": \["Fiction", "Classics"]
+
+&nbsp;      }
+
+&nbsp;    ]
+
+&nbsp;  });
+
+&nbsp;</script>`
+
+
+
+The `$event\_id` should be a unique identifier for the cart combined with the UNIX formatted time when the event was triggered. This allows someone to trigger \*Started Checkout\* more than once when they return after adding additional items.
+
+
+
+\## \*\*Server-side metrics\*\*
+
+
+
+We recommend tracking certain metrics on the server-side due to potential limitations of frontend code, security concerns, and general availability of data on the server-side versus the front-end. For example, if someone has a slow connection or a ad-blocking extension on their browser, the JavaScript API requests might not fire. In the case of more crucial metrics (e.g., transactional events and properties) or ones that may contain sensitive data, use our server-side POST \[create event](https://developers.klaviyo.com/en/reference/create\_event) API. For more information on this question, check out our \[custom integration FAQ on the topic](https://developers.klaviyo.com/en/docs/custom\_integration\_faqs#should-i-use-the-server-side-or-front-end-api).
+
+
+
+Klaviyo also has \[SDKs](https://developers.klaviyo.com/en/docs/sdk\_overview) in several languages.
+
+
+
+\### \*\*Syncing historical data\*\*
+
+
+
+Along with your ongoing data, it is best practice to send your historical order data, which will enhance your ability to segment off past data and improve historical accuracy in revenue tracking and \[predictive analytics](https://help.klaviyo.com/hc/en-us/articles/360020919731-Guide-to-Klaviyo-s-Predictive-Analytics). Historical data can be sent to Klaviyo by iterating through your historical orders and generating POST \[create event](https://developers.klaviyo.com/en/reference/create\_event) API requests for each server-side event as needed. The special `time` property for these events should be in ISO 8601 `datetime` (i.e. `2023-10-15T00:00:00`) of when that order occurred.
+
+
+
+\### \*\*Placed Order\*\*
+
+
+
+After an order is placed, make a call to to our server-side POST \[create event API](https://developers.klaviyo.com/en/reference/create\_event) to create a \*Placed Order\* event. Tracking \*Placed Order\* events is useful for calculating predictive analytics such as average order value and predicted CLV.
+
+
+
+Send order data to Klaviyo in one of two ways: real-time or batch.
+
+
+
+\- \*\*Real-time\*\*Make requests as soon as an order is placed.
+
+\- \*\*Batch\*\*Write some code that will run (for example) at least every 30 minutes (e.g., on a cron) to send all order events that occurred in that past 30 minutes.
+
+
+
+If you plan to send \[abandoned cart](https://help.klaviyo.com/hc/en-us/articles/115002779411-Guide-to-Creating-an-Abandoned-Cart-Flow) messages, you'll need to send order data at a frequency that falls within your flow time delay (at least) in order to stop the flow email from going to people who have completed their order. For example, if you have a one hour time delay between when someone triggers the abandoned cart flow and when they receive the first email, make sure that you send data over at least once every hour to fall within that window and filter them out of the flow before the email sends.
+
+
+
+For each order, we recommend you send two types of events:
+
+
+
+\- One event named \*Placed Order\* for the entire order.
+
+&nbsp;   - Useful for triggering post-purchase flows and managing conversion revenue.
+
+&nbsp;   - Includes a `value` property that represents the total value of the entire order.
+
+\- One event for each line item named \*Ordered Product\* (see below).
+
+&nbsp;   - Allows for deeper segmentation and filtering based on product-specific data.
+
+&nbsp;   - Includes a `value` property that represents the total cost of an item in the order before any adjustments as well as more SKU-level detailed information about the item.
+
+
+
+Here’s an example POST \[create event](https://developers.klaviyo.com/en/reference/create\_event) request for `Placed Order`:
+
+
+
+cURL
+
+
+
+`curl --request POST \\
+
+&nbsp;    --url https: //a.klaviyo.com/api/events/ \\
+
+&nbsp;    --header 'Authorization: Klaviyo-API-Key your-private-api-key' \\
+
+&nbsp;    --header 'accept: application/json' \\
+
+&nbsp;    --header 'content-type: application/json' \\
+
+&nbsp;    --header 'revision: 2024-02-15' \\
+
+&nbsp;    --data '
+
+{
+
+&nbsp;   "data": {
+
+&nbsp;       "type": "event",
+
+&nbsp;       "attributes": {
+
+&nbsp;           "properties": {
+
+&nbsp;               "OrderId": "1234",
+
+&nbsp;               "Categories": \[
+
+&nbsp;                   "Fiction",
+
+&nbsp;                   "Classics",
+
+&nbsp;                   "Children"
+
+&nbsp;               ],
+
+&nbsp;               "ItemNames": \[
+
+&nbsp;                   "Winnie the Pooh",
+
+&nbsp;                   "A Tale of Two Cities"
+
+&nbsp;               ],
+
+&nbsp;               "DiscountCode": "Free Shipping",
+
+&nbsp;               "DiscountValue": 5,
+
+&nbsp;               "Brands": \[
+
+&nbsp;                   "Kids Books",
+
+&nbsp;                   "Harcourt Classics"
+
+&nbsp;               ],
+
+&nbsp;               "Items": \[
+
+&nbsp;                   {
+
+&nbsp;                       "ProductID": "1111",
+
+&nbsp;                       "SKU": "WINNIEPOOH",
+
+&nbsp;                       "ProductName": "Winnie the Pooh",
+
+&nbsp;                       "Quantity": 1,
+
+&nbsp;                       "ItemPrice": 9.99,
+
+&nbsp;                       "RowTotal": 9.99,
+
+&nbsp;                       "ProductURL": "http://www.example.com/path/to/product",
+
+&nbsp;                       "ImageURL": "http://www.example.com/path/to/product/image.png",
+
+&nbsp;                       "Categories": \[
+
+&nbsp;                           "Fiction",
+
+&nbsp;                           "Children"
+
+&nbsp;                       ],
+
+&nbsp;                       "Brand": "Kids Books"
+
+&nbsp;                   },
+
+&nbsp;                   {
+
+&nbsp;                       "ProductID": "1112",
+
+&nbsp;                       "SKU": "TALEOFTWO",
+
+&nbsp;                       "ProductName": "A Tale of Two Cities",
+
+&nbsp;                       "Quantity": 1,
+
+&nbsp;                       "ItemPrice": 19.99,
+
+&nbsp;                       "RowTotal": 19.99,
+
+&nbsp;                       "ProductURL": "http://www.example.com/path/to/product2",
+
+&nbsp;                       "ImageURL": "http://www.example.com/path/to/product/image2.png",
+
+&nbsp;                       "Categories": \[
+
+&nbsp;                           "Fiction",
+
+&nbsp;                           "Classics"
+
+&nbsp;                       ],
+
+&nbsp;                       "Brand": "Harcourt Classics"
+
+&nbsp;                   }
+
+&nbsp;               ],
+
+&nbsp;               "BillingAddress": {
+
+&nbsp;                   "FirstName": "John",
+
+&nbsp;                   "LastName": "Smith",
+
+&nbsp;                   "Address1": "123 Abc St",
+
+&nbsp;                   "City": "Boston",
+
+&nbsp;                   "RegionCode": "MA",
+
+&nbsp;                   "CountryCode": "US",
+
+&nbsp;                   "Zip": "02110",
+
+&nbsp;                   "Phone": "+15551234567"
+
+&nbsp;               },
+
+&nbsp;               "ShippingAddress": {
+
+&nbsp;                   "Address1": "123 Abc St"
+
+&nbsp;               }
+
+&nbsp;           },
+
+&nbsp;           "time": "2022-11-08T00:00:00",
+
+&nbsp;           "value": 29.98,
+
+&nbsp;           "value\_currency": "USD",
+
+&nbsp;           "unique\_id": "d47aeda5-1751-4483-a81e-6fcc8ad48711",
+
+&nbsp;           "metric": {
+
+&nbsp;               "data": {
+
+&nbsp;                   "type": "metric",
+
+&nbsp;                   "attributes": {
+
+&nbsp;                       "name": "Placed Order"
+
+&nbsp;                   }
+
+&nbsp;               }
+
+&nbsp;           },
+
+&nbsp;           "profile": {
+
+&nbsp;               "data": {
+
+&nbsp;                   "type": "profile",
+
+&nbsp;                   "attributes": {
+
+&nbsp;                       "email": "sarah.mason@klaviyo-demo.com",
+
+&nbsp;                       "phone\_number": "+15005550006"
+
+&nbsp;                   }
+
+&nbsp;               }
+
+&nbsp;           }
+
+&nbsp;       }
+
+&nbsp;   }
+
+}
+
+'`
+
+
+
+> \*\*📘\*\*
+
+> 
+
+> 
+
+> Creating an event requires at least one \[profile identifier](https://developers.klaviyo.com/en/reference/profiles\_api\_overview#profile-identifiers). For example, the \*Placed Order\* event from the POST Create Event call above uses `email` as a profile identifier. Providing every identifier is unnecessary. You should limit your provided identifiers to known values.
+
+> 
+
+
+
+Key things to be aware of when tracking server-side events:
+
+
+
+\- Make sure to replace `PRIVATE\_API\_KEY` with a \[private key](https://help.klaviyo.com/hc/en-us/articles/7423954176283-How-to-create-a-private-API-key) from your Klaviyo account; this key must have write permissions to create events.
+
+\- The `unique\_id` should be a unique identifier for the order (e.g., Order ID).
+
+\- If the `unique\_id` is repeated for the same profile and metric, only the first processed event will be recorded. If the `unique\_id` is not present, it will default to the event's datetime value.
+
+\- `value` is a special property that allows Klaviyo to track revenue; this should be the total numeric (not a string), monetary value of the event it’s associated with.
+
+\- The `Items` array should contain one JSON block/dictionary for each line item.
+
+\- `time` is a special property that should bean ISO 8601 `datetime` (i.e. `2023-10-15T00:00:00Z`) for the order date and time.
+
+\- Note that the billing address is not used to determine a profile's location. You'll need to set profiles' locations with the `location` object (\[Profiles API](https://developers.klaviyo.com/en/reference/profiles\_api\_overview)).
+
+
+
+\### \*\*Ordered Product\*\*
+
+
+
+For each line item, you should also generate an \*Ordered Product\* event. This metric is useful if you plan to create any filters or triggers based on product-specific information (as opposed to the order as a whole) that isn't "\[top-level](https://developers.klaviyo.com/en/docs/custom\_integration\_faqs#how-should-i-structure-my-data-for-segmentation-and-flow-filtering)" for the \*Placed Order\* metric. This metric is also used in conjunction with your Catalog Feed in order to \[enable personalized recommendations](https://developers.klaviyo.com/en/docs/custom\_integration\_faqs#how-do-i-enable-personalized-recommendations) and in the benchmarks feature to calculate average item value and average cart size.
+
+
+
+The remainder of the POST \[create event](https://developers.klaviyo.com/en/reference/create\_event) calls in this guide will use the same headers as the \*Placed Order\* call.
+
+
+
+JSON
+
+
+
+`{
+
+&nbsp;   "data": {
+
+&nbsp;       "type": "event",
+
+&nbsp;       "attributes": {
+
+&nbsp;           "properties": {
+
+&nbsp;               "OrderId": "1234",
+
+&nbsp;               "ProductID": "1111",
+
+&nbsp;               "SKU": "WINNIEPOOH",
+
+&nbsp;               "ProductName": "Winnie the Pooh",
+
+&nbsp;               "Quantity": 1,
+
+&nbsp;               "ProductURL": "http://www.example.com/path/to/product",
+
+&nbsp;               "ImageURL": "http://www.example.com/path/to/product/image.png",
+
+&nbsp;               "Categories": \[
+
+&nbsp;                   "Fiction",
+
+&nbsp;                   "Children"
+
+&nbsp;               ],
+
+&nbsp;               "ProductBrand": "Kids Books"
+
+&nbsp;           },
+
+&nbsp;           "time": "2022-11-08T00:00:00",
+
+&nbsp;           "value": 9.99,
+
+&nbsp;           "value\_currency": "USD",
+
+&nbsp;           "unique\_id": "d47aeda5-1751-4483-a81e-6fcc8ad48711",
+
+&nbsp;           "metric": {
+
+&nbsp;               "data": {
+
+&nbsp;                   "type": "metric",
+
+&nbsp;                   "attributes": {
+
+&nbsp;                       "name": "Ordered Product"
+
+&nbsp;                   }
+
+&nbsp;               }
+
+&nbsp;           },
+
+&nbsp;           "profile": {
+
+&nbsp;               "data": {
+
+&nbsp;                   "type": "profile",
+
+&nbsp;                   "attributes": {
+
+&nbsp;                       "email": "sarah.mason@klaviyo-demo.com",
+
+&nbsp;                       "phone\_number": "+15005550006"
+
+&nbsp;                   }
+
+&nbsp;               }
+
+&nbsp;           }
+
+&nbsp;       }
+
+&nbsp;   }
+
+}`
+
+
+
+\### \*\*Fulfilled Order, Canceled Order, and Refunded Order\*\*
+
+
+
+Depending on how your products are sent to the customer, and whether they are able to be canceled or refunded, you may want to send additional metrics that reflect these actions. Each of these order-related metrics will have a similar payload to a \*Placed Order\* event.
+
+
+
+> \*\*📘\*\*
+
+> 
+
+> 
+
+> For \*Canceled Order\* and \*Refunded Order\* to be included in CLV calculations, they must have `unique\_id`s that correspond to a previously tracked \*Placed Order\* event.
+
+> 
+
+
+
+\### \*\*Fulfilled Order example\*\*
+
+
+
+For \*Fulfilled Order\*, the only update needed is the metric name and the time at which the fulfillment took place. You can also track additional details about the fulfillment itself (e.g., tracking number, shipping method):
+
+
+
+JSON
+
+
+
+`{
+
+&nbsp;   "data": {
+
+&nbsp;       "type": "event",
+
+&nbsp;       "attributes": {
+
+&nbsp;           "properties": {
+
+&nbsp;               "OrderId": "1234",
+
+&nbsp;               "Categories": \[
+
+&nbsp;                   "Fiction",
+
+&nbsp;                   "Classics",
+
+&nbsp;                   "Children"
+
+&nbsp;               ],
+
+&nbsp;               "ItemNames": \[
+
+&nbsp;                   "Winnie the Pooh",
+
+&nbsp;                   "A Tale of Two Cities"
+
+&nbsp;               ],
+
+&nbsp;               "Brands": \[
+
+&nbsp;                   "Kids Books",
+
+&nbsp;                   "Harcourt Classics"
+
+&nbsp;               ],
+
+&nbsp;               "DiscountCode": "Free Shipping",
+
+&nbsp;               "DiscountValue": 5,
+
+&nbsp;               "Items": \[
+
+&nbsp;                   {
+
+&nbsp;                       "ProductID": "1111",
+
+&nbsp;                       "SKU": "WINNIEPOOH",
+
+&nbsp;                       "ProductName": "Winnie the Pooh",
+
+&nbsp;                       "Quantity": 1,
+
+&nbsp;                       "ItemPrice": 9.99,
+
+&nbsp;                       "RowTotal": 9.99,
+
+&nbsp;                       "ProductURL": "http://www.example.com/path/to/product",
+
+&nbsp;                       "ImageURL": "http://www.example.com/path/to/product/image.png",
+
+&nbsp;                       "Categories": \[
+
+&nbsp;                           "Fiction",
+
+&nbsp;                           "Children"
+
+&nbsp;                       ],
+
+&nbsp;                       "Brand": "Kids Books"
+
+&nbsp;                   },
+
+&nbsp;                   {
+
+&nbsp;                       "ProductID": "1112",
+
+&nbsp;                       "SKU": "TALEOFTWO",
+
+&nbsp;                       "ProductName": "A Tale of Two Cities",
+
+&nbsp;                       "Quantity": 1,
+
+&nbsp;                       "ItemPrice": 19.99,
+
+&nbsp;                       "RowTotal": 19.99,
+
+&nbsp;                       "ProductURL": "http://www.example.com/path/to/product2",
+
+&nbsp;                       "ImageURL": "http://www.example.com/path/to/product/image2.png",
+
+&nbsp;                       "Categories": \[
+
+&nbsp;                           "Fiction",
+
+&nbsp;                           "Classics"
+
+&nbsp;                       ],
+
+&nbsp;                       "Brand": "Harcourt Classics"
+
+&nbsp;                   }
+
+&nbsp;               ],
+
+&nbsp;               "BillingAddress": {
+
+&nbsp;                   "FirstName": "John",
+
+&nbsp;                   "LastName": "Smith",
+
+&nbsp;                   "Address1": "123 Abc St",
+
+&nbsp;                   "City": "Boston",
+
+&nbsp;                   "RegionCode": "MA",
+
+&nbsp;                   "CountryCode": "US",
+
+&nbsp;                   "Zip": "02110",
+
+&nbsp;                   "Phone": "+15551234567"
+
+&nbsp;               },
+
+&nbsp;               "ShippingAddress": {
+
+&nbsp;                   "Address1": "123 Abc St"
+
+&nbsp;               }
+
+&nbsp;           },
+
+&nbsp;           "time": "2022-11-10T00:00:00",
+
+&nbsp;           "value": 29.98,
+
+&nbsp;           "value\_currency": "USD",
+
+&nbsp;           "unique\_id": "d47aeda5-1751-4483-a81e-6fcc8ad48711",
+
+&nbsp;           "metric": {
+
+&nbsp;               "data": {
+
+&nbsp;                   "type": "metric",
+
+&nbsp;                   "attributes": {
+
+&nbsp;                       "name": "Fulfilled Order"
+
+&nbsp;                   }
+
+&nbsp;               }
+
+&nbsp;           },
+
+&nbsp;           "profile": {
+
+&nbsp;               "data": {
+
+&nbsp;                   "type": "profile",
+
+&nbsp;                   "attributes": {
+
+&nbsp;                       "email": "sarah.mason@klaviyo-demo.com",
+
+&nbsp;                       "phone\_number": "+15005550006"
+
+&nbsp;                   }
+
+&nbsp;               }
+
+&nbsp;           }
+
+&nbsp;       }
+
+&nbsp;   }
+
+}`
+
+
+
+\### \*\*Canceled Order example\*\*
+
+
+
+For \*Canceled Order\*, update the metric name and timestamp, and add an additional property for the cancellation reason. You can also include which items were and weren’t canceled in the event payload, in case the order is only partially canceled.
+
+
+
+JSON
+
+
+
+`{
+
+&nbsp;   "data": {
+
+&nbsp;       "type": "event",
+
+&nbsp;       "attributes": {
+
+&nbsp;           "properties": {
+
+&nbsp;               "OrderId": "1234",
+
+&nbsp;               "Reason": "No longer needed",
+
+&nbsp;               "Categories": \[
+
+&nbsp;                   "Fiction",
+
+&nbsp;                   "Classics",
+
+&nbsp;                   "Children"
+
+&nbsp;               ],
+
+&nbsp;               "ItemNames": \[
+
+&nbsp;                   "Winnie the Pooh",
+
+&nbsp;                   "A Tale of Two Cities"
+
+&nbsp;               ],
+
+&nbsp;               "Brands": \[
+
+&nbsp;                   "Kids Books",
+
+&nbsp;                   "Harcourt Classics"
+
+&nbsp;               ],
+
+&nbsp;               "Discount Code": "Free Shipping",
+
+&nbsp;               "Discount Value": 5,
+
+&nbsp;               "Items": \[
+
+&nbsp;                   {
+
+&nbsp;                       "ProductID": "1111",
+
+&nbsp;                       "SKU": "WINNIEPOOH",
+
+&nbsp;                       "ProductName": "Winnie the Pooh",
+
+&nbsp;                       "Quantity": 1,
+
+&nbsp;                       "ItemPrice": 9.99,
+
+&nbsp;                       "RowTotal": 9.99,
+
+&nbsp;                       "ProductURL": "http://www.example.com/path/to/product",
+
+&nbsp;                       "ImageURL": "http://www.example.com/path/to/product/image.png",
+
+&nbsp;                       "Categories": \[
+
+&nbsp;                           "Fiction",
+
+&nbsp;                           "Children"
+
+&nbsp;                       ],
+
+&nbsp;                       "Brand": "Kids Books"
+
+&nbsp;                   },
+
+&nbsp;                   {
+
+&nbsp;                       "ProductID": "1112",
+
+&nbsp;                       "SKU": "TALEOFTWO",
+
+&nbsp;                       "ProductName": "A Tale of Two Cities",
+
+&nbsp;                       "Quantity": 1,
+
+&nbsp;                       "ItemPrice": 19.99,
+
+&nbsp;                       "RowTotal": 19.99,
+
+&nbsp;                       "ProductURL": "http://www.example.com/path/to/product2",
+
+&nbsp;                       "ImageURL": "http://www.example.com/path/to/product/image2.png",
+
+&nbsp;                       "Categories": \[
+
+&nbsp;                           "Fiction",
+
+&nbsp;                           "Classics"
+
+&nbsp;                       ],
+
+&nbsp;                       "Brand": "Harcourt Classics"
+
+&nbsp;                   }
+
+&nbsp;               ],
+
+&nbsp;               "BillingAddress": {
+
+&nbsp;                   "FirstName": "John",
+
+&nbsp;                   "LastName": "Smith",
+
+&nbsp;                   "Address1": "123 Abc St",
+
+&nbsp;                   "City": "Boston",
+
+&nbsp;                   "RegionCode": "MA",
+
+&nbsp;                   "CountryCode": "US",
+
+&nbsp;                   "Zip": "02110",
+
+&nbsp;                   "Phone": "+15551234567"
+
+&nbsp;               },
+
+&nbsp;               "ShippingAddress": {
+
+&nbsp;                   "Address1": "123 Abc St"
+
+&nbsp;               }
+
+&nbsp;           },
+
+&nbsp;           "time": "2022-11-09T00:00:00",
+
+&nbsp;           "value": 29.98,
+
+&nbsp;           "value\_currency": "USD",
+
+&nbsp;           "unique\_id": "d47aeda5-1751-4483-a81e-6fcc8ad48711",
+
+&nbsp;           "metric": {
+
+&nbsp;               "data": {
+
+&nbsp;                   "type": "metric",
+
+&nbsp;                   "attributes": {
+
+&nbsp;                       "name": "Canceled Order"
+
+&nbsp;                   }
+
+&nbsp;               }
+
+&nbsp;           },
+
+&nbsp;           "profile": {
+
+&nbsp;               "data": {
+
+&nbsp;                   "type": "profile",
+
+&nbsp;                   "attributes": {
+
+&nbsp;                       "email": "sarah.mason@klaviyo-demo.com",
+
+&nbsp;                       "phone\_number": "+15005550006"
+
+&nbsp;                   }
+
+&nbsp;               }
+
+&nbsp;           }
+
+&nbsp;       }
+
+&nbsp;   }
+
+}`
+
+
+
+\### \*\*Refunded Order example\*\*
+
+
+
+For \*Refunded Order\*, update the metric name and timestamp, and add an additional property for the refund reason. You can also include which items were and weren’t refunded in the event payload, in case the order is only partially refunded.
+
+
+
+JSON
+
+
+
+`{
+
+&nbsp;   "data": {
+
+&nbsp;       "type": "event",
+
+&nbsp;       "attributes": {
+
+&nbsp;           "properties": {
+
+&nbsp;               "OrderId": "1234",
+
+&nbsp;               "Reason": "No longer needed",
+
+&nbsp;               "Categories": \[
+
+&nbsp;                   "Fiction",
+
+&nbsp;                   "Classics",
+
+&nbsp;                   "Children"
+
+&nbsp;               ],
+
+&nbsp;               "ItemNames": \[
+
+&nbsp;                   "Winnie the Pooh",
+
+&nbsp;                   "A Tale of Two Cities"
+
+&nbsp;               ],
+
+&nbsp;               "Brands": \[
+
+&nbsp;                   "Kids Books",
+
+&nbsp;                   "Harcourt Classics"
+
+&nbsp;               ],
+
+&nbsp;               "Discount Code": "Free Shipping",
+
+&nbsp;               "Discount Value": 5,
+
+&nbsp;               "Items": \[
+
+&nbsp;                   {
+
+&nbsp;                       "ProductID": "1111",
+
+&nbsp;                       "SKU": "WINNIEPOOH",
+
+&nbsp;                       "ProductName": "Winnie the Pooh",
+
+&nbsp;                       "Quantity": 1,
+
+&nbsp;                       "ItemPrice": 9.99,
+
+&nbsp;                       "RowTotal": 9.99,
+
+&nbsp;                       "ProductURL": "http://www.example.com/path/to/product",
+
+&nbsp;                       "ImageURL": "http://www.example.com/path/to/product/image.png",
+
+&nbsp;                       "Categories": \[
+
+&nbsp;                           "Fiction",
+
+&nbsp;                           "Children"
+
+&nbsp;                       ],
+
+&nbsp;                       "Brand": "Kids Books"
+
+&nbsp;                   },
+
+&nbsp;                   {
+
+&nbsp;                       "ProductID": "1112",
+
+&nbsp;                       "SKU": "TALEOFTWO",
+
+&nbsp;                       "ProductName": "A Tale of Two Cities",
+
+&nbsp;                       "Quantity": 1,
+
+&nbsp;                       "ItemPrice": 19.99,
+
+&nbsp;                       "RowTotal": 19.99,
+
+&nbsp;                       "ProductURL": "http://www.example.com/path/to/product2",
+
+&nbsp;                       "ImageURL": "http://www.example.com/path/to/product/image2.png",
+
+&nbsp;                       "Categories": \[
+
+&nbsp;                           "Fiction",
+
+&nbsp;                           "Classics"
+
+&nbsp;                       ],
+
+&nbsp;                       "Brand": "Harcourt Classics"
+
+&nbsp;                   }
+
+&nbsp;               ],
+
+&nbsp;               "BillingAddress": {
+
+&nbsp;                   "FirstName": "John",
+
+&nbsp;                   "LastName": "Smith",
+
+&nbsp;                   "Address1": "123 Abc St",
+
+&nbsp;                   "City": "Boston",
+
+&nbsp;                   "RegionCode": "MA",
+
+&nbsp;                   "CountryCode": "US",
+
+&nbsp;                   "Zip": "02110",
+
+&nbsp;                   "Phone": "+15551234567"
+
+&nbsp;               },
+
+&nbsp;               "ShippingAddress": {
+
+&nbsp;                   "Address1": "123 Abc St"
+
+&nbsp;               }
+
+&nbsp;           },
+
+&nbsp;           "time": "2022-11-10T00:00:00",
+
+&nbsp;           "value": 29.98,
+
+&nbsp;           "value\_currency": "USD",
+
+&nbsp;           "unique\_id": "d47aeda5-1751-4483-a81e-6fcc8ad48711",
+
+&nbsp;           "metric": {
+
+&nbsp;               "data": {
+
+&nbsp;                   "type": "metric",
+
+&nbsp;                   "attributes": {
+
+&nbsp;                       "name": "Refunded Order"
+
+&nbsp;                   }
+
+&nbsp;               }
+
+&nbsp;           },
+
+&nbsp;           "profile": {
+
+&nbsp;               "data": {
+
+&nbsp;                   "type": "profile",
+
+&nbsp;                   "attributes": {
+
+&nbsp;                       "email": "sarah.mason@klaviyo-demo.com",
+
+&nbsp;                       "phone\_number": "+15005550006"
+
+&nbsp;                   }
+
+&nbsp;               }
+
+&nbsp;           }
+
+&nbsp;       }
+
+&nbsp;   }
+
+}`
+
+
+
+\## \*\*Catalog feed integration\*\*
+
+
+
+Integrating your catalog will allow you to utilize \[product blocks](https://help.klaviyo.com/hc/en-us/articles/115000219092-Insert-a-Product-Block) in emails. In order to set up a custom catalog integration, please follow the process outlined in \[Sync a custom catalog feed to Klaviyo](https://developers.klaviyo.com/en/docs/guide\_to\_syncing\_a\_custom\_catalog\_feed\_to\_klaviyo).
+
