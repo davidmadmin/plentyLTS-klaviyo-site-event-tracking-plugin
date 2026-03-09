@@ -292,3 +292,6 @@ JSON
 
 }`
 
+## Source
+
+- https://developers.klaviyo.com/en/docs/rate-limits-and-error-handling

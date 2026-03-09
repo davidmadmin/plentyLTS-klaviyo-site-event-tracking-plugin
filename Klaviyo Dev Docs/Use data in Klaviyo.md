@@ -160,3 +160,6 @@ We’ve built Klaviyo to make it easy to push data to us and use it. Here are so
 
 Klaviyo also supports uploading \[Events and Profiles via SFTP](https://developers.klaviyo.com/en/docs/use_klaviyos_sftp_import_tool), \[uploading profiles into a List](https://help.klaviyo.com/hc/en-us/articles/115005078967-Create-and-Add-Contacts-to-a-New-List) as well as \[uploading historical metric data via a CSV file upload](https://help.klaviyo.com/hc/en-us/articles/115005081247-Manually-Import-Historical-Event-Data). Additionally, any individual profile property or list membership may be edited manually in the app.
 
+## Source
+
+- https://developers.klaviyo.com/en/docs/use_data_in_klaviyo

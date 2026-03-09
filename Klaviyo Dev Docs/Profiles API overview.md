@@ -848,3 +848,6 @@ Below are error status codes you may encounter with the Profiles API, including 
 
 | 429 | Rate limit exceeded. |
 
+## Source
+
+- https://developers.klaviyo.com/en/docs/profiles_api_overview

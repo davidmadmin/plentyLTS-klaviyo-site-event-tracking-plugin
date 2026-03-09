@@ -386,3 +386,6 @@ Our fall-forward behavior is a best-effort attempt to honor your request and not
 
 \- \[Migrate from v1/v2 to new Klaviyo APIs](https://developers.klaviyo.com/en/docs/migrating_from_v1v2_to_the_new_klaviyo_apis)
 
+## Source
+
+- https://developers.klaviyo.com/en/docs/api_versioning_and_deprecation_policy

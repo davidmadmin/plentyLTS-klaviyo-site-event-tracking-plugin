@@ -1024,3 +1024,6 @@ A set limit is allotted for each unique data identifier or digested piece of inf
 
 | Max size of an event's profile object | Profile objects created or updated via Events API | 95 KB |
 
+## Source
+
+- https://developers.klaviyo.com/en/docs/events_api_overview
