@@ -1,4 +1,6 @@
-### **Update profile identifiers via API**Learn how to update profile identifier fields using Klaviyo's RESTful APIs.
+### **Update Profile Identifiers via API**
+
+Learn how to update profile identifier fields using Klaviyo's RESTful APIs.
 
 
 
@@ -227,4 +229,3 @@ curl --request POST \\
 
 
 If the request is successful, the profile will be returned with an updated email address and phone number.
-

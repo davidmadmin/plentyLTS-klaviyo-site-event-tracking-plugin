@@ -1,4 +1,6 @@
-# Set up API-based website activity events**Learn how to set up tracking for events on your website using Klaviyo’s APIs to enhance your marketing goals.
+# Set Up API-Based Website Activity Events
+
+Learn how to set up tracking for events on your website using Klaviyo’s APIs to enhance your marketing goals.
 
 While our pre-built integrations offer some common onsite events by default, you may have other event information that you'd like to track. This guide will review some examples of additional data you can track which can enhance your marketing goals.
 
