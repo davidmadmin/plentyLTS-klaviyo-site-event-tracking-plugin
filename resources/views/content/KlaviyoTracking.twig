@@ -1,0 +1,12 @@
+{% set integrationMode = config("KlaviyoSiteEventTracking.tracking.integrationMode")|default("plugin") %}
+
+{#
+  Placeholder template:
+  - In `gtm` mode, this plugin should eventually avoid injecting its own Klaviyo bootstrap.
+  - In `plugin` mode, this plugin will provide the Klaviyo JavaScript integration directly.
+#}
+<script>
+  window.KlaviyoSiteEventTracking = window.KlaviyoSiteEventTracking || {};
+  window.KlaviyoSiteEventTracking.integrationMode = "{{ integrationMode }}";
+</script>
+<script src="{{ plugin_path('KlaviyoSiteEventTracking') }}/js/klaviyo-tracking-placeholder.js"></script>

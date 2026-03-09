@@ -1,0 +1,30 @@
+{
+  "formatVersion": 1,
+  "menu": {
+    "tracking": {
+      "label": "Config.trackingLabel",
+      "fullWidth": true,
+      "formFields": {
+        "tracking.integrationMode": {
+          "type": "selectBox",
+          "required": true,
+          "label": "Config.integrationModeLabel",
+          "options": {
+            "tooltip": "Config.integrationModeTooltip",
+            "defaultValue": "plugin",
+            "selectBoxValues": [
+              {
+                "value": "gtm",
+                "caption": "Config.integrationModeGtm"
+              },
+              {
+                "value": "plugin",
+                "caption": "Config.integrationModePlugin"
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}
