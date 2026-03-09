@@ -217,4 +217,3 @@ Optional parameters are represented with `?`.
 
 
 The documentation continues with the specific method list on the page.
-

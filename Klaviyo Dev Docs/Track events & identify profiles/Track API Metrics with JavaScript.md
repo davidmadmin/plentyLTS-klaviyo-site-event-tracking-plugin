@@ -1,4 +1,6 @@
-### **Track API metrics with JavaScript**Track metrics in Klaviyo and use them for targeted messaging
+### **Track API Metrics with JavaScript**
+
+Track metrics in Klaviyo and use them for targeted messaging.
 
 
 
@@ -143,4 +145,3 @@ Select your API metric to report on. From the designated dropdown, you can selec
 
 
 Read more about \[creating a single metric deep dive report](https://help.klaviyo.com/hc/en-us/articles/360046242952).
-

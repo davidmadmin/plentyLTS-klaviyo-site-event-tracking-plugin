@@ -1,4 +1,6 @@
-### **Acceptable date and timestamp formats for profile and event properties**Learn acceptable date and timestamp formats for profile properties added via API.
+### **Acceptable Date and Timestamp Formats for Profile and Event Properties**
+
+Learn acceptable date and timestamp formats for profile properties added via API.
 
 ## **Acceptable date and timestamp formats**
 

@@ -1,4 +1,4 @@
-# Set up API-based transactional events
+# Set Up API-Based Transactional Emails
 
 
 
@@ -509,4 +509,3 @@ The process:
 3. Create a flow triggered by that event
 
 4. Send the transactional email
-

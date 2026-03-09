@@ -1,4 +1,6 @@
-### **Integrate an ecommerce platform without a pre-built Klaviyo integration**Learn how to integrate a platform without a pre-built Klaviyo integration.
+### **Integrate an E-Commerce Platform Without a Pre-Built Klaviyo Integration**
+
+Learn how to integrate a platform without a pre-built Klaviyo integration.
 
 
 
@@ -1479,4 +1481,3 @@ JSON
 
 
 Integrating your catalog will allow you to utilize \[product blocks](https://help.klaviyo.com/hc/en-us/articles/115000219092-Insert-a-Product-Block) in emails. In order to set up a custom catalog integration, please follow the process outlined in \[Sync a custom catalog feed to Klaviyo](https://developers.klaviyo.com/en/docs/guide_to_syncing_a_custom_catalog_feed_to_klaviyo).
-
