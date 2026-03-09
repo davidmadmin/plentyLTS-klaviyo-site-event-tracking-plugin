@@ -1,4 +1,4 @@
-\### \*\*API versioning and deprecation policy\*\*Learn about how we version and support our APIs.
+### **API versioning and deprecation policy**Learn about how we version and support our APIs.
 
 
 
@@ -14,11 +14,11 @@ To stay up-to-date on API changes, be sure to:
 
 \- Join our \[Klaviyo Community developer group](https://community.klaviyo.com/groups/developer-group-64).
 
-\- Regularly check our \[changelog](https://developers.klaviyo.com/en/docs/changelog\_).
+\- Regularly check our \[changelog](https://developers.klaviyo.com/en/docs/changelog_).
 
 
 
-\## \*\*API versioning\*\*
+## **API versioning**
 
 
 
@@ -46,7 +46,7 @@ Request
 
 
 
-> \*\*📘\*\*
+> **📘**
 
 > 
 
@@ -56,25 +56,25 @@ Request
 
 > 
 
-> !\[](https://files.readme.io/27c9d70-api\_doc\_version.png)
+> !\[](https://files.readme.io/27c9d70-api_doc_version.png)
 
 > 
 
 
 
-> \*\*📘\*\*
+> **📘**
 
 > 
 
 > 
 
-> If you are using a revision that was released before the 2023-07-15 revision, we recommend \[learning about the breaking changes released](https://developers.klaviyo.com/en/docs/migrate\_to\_2023\_07\_15\_relationships) and upgrading to our latest revision.
+> If you are using a revision that was released before the 2023-07-15 revision, we recommend \[learning about the breaking changes released](https://developers.klaviyo.com/en/docs/migrate_to_2023_07_15_relationships) and upgrading to our latest revision.
 
 > 
 
 
 
-\### \*\*Beta revisions\*\*
+### **Beta revisions**
 
 
 
@@ -82,7 +82,7 @@ For testing and feedback purposes, we share our new APIs with developers in an e
 
 
 
-> \*\*🚧\*\*
+> **🚧**
 
 > 
 
@@ -94,11 +94,11 @@ For testing and feedback purposes, we share our new APIs with developers in an e
 
 
 
-\## \*\*Breaking changes\*\*
+## **Breaking changes**
 
 
 
-Klaviyo defines a \[breaking change](https://developers.klaviyo.com/en/docs/glossary\_index#breaking-change) as any modification to or deletion of functionality within an API that may cause integrations or applications to function abnormally or break.
+Klaviyo defines a \[breaking change](https://developers.klaviyo.com/en/docs/glossary_index#breaking-change) as any modification to or deletion of functionality within an API that may cause integrations or applications to function abnormally or break.
 
 
 
@@ -116,11 +116,11 @@ Examples of breaking changes include, but are not limited to:
 
 
 
-Breaking changes are generally gated behind a new revision and clearly documented in our \[changelog](https://developers.klaviyo.com/en/docs/changelog\_). If we plan on introducing a breaking change to an existing revision, we will provide \*\*30 days notice\*\* to our developers. Be sure to join our \[developer newsletter](https://manage.kmail-lists.com/subscriptions/subscribe?a=9BX3wh\&g=SaqhYy) to receive important updates.
+Breaking changes are generally gated behind a new revision and clearly documented in our \[changelog](https://developers.klaviyo.com/en/docs/changelog_). If we plan on introducing a breaking change to an existing revision, we will provide **30 days notice** to our developers. Be sure to join our \[developer newsletter](https://manage.kmail-lists.com/subscriptions/subscribe?a=9BX3wh\&g=SaqhYy) to receive important updates.
 
 
 
-> \*\*📘\*\*
+> **📘**
 
 > 
 
@@ -132,11 +132,11 @@ Breaking changes are generally gated behind a new revision and clearly documente
 
 
 
-\## \*\*Non-breaking changes\*\*
+## **Non-breaking changes**
 
 
 
-Klaviyo considers the following classes of changes to be \[non-breaking changes](https://developers.klaviyo.com/en/docs/glossary\_index#non-breaking-change):
+Klaviyo considers the following classes of changes to be \[non-breaking changes](https://developers.klaviyo.com/en/docs/glossary_index#non-breaking-change):
 
 
 
@@ -164,7 +164,7 @@ Generally, new endpoints are only released in new revisions. Note that non-break
 
 
 
-> \*\*📘\*\*
+> **📘**
 
 > 
 
@@ -176,15 +176,15 @@ Generally, new endpoints are only released in new revisions. Note that non-break
 
 
 
-\## \*\*SDK versioning\*\*
+## **SDK versioning**
 
 
 
-When a new API revision is released, we release new versions of our \[SDKs](https://developers.klaviyo.com/en/docs/install\_a\_library). Our SDKs follow \[semantic versioning](https://semver.org/), or the major.minor.patch format, where each numeric value is incremented to reflect the following changes:
+When a new API revision is released, we release new versions of our \[SDKs](https://developers.klaviyo.com/en/docs/install_a_library). Our SDKs follow \[semantic versioning](https://semver.org/), or the major.minor.patch format, where each numeric value is incremented to reflect the following changes:
 
 
 
-\- \*\*major\*\*
+\- **major**
 
 &nbsp;   
 
@@ -192,7 +192,7 @@ When a new API revision is released, we release new versions of our \[SDKs](htt
 
 &nbsp;   
 
-\- \*\*minor\*\*
+\- **minor**
 
 &nbsp;   
 
@@ -200,7 +200,7 @@ When a new API revision is released, we release new versions of our \[SDKs](htt
 
 &nbsp;   
 
-\- \*\*patch\*\*
+\- **patch**
 
 &nbsp;   
 
@@ -214,23 +214,23 @@ Note that SDK support relies on our API versioning and deprecation policy, as ea
 
 
 
-\## \*\*API lifecycle\*\*
+## **API lifecycle**
 
 
 
-> \*\*📘\*\*
-
-> 
+> **📘**
 
 > 
 
-> Klaviyo provides developers \*\*2 years\*\* to update their apps and integrations before a revision is retired and access is removed. View our revision lifecycle example below to learn about how each of our revisions is supported from initial release to retirement.
+> 
+
+> Klaviyo provides developers **2 years** to update their apps and integrations before a revision is retired and access is removed. View our revision lifecycle example below to learn about how each of our revisions is supported from initial release to retirement.
 
 > 
 
 
 
-!\[](https://files.readme.io/bf1505f-example\_revision\_lifecycle.jpg)
+!\[](https://files.readme.io/bf1505f-example_revision_lifecycle.jpg)
 
 
 
@@ -238,13 +238,13 @@ As shown in the example above, a revision goes through the following phases:
 
 
 
-\- \*\*Stable\*\*
+\- **Stable**
 
 &nbsp;   - The revision is subject to non-breaking changes, but remains largely unchanged.
 
 &nbsp;   - Lasts for 1 year after release.
 
-\- \*\*Deprecated\*\*
+\- **Deprecated**
 
 &nbsp;   - Use of the revision is discouraged over stable revisions
 
@@ -252,7 +252,7 @@ As shown in the example above, a revision goes through the following phases:
 
 &nbsp;   - Starts 1 year after release. Lasts for 1 year.
 
-\- \*\*Retired\*\*
+\- **Retired**
 
 &nbsp;   - 2 years after release, the revision is no longer supported, and breakages are likely to occur in any apps/integrations that rely on it.
 
@@ -260,7 +260,7 @@ As shown in the example above, a revision goes through the following phases:
 
 
 
-> \*\*📘\*\*
+> **📘**
 
 > 
 
@@ -272,7 +272,7 @@ As shown in the example above, a revision goes through the following phases:
 
 
 
-\### \*\*Initial release\*\*
+### **Initial release**
 
 
 
@@ -284,19 +284,19 @@ When a new revision is released:
 
 
 
-\- It is the \[latest stable](https://developers.klaviyo.com/en/docs/glossary\_index#latest-stable) revision until a newer revision is released.
+\- It is the \[latest stable](https://developers.klaviyo.com/en/docs/glossary_index#latest-stable) revision until a newer revision is released.
 
 \- There should not be any breaking changes made to the revision, but there may be some non-breaking changes over time.
 
-\- The revision remains \[stable](https://developers.klaviyo.com/en/docs/glossary\_index#stable) for \*\*1 year\*\*.
+\- The revision remains \[stable](https://developers.klaviyo.com/en/docs/glossary_index#stable) for **1 year**.
 
 
 
-\### \*\*Deprecation\*\*
+### **Deprecation**
 
 
 
-After a revision’s stable period (1 year after its initial release), the revision is \[deprecated](https://developers.klaviyo.com/en/docs/glossary\_index#deprecated) (set to retire). At this point, you should plan to upgrade your apps to our latest stable revision, which will include new and improved functionality over any deprecated revisions.
+After a revision’s stable period (1 year after its initial release), the revision is \[deprecated](https://developers.klaviyo.com/en/docs/glossary_index#deprecated) (set to retire). At this point, you should plan to upgrade your apps to our latest stable revision, which will include new and improved functionality over any deprecated revisions.
 
 
 
@@ -304,7 +304,7 @@ When a revision becomes deprecated:
 
 
 
-\- You’ll have \*\*1 year\*\* to upgrade your apps before the revision is retired.
+\- You’ll have **1 year** to upgrade your apps before the revision is retired.
 
 \- The revision will not receive any further updates or bug fixes.
 
@@ -312,7 +312,7 @@ When a revision becomes deprecated:
 
 
 
-> \*\*📘\*\*
+> **📘**
 
 > 
 
@@ -324,15 +324,15 @@ When a revision becomes deprecated:
 
 
 
-\### \*\*Retirement\*\*
+### **Retirement**
 
 
 
-After a revision’s year-long deprecation phase, it is \[retired](https://developers.klaviyo.com/en/docs/glossary\_index#retired), meaning it is unsupported and no longer available for use. We do our best to fall-forward to the oldest non-retired revision (see below); however, calls to retired endpoints that have been removed since that revision will receive a 410 error, and other breakages are likely to occur.
+After a revision’s year-long deprecation phase, it is \[retired](https://developers.klaviyo.com/en/docs/glossary_index#retired), meaning it is unsupported and no longer available for use. We do our best to fall-forward to the oldest non-retired revision (see below); however, calls to retired endpoints that have been removed since that revision will receive a 410 error, and other breakages are likely to occur.
 
 
 
-\### \*\*Fall-forward behavior\*\*
+### **Fall-forward behavior**
 
 
 
@@ -340,7 +340,7 @@ If a retired revision date is passed to the request header, Klaviyo falls forwar
 
 
 
-> \*\*🚧\*\*
+> **🚧**
 
 > 
 
@@ -360,7 +360,7 @@ If you would like to opt out of this behavior, you can use the following request
 
 
 
-> \*\*🚧\*\*
+> **🚧**
 
 > 
 
@@ -376,13 +376,13 @@ Our fall-forward behavior is a best-effort attempt to honor your request and not
 
 
 
-\## \*\*Additional resources\*\*
+## **Additional resources**
 
 
 
-\- \[API overview](https://developers.klaviyo.com/en/reference/api\_overview)
+\- \[API overview](https://developers.klaviyo.com/en/reference/api_overview)
 
 \- \[Monitor API usage](https://developers.klaviyo.com/en/docs/monitor-api-usage)
 
-\- \[Migrate from v1/v2 to new Klaviyo APIs](https://developers.klaviyo.com/en/docs/migrating\_from\_v1v2\_to\_the\_new\_klaviyo\_apis)
+\- \[Migrate from v1/v2 to new Klaviyo APIs](https://developers.klaviyo.com/en/docs/migrating_from_v1v2_to_the_new_klaviyo_apis)
 

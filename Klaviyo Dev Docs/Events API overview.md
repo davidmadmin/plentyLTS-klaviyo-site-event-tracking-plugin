@@ -1,28 +1,28 @@
-\### \*\*Events API overview\*\*
+### **Events API overview**
 
 
 
-\## \*\*Before you begin\*\*
+## **Before you begin**
 
 
 
-Check out our general \[API overview](https://developers.klaviyo.com/en/reference/api\_overview) to make sure you’re ready to get started with specific endpoints.
+Check out our general \[API overview](https://developers.klaviyo.com/en/reference/api_overview) to make sure you’re ready to get started with specific endpoints.
 
 
 
-> \*\*📘\*\*
-
-> 
+> **📘**
 
 > 
 
-> Check out our \[YouTube tutorial on creating custom events](https://www.youtube.com/watch?v=ksvZ5Kdvf8o\&list=PLHkNfHgtxcUanrkMnKPdkRzuWU7MGv\_xM) with the Events API.
+> 
+
+> Check out our \[YouTube tutorial on creating custom events](https://www.youtube.com/watch?v=ksvZ5Kdvf8o\&list=PLHkNfHgtxcUanrkMnKPdkRzuWU7MGv_xM) with the Events API.
 
 > 
 
 
 
-Our \[Events API](https://developers.klaviyo.com/en/reference/get\_events) allows you to retrieve and create events, which are actions taken by Klaviyo profiles. Each event has exactly one metric (effectively the “event type”) associated with it and a timestamp for when it occurred. The metric and profile associated with an event are stored in the event’s \[relationships](https://developers.klaviyo.com/en/docs/relationships\_) object. There are two types of endpoints within the Events API:
+Our \[Events API](https://developers.klaviyo.com/en/reference/get_events) allows you to retrieve and create events, which are actions taken by Klaviyo profiles. Each event has exactly one metric (effectively the “event type”) associated with it and a timestamp for when it occurred. The metric and profile associated with an event are stored in the event’s \[relationships](https://developers.klaviyo.com/en/docs/relationships_) object. There are two types of endpoints within the Events API:
 
 
 
@@ -32,7 +32,7 @@ Our \[Events API](https://developers.klaviyo.com/en/reference/get\_events) all
 
 
 
-\## \*\*Use cases\*\*
+## **Use cases**
 
 
 
@@ -54,19 +54,19 @@ You can find example code for all of these use cases in our \[api-examples repo
 
 
 
-> \*\*📘Analyze your marketing performance with the Reporting API\*\*
+> **📘Analyze your marketing performance with the Reporting API**
 
 > 
 
 > 
 
-> Use Klaviyo's \[Reporting API](https://developers.klaviyo.com/en/reference/reporting\_api\_overview) to request 1:1 matches of campaign, flow, form, or segment performance data shown in the Klaviyo app.
+> Use Klaviyo's \[Reporting API](https://developers.klaviyo.com/en/reference/reporting_api_overview) to request 1:1 matches of campaign, flow, form, or segment performance data shown in the Klaviyo app.
 
 > 
 
 
 
-\## \*\*Data model\*\*
+## **Data model**
 
 
 
@@ -98,7 +98,7 @@ An event can have the following:
 
 &nbsp;   
 
-\- `unique\_id`
+\- `unique_id`
 
 &nbsp;   
 
@@ -106,13 +106,13 @@ An event can have the following:
 
 &nbsp;   
 
-&nbsp;   > \*\*🚧Use unique ID to avoid event loss\*\*
+&nbsp;   > **🚧Use unique ID to avoid event loss**
 
 &nbsp;   > 
 
 &nbsp;   > 
 
-&nbsp;   > If you do not provide a `unique\_id`, multiple events sent at the same time will be assigned the same default `unique\_id` and may be removed as duplicates (see \*Event deduplication behavior\*).
+&nbsp;   > If you do not provide a `unique_id`, multiple events sent at the same time will be assigned the same default `unique_id` and may be removed as duplicates (see \*Event deduplication behavior\*).
 
 &nbsp;   > 
 
@@ -136,15 +136,15 @@ An event can have the following:
 
 
 
-\## \*\*Events and metrics\*\*
+## **Events and metrics**
 
 
 
-Each event object is related to a \[metric](https://help.klaviyo.com/hc/en-us/articles/115005076787) object, per the data model above. A metric is what defines an event’s type. Think of a metric as a recipe name and its defined events as the instances in which the recipe was cooked. Each event includes the recipe name (`metric`), the chef (`profile`), the `time` the recipe was cooked, and details like ingredients (`properties`) and, optionally, `value`. When you create a custom event object via API, you’ll need to provide a metric `name` associated with the event, for example, \*Viewed Product\*. If the metric you provide does not match an existing one, a new metric will be created with its own `metric\_id`. The `metric\_id` connects the metric to an event. This ID, along with other fields like `profile\_id,` can be used to query events.
+Each event object is related to a \[metric](https://help.klaviyo.com/hc/en-us/articles/115005076787) object, per the data model above. A metric is what defines an event’s type. Think of a metric as a recipe name and its defined events as the instances in which the recipe was cooked. Each event includes the recipe name (`metric`), the chef (`profile`), the `time` the recipe was cooked, and details like ingredients (`properties`) and, optionally, `value`. When you create a custom event object via API, you’ll need to provide a metric `name` associated with the event, for example, \*Viewed Product\*. If the metric you provide does not match an existing one, a new metric will be created with its own `metric_id`. The `metric_id` connects the metric to an event. This ID, along with other fields like `profile_id,` can be used to query events.
 
 
 
-\## \*\*Event properties\*\*
+## **Event properties**
 
 
 
@@ -152,15 +152,15 @@ Each event includes a `properties` object, which stores relevant details about
 
 
 
-\- \*\*Segmentation\*\*
+\- **Segmentation**
 
 &nbsp;   
 
-&nbsp;   Non-object property values can be used to build segments, e.g., a segment with customers who have purchased products within the "Skincare" category. See our \[FAQ](https://developers.klaviyo.com/en/docs/custom\_integration\_faqs#how-should-i-structure-my-data-for-segmentation-and-flow-filtering) for more information on how to structure event data for segmentation.
+&nbsp;   Non-object property values can be used to build segments, e.g., a segment with customers who have purchased products within the "Skincare" category. See our \[FAQ](https://developers.klaviyo.com/en/docs/custom_integration_faqs#how-should-i-structure-my-data-for-segmentation-and-flow-filtering) for more information on how to structure event data for segmentation.
 
 &nbsp;   
 
-\- \*\*Flows\*\*
+\- **Flows**
 
 &nbsp;   
 
@@ -168,7 +168,7 @@ Each event includes a `properties` object, which stores relevant details about
 
 &nbsp;   
 
-\- \*\*Reporting\*\*
+\- **Reporting**
 
 &nbsp;   
 
@@ -182,7 +182,7 @@ You may have up to 400 event properties per event. See \*Limitations\* for inf
 
 
 
-\### \*\*Excluded property values\*\*
+### **Excluded property values**
 
 
 
@@ -206,15 +206,15 @@ Note that the way Klaviyo handles event properties differs from how it handles p
 
 
 
-\## \*\*Create Event\*\*
+## **Create Event**
 
 
 
-To create an event, you’ll need at least one \[profile identifier](https://developers.klaviyo.com/en/reference/profiles\_api\_overview#profile-identifiers) (e.g., `id`, `email`, or `phone\_number`) and a metric `name`.
+To create an event, you’ll need at least one \[profile identifier](https://developers.klaviyo.com/en/reference/profiles_api_overview#profile-identifiers) (e.g., `id`, `email`, or `phone_number`) and a metric `name`.
 
 
 
-> \*\*🚧Events using test emails are silently dropped\*\*
+> **🚧Events using test emails are silently dropped**
 
 > 
 
@@ -226,7 +226,7 @@ To create an event, you’ll need at least one \[profile identifier](https://de
 
 
 
-Your request payload for \[Create Event](https://developers.klaviyo.com/en/reference/create\_event) should be formatted like the example \*Reset Password\* event below:
+Your request payload for \[Create Event](https://developers.klaviyo.com/en/reference/create_event) should be formatted like the example \*Reset Password\* event below:
 
 
 
@@ -282,7 +282,7 @@ Request payload
 
 &nbsp;           },
 
-&nbsp;           "unique\_id": "4b5d3f33-2e21-4c1c-b392-2dae2a74a2ed"
+&nbsp;           "unique_id": "4b5d3f33-2e21-4c1c-b392-2dae2a74a2ed"
 
 &nbsp;       }
 
@@ -292,15 +292,15 @@ Request payload
 
 
 
-In the example Create Event payload, an `email`, `sarah.mason@klaviyo-demo.com`, and a metric `name`, \*Reset Password\*, are provided to associate the created event with a profile and a metric. The only optional field provided is the `unique\_id` in UUID format for good practice. Once the event has been created, you should see the event logged in the profile’s activity feed in Klaviyo:
+In the example Create Event payload, an `email`, `sarah.mason@klaviyo-demo.com`, and a metric `name`, \*Reset Password\*, are provided to associate the created event with a profile and a metric. The only optional field provided is the `unique_id` in UUID format for good practice. Once the event has been created, you should see the event logged in the profile’s activity feed in Klaviyo:
 
 
 
-!\[A reset password event shown in the metrics activity log](https://files.readme.io/6f2d9e07daaeaa42746b1bd8917f918a24eea971c3d541601fa76c4d8395d554-reset\_pass\_ui.png)
+!\[A reset password event shown in the metrics activity log](https://files.readme.io/6f2d9e07daaeaa42746b1bd8917f918a24eea971c3d541601fa76c4d8395d554-reset_pass_ui.png)
 
 
 
-\### \*\*Using optional fields like `time` and `value` in events\*\*
+### **Using optional fields like `time` and `value` in events**
 
 
 
@@ -364,7 +364,7 @@ Request payload
 
 &nbsp;           "email": "sarah.mason@klaviyo-demo.com",
 
-&nbsp;           "phone\_number": "+15005550006",
+&nbsp;           "phone_number": "+15005550006",
 
 &nbsp;           ...
 
@@ -372,7 +372,7 @@ Request payload
 
 &nbsp;     },
 
-&nbsp;     "unique\_id": "cc50e5b3-059c-4f7d-9e26-821302b63235"
+&nbsp;     "unique_id": "cc50e5b3-059c-4f7d-9e26-821302b63235"
 
 &nbsp;  }
 
@@ -380,7 +380,7 @@ Request payload
 
 
 
-> \*\*🚧Default behavior for missing `value` field\*\*
+> **🚧Default behavior for missing `value` field**
 
 > 
 
@@ -392,11 +392,11 @@ Request payload
 
 
 
-\## \*\*Bulk Create Events\*\*
+## **Bulk Create Events**
 
 
 
-The \[Bulk Create Events API](https://developers.klaviyo.com/en/reference/bulk\_create\_events) supports creating multiple events for one or more profiles at a time.
+The \[Bulk Create Events API](https://developers.klaviyo.com/en/reference/bulk_create_events) supports creating multiple events for one or more profiles at a time.
 
 
 
@@ -404,11 +404,11 @@ A maximum of 1,000 events can be created in a single request, and the max allowe
 
 
 
-\### \*\*Bulk create events for a single profile\*\*
+### **Bulk create events for a single profile**
 
 
 
-The example below is a request to \[Bulk Create Events](https://developers.klaviyo.com/en/reference/bulk\_create\_events) to create 2 events (\*Refunded Order\* and \*Placed Order\*) for a single profile:
+The example below is a request to \[Bulk Create Events](https://developers.klaviyo.com/en/reference/bulk_create_events) to create 2 events (\*Refunded Order\* and \*Placed Order\*) for a single profile:
 
 
 
@@ -480,9 +480,9 @@ Request
 
 &nbsp;                                           "value": 9.99,
 
-&nbsp;                                           "value\_currency": "USD",
+&nbsp;                                           "value_currency": "USD",
 
-&nbsp;                                           "unique\_id": "3e57326a-f0b8-4d4f-98e5-aa56a39842d9",
+&nbsp;                                           "unique_id": "3e57326a-f0b8-4d4f-98e5-aa56a39842d9",
 
 &nbsp;                                           "metric": {
 
@@ -528,9 +528,9 @@ Request
 
 &nbsp;                                           "value": 9.99,
 
-&nbsp;                                           "value\_currency": "USD",
+&nbsp;                                           "value_currency": "USD",
 
-&nbsp;                                           "unique\_id": "bd29b5e8-076f-405c-b34c-591794e196e6",
+&nbsp;                                           "unique_id": "bd29b5e8-076f-405c-b34c-591794e196e6",
 
 &nbsp;                                           "metric": {
 
@@ -572,7 +572,7 @@ Request
 
 
 
-> \*\*📘Keep profile properties up-to-date\*\*
+> **📘Keep profile properties up-to-date**
 
 > 
 
@@ -584,7 +584,7 @@ Request
 
 
 
-\### \*\*Bulk create events for multiple profiles\*\*
+### **Bulk create events for multiple profiles**
 
 
 
@@ -658,9 +658,9 @@ Request
 
 &nbsp;                                           "value": 9.99,
 
-&nbsp;                                           "value\_currency": "USD",
+&nbsp;                                           "value_currency": "USD",
 
-&nbsp;                                           "unique\_id": "baf5fcf1-8e41-4868-a9b0-3a3c63c805e8",
+&nbsp;                                           "unique_id": "baf5fcf1-8e41-4868-a9b0-3a3c63c805e8",
 
 &nbsp;                                           "metric": {
 
@@ -704,7 +704,7 @@ Request
 
 &nbsp;                                   "attributes": {
 
-&nbsp;                                       "phone\_number": "+13105555555"
+&nbsp;                                       "phone_number": "+13105555555"
 
 &nbsp;                                   }
 
@@ -740,9 +740,9 @@ Request
 
 &nbsp;                                           "value": 9.99,
 
-&nbsp;                                           "value\_currency": "USD",
+&nbsp;                                           "value_currency": "USD",
 
-&nbsp;                                           "unique\_id": "fc2ac97b-24dc-4c2c-8e8e-232834dd69a8",
+&nbsp;                                           "unique_id": "fc2ac97b-24dc-4c2c-8e8e-232834dd69a8",
 
 &nbsp;                                           "metric": {
 
@@ -784,7 +784,7 @@ Request
 
 
 
-\## \*\*Event deduplication behavior\*\*
+## **Event deduplication behavior**
 
 
 
@@ -792,7 +792,7 @@ The Bulk Create Events API handles deduplication of events. This means that ther
 
 
 
-\### \*\*Use a unique ID for each event\*\*
+### **Use a unique ID for each event**
 
 
 
@@ -800,11 +800,11 @@ If you attempt to create multiple events for a profile with the same metric and 
 
 
 
-To ensure that these events are treated as distinct, assign a unique identifier (`unique\_id`) to each event. This ensures that events with the same profile and metric are processed separately.
+To ensure that these events are treated as distinct, assign a unique identifier (`unique_id`) to each event. This ensures that events with the same profile and metric are processed separately.
 
 
 
-\### \*\*Include the `time` field for historical events\*\*
+### **Include the `time` field for historical events**
 
 
 
@@ -812,7 +812,7 @@ When importing historical events, always include the `time` field to specify w
 
 
 
-\## \*\*Troubleshooting\*\*
+## **Troubleshooting**
 
 
 
@@ -820,7 +820,7 @@ If you're trying to create events via either of the APIs above, and your events 
 
 
 
-\### \*\*Receiving a 400?\*\*
+### **Receiving a 400?**
 
 
 
@@ -832,11 +832,11 @@ If you're trying to create events via either of the APIs above, and your events 
 
 
 
-\### \*\*Receiving a 202?\*\*
+### **Receiving a 202?**
 
 
 
-Events are created asynchronously, so it may take up to a few minutes to see them in the UI or returned via the \[Get Events API](https://developers.klaviyo.com/en/reference/get\_events).
+Events are created asynchronously, so it may take up to a few minutes to see them in the UI or returned via the \[Get Events API](https://developers.klaviyo.com/en/reference/get_events).
 
 
 
@@ -846,31 +846,31 @@ If you're still not seeing the events in Klaviyo, you may be sending a payload t
 
 \- Contains email addresses using an "@example.com" or "@test.com" domain. Such email addresses may be silently dropped by our event pipeline during processing.
 
-\- Provides a non-unique `unique\_id` that will result in duplicates for a given metric and profile.
+\- Provides a non-unique `unique_id` that will result in duplicates for a given metric and profile.
 
-\- Creates multiple events for a metric and profile at once. \[Duplicates will be ignored](https://developers.klaviyo.com/en/reference/events\_api\_overview#event-deduplication-behavior) if you're not using a `unique\_id`.
+\- Creates multiple events for a metric and profile at once. \[Duplicates will be ignored](https://developers.klaviyo.com/en/reference/events_api_overview#event-deduplication-behavior) if you're not using a `unique_id`.
 
 \- Contains an incorrect profile identifier. At least one profile identifier is needed to determine which profile triggered the event. Only include known identifiers when creating events.
 
 
 
-> \*\*🚧Limit profile identifiers to known values\*\*
+> **🚧Limit profile identifiers to known values**
 
 > 
 
 > 
 
-> Our API reference documentation lists all supported profile identifiers (`id`, `email`, `phone\_number`, `external\_id`), however, providing every identifier is unnecessary. If you're including a profile ID along with an email and/or phone number, it's possible that the ID is incorrect. To avoid this error, limit your provided identifiers to known values.
+> Our API reference documentation lists all supported profile identifiers (`id`, `email`, `phone_number`, `external_id`), however, providing every identifier is unnecessary. If you're including a profile ID along with an email and/or phone number, it's possible that the ID is incorrect. To avoid this error, limit your provided identifiers to known values.
 
 > 
 
 
 
-\## \*\*Get Event(s)\*\*
+## **Get Event(s)**
 
 
 
-When making a \[Get Event](https://developers.klaviyo.com/en/reference/get\_event) or \[Get Events](https://developers.klaviyo.com/en/reference/get\_events) request, here’s an example of how the \*Reset Password\* event object from the example above might look in your response:
+When making a \[Get Event](https://developers.klaviyo.com/en/reference/get_event) or \[Get Events](https://developers.klaviyo.com/en/reference/get_events) request, here’s an example of how the \*Reset Password\* event object from the example above might look in your response:
 
 
 
@@ -890,7 +890,7 @@ RequestResponse
 
 
 
-Note that there are `id` values for the `profile` and `metric` associated with the event in the `relationships` object. The following example is a call to \[Get Profile](https://developers.klaviyo.com/en/reference/get\_profile) using the profile `id` returned in the response:
+Note that there are `id` values for the `profile` and `metric` associated with the event in the `relationships` object. The following example is a call to \[Get Profile](https://developers.klaviyo.com/en/reference/get_profile) using the profile `id` returned in the response:
 
 
 
@@ -914,7 +914,7 @@ The response contains the profile object with the same identifier used to create
 
 
 
-The following example is a call to \[Get Metric](https://developers.klaviyo.com/en/reference/get\_metric) with the metric `id` value from the \*Reset Password\* response:
+The following example is a call to \[Get Metric](https://developers.klaviyo.com/en/reference/get_metric) with the metric `id` value from the \*Reset Password\* response:
 
 
 
@@ -938,35 +938,35 @@ The API-created metric object with the name \*Reset Password\* is returned in 
 
 
 
-\## \*\*Querying events\*\*
+## **Querying events**
 
 
 
-Querying events with the Events API can help you achieve many use cases, such as populating a list with events that match a specific `profile\_id`. Check out the supported query parameters below and \[test them out with our latest Postman collection](https://developers.klaviyo.com/en/docs/use\_klaviyos\_postman\_collections). Note that support for given operators and fields is endpoint-specific. Review the \[API reference documentation](https://developers.klaviyo.com/en/reference/get\_events) for more information on allowed fields and query operators.
+Querying events with the Events API can help you achieve many use cases, such as populating a list with events that match a specific `profile_id`. Check out the supported query parameters below and \[test them out with our latest Postman collection](https://developers.klaviyo.com/en/docs/use_klaviyos_postman_collections). Note that support for given operators and fields is endpoint-specific. Review the \[API reference documentation](https://developers.klaviyo.com/en/reference/get_events) for more information on allowed fields and query operators.
 
 
 
-| \*\*Parameter\*\* | \*\*Description\*\* | \*\*Query example\*\* |
+| **Parameter** | **Description** | **Query example** |
 
 | --- | --- | --- |
 
-| `filter` | Retrieve a subset of events, e.g., events for a specific `profile\_id` and/or `metric\_id` Learn about the \[filter query parameter](https://developers.klaviyo.com/en/docs/filtering\_). | `GET /api/events?filter=and(equals(profile\_id,"PROFILE\_ID") ,equals(metric\_id,"METRIC\_ID")` |
+| `filter` | Retrieve a subset of events, e.g., events for a specific `profile_id` and/or `metric_id` Learn about the \[filter query parameter](https://developers.klaviyo.com/en/docs/filtering_). | `GET /api/events?filter=and(equals(profile_id,"PROFILE_ID") ,equals(metric_id,"METRIC_ID")` |
 
-| `sort` | Sort events, e.g., by `datetime` in ascending order (oldest to newest). Learn about the \[sort query parameter](https://developers.klaviyo.com/en/docs/sorting\_). | `GET /api/events?sort=datetime` |
+| `sort` | Sort events, e.g., by `datetime` in ascending order (oldest to newest). Learn about the \[sort query parameter](https://developers.klaviyo.com/en/docs/sorting_). | `GET /api/events?sort=datetime` |
 
-| `fields` | Request for only specified event data, e.g., timestamp attributes. You can also request for only specified related resource data. Learn more about \[sparse fieldsets](https://developers.klaviyo.com/en/docs/sparse\_fieldsets). | `GET /api/events?fields\[event]=timestampGET /api/events?include=profile\&fields\[profile]=email` |
+| `fields` | Request for only specified event data, e.g., timestamp attributes. You can also request for only specified related resource data. Learn more about \[sparse fieldsets](https://developers.klaviyo.com/en/docs/sparse_fieldsets). | `GET /api/events?fields\[event]=timestampGET /api/events?include=profile\&fields\[profile]=email` |
 
-| `include` | Include related resources in the response, e.g., profile data. Learn about the \[include query parameter](https://developers.klaviyo.com/en/docs/relationships\_#the-include-query-parameter). | `GET /api/events?include=profile` |
+| `include` | Include related resources in the response, e.g., profile data. Learn about the \[include query parameter](https://developers.klaviyo.com/en/docs/relationships_#the-include-query-parameter). | `GET /api/events?include=profile` |
 
 | `has` | Request for events that are related to existing profiles. This is useful for filtering out events that do not have any existing profile data (i.e., deleted profiles). | `GET /api/events?filter=has(profile)` |
 
 
 
-\### \*\*Query example\*\*
+### **Query example**
 
 
 
-To filter events by profile ID `profile\_id`, you can first use a \[Get Profiles](https://developers.klaviyo.com/en/reference/get\_profiles) query to obtain a profile’s `id` by email or phone number, like this call to \[Get Events](https://developers.klaviyo.com/en/reference/get\_events):
+To filter events by profile ID `profile_id`, you can first use a \[Get Profiles](https://developers.klaviyo.com/en/reference/get_profiles) query to obtain a profile’s `id` by email or phone number, like this call to \[Get Events](https://developers.klaviyo.com/en/reference/get_events):
 
 
 
@@ -974,7 +974,7 @@ To filter events by profile ID `profile\_id`, you can first use a \[Get Profil
 
 
 
-The following example is a request to \[Get Events](https://developers.klaviyo.com/en/reference/get\_events) and uses the `id` value obtained from the \[Get Profiles](https://developers.klaviyo.com/en/reference/get\_profiles) query above as the `profile\_id` to filter events:
+The following example is a request to \[Get Events](https://developers.klaviyo.com/en/reference/get_events) and uses the `id` value obtained from the \[Get Profiles](https://developers.klaviyo.com/en/reference/get_profiles) query above as the `profile_id` to filter events:
 
 
 
@@ -984,7 +984,7 @@ RequestResponse
 
 `curl --request GET \\
 
-&nbsp;    --url https://a.klaviyo.com/api/events/?filter=equals(profile\_id,"01H7FZEVECGN0MNQ8V417TPVP0") \\
+&nbsp;    --url https://a.klaviyo.com/api/events/?filter=equals(profile_id,"01H7FZEVECGN0MNQ8V417TPVP0") \\
 
 &nbsp;    --header 'Authorization: Klaviyo-API-Key your-private-api-key' \\
 
@@ -994,7 +994,7 @@ RequestResponse
 
 
 
-\## \*\*Limitations\*\*
+## **Limitations**
 
 
 
@@ -1002,7 +1002,7 @@ A set limit is allotted for each unique data identifier or digested piece of inf
 
 
 
-| \*\*Limitation type\*\* | \*\*Description\*\* | \*\*Limit\*\* |
+| **Limitation type** | **Description** | **Limit** |
 
 | --- | --- | --- |
 
@@ -1016,9 +1016,9 @@ A set limit is allotted for each unique data identifier or digested piece of inf
 
 | Max levels of nested objects | Any combination of objects and arrays within event properties; currently only applies to objects | 10 |
 
-| Timestamp of events | The time an event occurred; learn more about \[acceptable date and timestamp formats for profile and event properties](https://developers.klaviyo.com/en/docs/acceptable\_date\_and\_timestamp\_formats\_for\_profile\_and\_event\_properties) | Between 2000 and “now”+1 year (e.g., max 2026, minimum 2000) |
+| Timestamp of events | The time an event occurred; learn more about \[acceptable date and timestamp formats for profile and event properties](https://developers.klaviyo.com/en/docs/acceptable_date_and_timestamp_formats_for_profile_and_event_properties) | Between 2000 and “now”+1 year (e.g., max 2026, minimum 2000) |
 
-| Field length for `$event\_id` (`unique\_id`) | Allowed characters for the unique identifier of an event | 1-255 characters |
+| Field length for `$event_id` (`unique_id`) | Allowed characters for the unique identifier of an event | 1-255 characters |
 
 | Max integers | Applies anywhere there's an integer | 64 bits (-9,223,372,036,854,775,808 \& +9,223,372,036,854,775,807) |
 

@@ -1,4 +1,4 @@
-\### \*\*Track API metrics with JavaScript\*\*Track metrics in Klaviyo and use them for targeted messaging
+### **Track API metrics with JavaScript**Track metrics in Klaviyo and use them for targeted messaging
 
 
 
@@ -10,21 +10,21 @@ Klaviyo's metric tracking and analytics are very flexible. You can customize met
 
 
 
-\## \*\*Track a metric\*\*
+## **Track a metric**
 
 
 
-If you already have our "Active on Site" javascript (known as Klaviyo.js) installed, the `klaviyo` object will be available to you. You will likely have installed Klaviyo.js during your account setup, however, if you need to install it, check out our \[custom integration guide](https://developers.klaviyo.com/en/docs/guide\_to\_integrating\_a\_platform\_without\_a\_pre\_built\_klaviyo\_integration#active-on-site-tracking-snippet).
+If you already have our "Active on Site" javascript (known as Klaviyo.js) installed, the `klaviyo` object will be available to you. You will likely have installed Klaviyo.js during your account setup, however, if you need to install it, check out our \[custom integration guide](https://developers.klaviyo.com/en/docs/guide_to_integrating_a_platform_without_a_pre_built_klaviyo_integration#active-on-site-tracking-snippet).
 
 
 
-> \*\*📘\*\*
-
-> 
+> **📘**
 
 > 
 
-> When you add the Klaviyo.js snippet to your site, we are only able to track the browsing activity of "known browsers" - browsers that have been cookied (e.g., via filling out a form). For this reason, in order to \[test your onsite metric tracking](https://help.klaviyo.com/hc/en-us/articles/115005076767#h\_01HADAYAACFYSN7F22XPPCGT6B), you have to be manually cookied. Note that Klaviyo will not track anonymous browsers.
+> 
+
+> When you add the Klaviyo.js snippet to your site, we are only able to track the browsing activity of "known browsers" - browsers that have been cookied (e.g., via filling out a form). For this reason, in order to \[test your onsite metric tracking](https://help.klaviyo.com/hc/en-us/articles/115005076767#h_01HADAYAACFYSN7F22XPPCGT6B), you have to be manually cookied. Note that Klaviyo will not track anonymous browsers.
 
 > 
 
@@ -110,7 +110,7 @@ JavaScript
 
 
 
-\## \*\*Use API metrics in flows\*\*
+## **Use API metrics in flows**
 
 
 
@@ -122,7 +122,7 @@ To learn more about these flows, \[read our metric-triggered flow guide](https:
 
 
 
-\## \*\*Report on API metrics\*\*
+## **Report on API metrics**
 
 
 
@@ -130,11 +130,11 @@ Klaviyo’s pre-built, customizable reports enable you to dive deeper into metri
 
 
 
-To access custom reports, click on the \*\*Analytics\*\* tab and select \*\*Custom Reports\*\* from the main dashboard. Create a new report by selecting \*\*Create from scratch\*\*.
+To access custom reports, click on the **Analytics** tab and select **Custom Reports** from the main dashboard. Create a new report by selecting **Create from scratch**.
 
 
 
-Next, click on \*\*Select report type\*\* and choose \*\*Single Metric Deep Dive Report\*\* from the dropdown menu. With the single metric report, you can choose any metric in your account to build a report around and can further customize it by selecting different timeframes, properties, and groupings.
+Next, click on **Select report type** and choose **Single Metric Deep Dive Report** from the dropdown menu. With the single metric report, you can choose any metric in your account to build a report around and can further customize it by selecting different timeframes, properties, and groupings.
 
 
 

@@ -1,8 +1,8 @@
-\### \*\*Filtering\*\*Learn how to use our JSON:API filtering syntax.
+### **Filtering**Learn how to use our JSON:API filtering syntax.
 
 
 
-\## \*\*Filter syntax\*\*
+## **Filter syntax**
 
 
 
@@ -18,19 +18,19 @@ The filtering syntax for Klaviyo’s new APIs uses the `?filter` query paramet
 
 
 
-\### \*\*URI encoding\*\*
+### **URI encoding**
 
 
 
-Filter expressions can contain non-URL-safe characters. We recommend that you always URI-encode the value of the filter query parameter to ensure your filter expression functions properly. See \[the MDN docs on encodeURIComponent](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global\_Objects/encodeURIComponent) for more details.
+Filter expressions can contain non-URL-safe characters. We recommend that you always URI-encode the value of the filter query parameter to ensure your filter expression functions properly. See \[the MDN docs on encodeURIComponent](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/encodeURIComponent) for more details.
 
 
 
-\## \*\*Filter operations\*\*
+## **Filter operations**
 
 
 
-\### \*\*Filter operators\*\*
+### **Filter operators**
 
 
 
@@ -38,7 +38,7 @@ Below are the filter operators supported by our filter syntax. The documentation
 
 
 
-| \*\*Operator\*\* | \*\*Description\*\* | \*\*Supported field types\*\* | \*\*Raw example\*\* | \*\*Encoded example\*\* |
+| **Operator** | **Description** | **Supported field types** | **Raw example** | **Encoded example** |
 
 | --- | --- | --- | --- | --- |
 
@@ -68,21 +68,21 @@ Below are the filter operators supported by our filter syntax. The documentation
 
 
 
-\### \*\*Boolean logic operators\*\*
+### **Boolean logic operators**
 
 
 
-| \*\*Operator\*\* | \*\*Description\*\* | \*\*Raw example\*\* | \*\*Encoded example\*\* |
+| **Operator** | **Description** | **Raw example** | **Encoded example** |
 
 | --- | --- | --- | --- |
 
-| `and` | This operator accepts other operator functions as arguments to perform a logical `AND` operation. | `?filter=and(equals(first\_name,"Jane"),equals(email,"jane@klaviyo-demo.com"))` | `?filter=and(equals(first\_name%2C%22Jane%22)%2Cequals(email%2C%22jane%40klaviyo-demo.com%22))` |
+| `and` | This operator accepts other operator functions as arguments to perform a logical `AND` operation. | `?filter=and(equals(first_name,"Jane"),equals(email,"jane@klaviyo-demo.com"))` | `?filter=and(equals(first_name%2C%22Jane%22)%2Cequals(email%2C%22jane%40klaviyo-demo.com%22))` |
 
-| `,` | This can be used to perform an implicit `AND` operation. | `?filter=equals(first\_name,"Jane"),equals(email,"jane@klaviyo-demo.com")` | `?filter=equals(first\_name%2C%22Jane%22)%2Cequals(email%2C%22jane%40klaviyo-demo.com%22)` |
+| `,` | This can be used to perform an implicit `AND` operation. | `?filter=equals(first_name,"Jane"),equals(email,"jane@klaviyo-demo.com")` | `?filter=equals(first_name%2C%22Jane%22)%2Cequals(email%2C%22jane%40klaviyo-demo.com%22)` |
 
 
 
-> \*\*📘Klaviyo’s APIs also interpret comma-separated filter expressions as an alias for an `and` wrapper function.\*\*
+> **📘Klaviyo’s APIs also interpret comma-separated filter expressions as an alias for an `and` wrapper function.**
 
 > 
 
@@ -100,17 +100,17 @@ Below are the filter operators supported by our filter syntax. The documentation
 
 > 
 
-> This can be particularly helpful for filtering on a date range. For example, pulling all events for a specific metric for a specific time range would look like the below, swapping out your own metric\_id and datetime values:
+> This can be particularly helpful for filtering on a date range. For example, pulling all events for a specific metric for a specific time range would look like the below, swapping out your own metric_id and datetime values:
 
 > 
 
-> `filter=equals(metric\_id,"UxxK4u"),greater-or-equal(datetime,2023-02-07),less-than(datetime,2023-02-15)`
+> `filter=equals(metric_id,"UxxK4u"),greater-or-equal(datetime,2023-02-07),less-than(datetime,2023-02-15)`
 
 > 
 
 
 
-\## \*\*Comparison literals\*\*
+## **Comparison literals**
 
 
 

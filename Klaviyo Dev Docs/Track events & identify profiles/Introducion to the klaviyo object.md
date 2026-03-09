@@ -1,4 +1,4 @@
-\# Introduction to the `klaviyo` object
+# Introduction to the `klaviyo` object
 
 
 
@@ -6,7 +6,7 @@ Learn more about the new `klaviyo` JavaScript object, which offers full support 
 
 
 
-Source: https://developers.klaviyo.com/en/docs/introduction\_to\_the\_klaviyo\_object
+Source: https://developers.klaviyo.com/en/docs/introduction_to_the_klaviyo_object
 
 
 
@@ -14,11 +14,11 @@ Source: https://developers.klaviyo.com/en/docs/introduction\_to\_the\_klaviyo\_o
 
 
 
-\## What is the `klaviyo` object?
+## What is the `klaviyo` object?
 
 
 
-The new `klaviyo` object replaces the legacy `\_learnq` and `klOnsite` objects. These JavaScript objects offer a shorthand way to interact with Klaviyo APIs and send events into Klaviyo with event tracking.
+The new `klaviyo` object replaces the legacy `_learnq` and `klOnsite` objects. These JavaScript objects offer a shorthand way to interact with Klaviyo APIs and send events into Klaviyo with event tracking.
 
 
 
@@ -46,7 +46,7 @@ This includes:
 
 
 
-`klaviyo.js`, also known as Klaviyo’s \*\*Active on Site JavaScript\*\*, automatically supports the `klaviyo` object. If you enable an integration with your Klaviyo account or manually install `klaviyo.js`, you can initiate `klaviyo` to listen for relevant calls.
+`klaviyo.js`, also known as Klaviyo’s **Active on Site JavaScript**, automatically supports the `klaviyo` object. If you enable an integration with your Klaviyo account or manually install `klaviyo.js`, you can initiate `klaviyo` to listen for relevant calls.
 
 
 
@@ -54,7 +54,7 @@ This includes:
 
 
 
-\# How to load the `klaviyo` object
+# How to load the `klaviyo` object
 
 
 
@@ -62,11 +62,11 @@ To use the `klaviyo` object immediately on page load, it is recommended to manua
 
 
 
-This snippet exists \*\*in addition to Klaviyo's onsite script\*\*.
+This snippet exists **in addition to Klaviyo's onsite script**.
 
 
 
-The `klaviyo` object only needs to be loaded \*\*once per page\*\*.
+The `klaviyo` object only needs to be loaded **once per page**.
 
 
 
@@ -82,7 +82,7 @@ The `klaviyo` object only needs to be loaded \*\*once per page\*\*.
 
 
 
-\# Callback support
+# Callback support
 
 
 
@@ -94,7 +94,7 @@ Callbacks are invoked with a return value.
 
 
 
-Example: identifying a cookied user \*\*without a callback\*\*:
+Example: identifying a cookied user **without a callback**:
 
 
 
@@ -106,7 +106,7 @@ klaviyo.identify({});
 
 
 
-Example: identifying a user \*\*with a callback\*\*, then tracking an event.
+Example: identifying a user **with a callback**, then tracking an event.
 
 
 
@@ -170,11 +170,11 @@ This approach allows you to:
 
 
 
-\# Promise support
+# Promise support
 
 
 
-The `klaviyo` object also supports \*\*Promises\*\*, which provide a cleaner way to handle asynchronous operations.
+The `klaviyo` object also supports **Promises**, which provide a cleaner way to handle asynchronous operations.
 
 
 
@@ -204,7 +204,7 @@ When the identify call completes, the promise resolves.
 
 
 
-\# Supported methods
+# Supported methods
 
 
 
