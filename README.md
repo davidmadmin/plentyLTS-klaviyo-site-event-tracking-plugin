@@ -60,6 +60,11 @@ At this time, the repository provides a **foundation scaffold**, not a finished 
 4. **Hardening**
    - Error handling, deduplication, QA matrix, and documentation
 
+## Setup notes
+
+- The `KlaviyoSiteEventTracking\Containers\KlaviyoTrackingContainer` data provider defaults to `Ceres::Script.Loader` via `defaultLayoutContainer`.
+- Without custom overrides, the tracking placeholder snippet is injected through that Ceres script loader container.
+
 ## Configuration
 
 Current config key:
