@@ -1,12 +1,12 @@
-\### \*\*Sparse fieldsets\*\*Learn how to request specific fields from resources.
+### **Sparse fieldsets**Learn how to request specific fields from resources.
 
 
 
-Sparse fieldsets allow you to request only specific fields from a resource or collection. Note that support for this functionality is endpoint-specific. Refer to the `fields` query parameter in our \[API reference documentation](https://developers.klaviyo.com/en/reference/api\_overview).
+Sparse fieldsets allow you to request only specific fields from a resource or collection. Note that support for this functionality is endpoint-specific. Refer to the `fields` query parameter in our \[API reference documentation](https://developers.klaviyo.com/en/reference/api_overview).
 
 
 
-\## \*\*Sparse fieldsets syntax\*\*
+## **Sparse fieldsets syntax**
 
 
 
@@ -14,7 +14,7 @@ Sparse fieldsets are specified using `?fields\[TYPE]=field1,field2` as a query
 
 
 
-> \*\*🚧\*\*
+> **🚧**
 
 > 
 
@@ -26,15 +26,15 @@ Sparse fieldsets are specified using `?fields\[TYPE]=field1,field2` as a query
 
 
 
-\## \*\*Example request and response\*\*
+## **Example request and response**
 
 
 
-A request to \[Get Catalogs Variants](https://developers.klaviyo.com/en/reference/get\_catalog\_variants) returns a considerable amount of data, including up to 15 different attributes per catalog variant. Large responses like these can lead to extra HTTP responses and data stored in memory. It’s likely you are only interested in a fraction of this data. Fortunately, this customization can be achieved with sparse fieldsets.
+A request to \[Get Catalogs Variants](https://developers.klaviyo.com/en/reference/get_catalog_variants) returns a considerable amount of data, including up to 15 different attributes per catalog variant. Large responses like these can lead to extra HTTP responses and data stored in memory. It’s likely you are only interested in a fraction of this data. Fortunately, this customization can be achieved with sparse fieldsets.
 
 
 
-The following request to Get Catalogs Variant uses sparse fieldsets to return only `external\_id` and `title` attributes from each catalog variant in the response:
+The following request to Get Catalogs Variant uses sparse fieldsets to return only `external_id` and `title` attributes from each catalog variant in the response:
 
 
 
@@ -44,7 +44,7 @@ RequestResponse
 
 `curl --request GET \\
 
---url'https://a.klaviyo.com/api/catalog-variants/?fields\[catalog-variant]=external\_id,title'\\
+--url'https://a.klaviyo.com/api/catalog-variants/?fields\[catalog-variant]=external_id,title'\\
 
 --header 'Authorization: Klaviyo-API-Key your-private-api-key' \\
 
@@ -54,11 +54,11 @@ RequestResponse
 
 
 
-Note that the `relationships` and `links` fields are still fully populated in the response. Each `attribute` object only contains the `external\_id` and `title` fields as requested.
+Note that the `relationships` and `links` fields are still fully populated in the response. Each `attribute` object only contains the `external_id` and `title` fields as requested.
 
 
 
-\### \*\*Sparse fieldsets with included resource types\*\*
+### **Sparse fieldsets with included resource types**
 
 
 
@@ -86,19 +86,19 @@ Note that the `included` field of the response payload contains a list of prof
 
 
 
-> \*\*🚧\*\*
+> **🚧**
 
 > 
 
 > 
 
-> Note that sparse fieldsets can only be used on fields that exist across a resource. For example, across the event resource, you can use sparse fieldsets to only return the `event\_properties` field. However, you cannot use sparse fieldsets to only return specific fields within the `event\_properties` field itself.
+> Note that sparse fieldsets can only be used on fields that exist across a resource. For example, across the event resource, you can use sparse fieldsets to only return the `event_properties` field. However, you cannot use sparse fieldsets to only return specific fields within the `event_properties` field itself.
 
 > 
 
 
 
-\## \*\*Additional fields\*\*
+## **Additional fields**
 
 
 
@@ -106,11 +106,11 @@ You can use ?`additional-fields` as a query parameter to return additional fiel
 
 
 
-\### \*\*Example request and response\*\*
+### **Example request and response**
 
 
 
-The following request to \[Get List](https://developers.klaviyo.com/en/reference/get\_list) uses the `?additional-fields` query parameter to return `profile\_count`, a field representing the number of profiles on a given list:
+The following request to \[Get List](https://developers.klaviyo.com/en/reference/get_list) uses the `?additional-fields` query parameter to return `profile_count`, a field representing the number of profiles on a given list:
 
 
 
@@ -120,7 +120,7 @@ RequestResponse
 
 `curl --request GET \\
 
---url'https://a.klaviyo.com/api/lists/RB89mt/?additional-fields\[list]=profile\_count'\\
+--url'https://a.klaviyo.com/api/lists/RB89mt/?additional-fields\[list]=profile_count'\\
 
 --header 'Authorization: Klaviyo-API-Key your-private-api-key' \\
 
@@ -130,7 +130,7 @@ RequestResponse
 
 
 
-\### \*\*Predictive analytics\*\*
+### **Predictive analytics**
 
 
 
@@ -138,7 +138,7 @@ The `?additional-fields` parameter allows you to retrieve predictive analytics
 
 
 
-> \*\*📘\*\*
+> **📘**
 
 > 
 
@@ -168,49 +168,49 @@ The full list of predictive analytics fields that can be returned for a profile 
 
 
 
-| \*\*Field\*\* | \*\*Description\*\* |
+| **Field** | **Description** |
 
 | --- | --- |
 
-| `historic\_clv` | Total value of all historically placed orders. |
+| `historic_clv` | Total value of all historically placed orders. |
 
-| `predicted\_clv` | Predicted value of all placed orders in the next 365 days. |
+| `predicted_clv` | Predicted value of all placed orders in the next 365 days. |
 
-| `total\_clv` | Sum of historic and predicted CLV. |
+| `total_clv` | Sum of historic and predicted CLV. |
 
-| `historic\_number\_of\_orders` | Number of placed orders. |
+| `historic_number_of_orders` | Number of placed orders. |
 
-| `predicted\_number\_of\_orders` | Predicted number of placed orders in the next 365 days. |
+| `predicted_number_of_orders` | Predicted number of placed orders in the next 365 days. |
 
-| `average\_days\_between\_orders` | Average number of days between orders, over all time. |
+| `average_days_between_orders` | Average number of days between orders, over all time. |
 
-| `average\_order\_value` | Average value of historically placed orders. |
+| `average_order_value` | Average value of historically placed orders. |
 
-| `churn\_probability` | Probability that the customer will never make another purchase, or churn. |
+| `churn_probability` | Probability that the customer will never make another purchase, or churn. |
 
-| `expected\_date\_of\_next\_order` | Expected date of next order, calculated at the time of their most recent order. |
+| `expected_date_of_next_order` | Expected date of next order, calculated at the time of their most recent order. |
 
-| `ranked\_channel\_affinity` | Lists the profile's subscribed channels from most-preferred to least, for example, `\["sms", "email", "push"]`. If a profile is not subscribed to any channels, this field has a value of `None`. |
+| `ranked_channel_affinity` | Lists the profile's subscribed channels from most-preferred to least, for example, `\["sms", "email", "push"]`. If a profile is not subscribed to any channels, this field has a value of `None`. |
 
 
 
-> \*\*📘\*\*
-
-> 
+> **📘**
 
 > 
 
-> You can use sparse fieldsets to request for only a field(s) not included by default in the response. For example, you can request for additional fields with sparse fieldsets to include only `predictive\_analytics` in the response. Be sure to use both query parameters in your request.
+> 
+
+> You can use sparse fieldsets to request for only a field(s) not included by default in the response. For example, you can request for additional fields with sparse fieldsets to include only `predictive_analytics` in the response. Be sure to use both query parameters in your request.
 
 > 
 
 
 
-\## \*\*SDK example (Node, PHP, Python, Ruby)\*\*
+## **SDK example (Node, PHP, Python, Ruby)**
 
 
 
-This SDK example shows how to request events along with their related profile attributes limited to `external\_id` and `title` fields:
+This SDK example shows how to request events along with their related profile attributes limited to `external_id` and `title` fields:
 
 
 
@@ -220,9 +220,9 @@ NodePHPPythonRuby
 
 `import { ConfigWrapper, Events } from 'klaviyo-api';
 
-ConfigWrapper(process.env\["KLAVIYO\_PRIVATE\_API\_KEY"]));
+ConfigWrapper(process.env\["KLAVIYO_PRIVATE_API_KEY"]));
 
 
 
-const eventsList = await Events.getEvents({fieldsProfile:\["external\_id","title"],include:\["profile"]});`
+const eventsList = await Events.getEvents({fieldsProfile:\["external_id","title"],include:\["profile"]});`
 

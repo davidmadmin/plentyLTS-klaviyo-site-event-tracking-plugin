@@ -1,4 +1,4 @@
-\### \*\*Integrate an ecommerce platform without a pre-built Klaviyo integration\*\*Learn how to integrate a platform without a pre-built Klaviyo integration.
+### **Integrate an ecommerce platform without a pre-built Klaviyo integration**Learn how to integrate a platform without a pre-built Klaviyo integration.
 
 
 
@@ -6,27 +6,27 @@ If you’re using an ecommerce platform not currently supported by one of Klaviy
 
 
 
-\- Onsite activity tracking with the \[JavaScript API](https://developers.klaviyo.com/en/docs/javascript\_api).
+\- Onsite activity tracking with the \[JavaScript API](https://developers.klaviyo.com/en/docs/javascript_api).
 
-\- Managing lists and segments with the \[server-side API](https://developers.klaviyo.com/en/reference/api\_overview).
+\- Managing lists and segments with the \[server-side API](https://developers.klaviyo.com/en/reference/api_overview).
 
-\- Creating and managing custom \[catalogs](https://developers.klaviyo.com/en/docs/guide\_to\_syncing\_a\_custom\_catalog\_feed\_to\_klaviyo).
+\- Creating and managing custom \[catalogs](https://developers.klaviyo.com/en/docs/guide_to_syncing_a_custom_catalog_feed_to_klaviyo).
 
 
 
-> \*\*📘\*\*
-
-> 
+> **📘**
 
 > 
 
-> Check out our video on how to \[use Klaviyo's JavaScript for onsite tracking](https://www.youtube.com/watch?v=O2oHTGpBdlQ\&list=PLHkNfHgtxcUanrkMnKPdkRzuWU7MGv\_xM\&index=3).
+> 
+
+> Check out our video on how to \[use Klaviyo's JavaScript for onsite tracking](https://www.youtube.com/watch?v=O2oHTGpBdlQ\&list=PLHkNfHgtxcUanrkMnKPdkRzuWU7MGv_xM\&index=3).
 
 > 
 
 
 
-\## \*\*Key integration components\*\*
+## **Key integration components**
 
 
 
@@ -34,25 +34,25 @@ The key components of integrating this type of ecommerce solution are:
 
 
 
-\- \*\*Customer data\*\*Tracking information such as name, email, phone number, or other profile attributes.
+\- **Customer data**Tracking information such as name, email, phone number, or other profile attributes.
 
-\- \*\*Website activity\*\*Tracking who is active on your site, what products they view, etc.
+\- **Website activity**Tracking who is active on your site, what products they view, etc.
 
-\- \*\*Order activity\*\*Tracking when a customer places an order, what products are ordered, etc.
+\- **Order activity**Tracking when a customer places an order, what products are ordered, etc.
 
-\- \*\*Products\*\*The items in your catalog.
-
-
-
-\## \*\*About JavaScript and server-side event APIs\*\*
+\- **Products**The items in your catalog.
 
 
 
-This guide focuses on how to sync important metrics, or key customer activities, to Klaviyo. These events can be created in the browser with the \[JavaScript API](https://developers.klaviyo.com/en/docs/javascript\_api) and on the backend with the \[server-side API](https://developers.klaviyo.com/en/reference/api\_overview).
+## **About JavaScript and server-side event APIs**
 
 
 
-> \*\*🚧\*\*
+This guide focuses on how to sync important metrics, or key customer activities, to Klaviyo. These events can be created in the browser with the \[JavaScript API](https://developers.klaviyo.com/en/docs/javascript_api) and on the backend with the \[server-side API](https://developers.klaviyo.com/en/reference/api_overview).
+
+
+
+> **🚧**
 
 > 
 
@@ -68,13 +68,13 @@ Use our JavaScript API to track customer actions during a browsing session:
 
 
 
-\- \*\*Active on Site\*\*When someone visits your website.
+\- **Active on Site**When someone visits your website.
 
-\- \*\*Viewed Product\*\*When someone views a product.
+\- **Viewed Product**When someone views a product.
 
-\- \*\*Added to Cart\*\*When someone adds an item to their cart.
+\- **Added to Cart**When someone adds an item to their cart.
 
-\- \*\*Started Checkout\*\*When someone lands on the checkout page.
+\- **Started Checkout**When someone lands on the checkout page.
 
 
 
@@ -82,15 +82,15 @@ Use our server-side API for events that happen on the backend, starting with whe
 
 
 
-\- \*\*Placed Order\*\*When an order successfully processes on your system.
+\- **Placed Order**When an order successfully processes on your system.
 
-\- \*\*Ordered Product\*\*An event for each item in a processed order.
+\- **Ordered Product**An event for each item in a processed order.
 
-\- \*\*Fulfilled Order\*\*When an order is sent to the customer.
+\- **Fulfilled Order**When an order is sent to the customer.
 
-\- \*\*Canceled Order\*\*When an order is canceled.
+\- **Canceled Order**When an order is canceled.
 
-\- \*\*Refunded Order\*\*When a customer’s order is refunded.
+\- **Refunded Order**When a customer’s order is refunded.
 
 
 
@@ -98,27 +98,27 @@ Use our custom catalog feed for the following:
 
 
 
-\- \*\*Catalog Feed\*\*An XML or JSON feed of your product catalog.
+\- **Catalog Feed**An XML or JSON feed of your product catalog.
 
 
 
-> \*\*🚧\*\*
-
-> 
+> **🚧**
 
 > 
 
-> For populating your Klaviyo product catalog, you can use either a custom catalog feed or the new \[catalog API](https://developers.klaviyo.com/en/reference/get\_catalog\_items). You can only populate products using one option. To shift from a custom catalog feed to the new catalog API you must first disable the existing custom catalog feed before using the API.
+> 
+
+> For populating your Klaviyo product catalog, you can use either a custom catalog feed or the new \[catalog API](https://developers.klaviyo.com/en/reference/get_catalog_items). You can only populate products using one option. To shift from a custom catalog feed to the new catalog API you must first disable the existing custom catalog feed before using the API.
 
 > 
 
 
 
-The level of detail in the data you send within these events will determine how you can filter and segment based on these events in Klaviyo. To understand how data must be structured so that key event details are available for segmentation, check out our articles on \[segment conditions](https://help.klaviyo.com/hc/en-us/articles/115005062847-Understand-the-Data-Available-for-Segmentation) and \[how to structure your data for segment and flow filters](https://developers.klaviyo.com/en/docs/custom\_integration\_faqs#how-should-i-structure-my-data-for-segmentation-and-flow-filtering).
+The level of detail in the data you send within these events will determine how you can filter and segment based on these events in Klaviyo. To understand how data must be structured so that key event details are available for segmentation, check out our articles on \[segment conditions](https://help.klaviyo.com/hc/en-us/articles/115005062847-Understand-the-Data-Available-for-Segmentation) and \[how to structure your data for segment and flow filters](https://developers.klaviyo.com/en/docs/custom_integration_faqs#how-should-i-structure-my-data-for-segmentation-and-flow-filtering).
 
 
 
-> \*\*🚧\*\*
+> **🚧**
 
 > 
 
@@ -130,19 +130,19 @@ The level of detail in the data you send within these events will determine how 
 
 
 
-Check out our \[Custom integration FAQ](https://developers.klaviyo.com/en/docs/custom\_integration\_faqs) for questions about custom integrations.
+Check out our \[Custom integration FAQ](https://developers.klaviyo.com/en/docs/custom_integration_faqs) for questions about custom integrations.
 
 
 
-\## \*\*JavaScript Track API for onsite metrics\*\*
+## **JavaScript Track API for onsite metrics**
 
 
 
-\### \*\*Active on Site tracking snippet\*\*
+### **Active on Site tracking snippet**
 
 
 
-To be able to publish forms directly from Klaviyo to your site, add the following JavaScript snippet so it appears on every page on your website (the end of the footer is often a good place to add it). Make sure to replace `PUBLIC\_API\_KEY` with your Klaviyo account's six character \[public API key](https://help.klaviyo.com/hc/en-us/articles/115005062267-How-to-Manage-Your-Account-s-API-Keys):
+To be able to publish forms directly from Klaviyo to your site, add the following JavaScript snippet so it appears on every page on your website (the end of the footer is often a good place to add it). Make sure to replace `PUBLIC_API_KEY` with your Klaviyo account's six character \[public API key](https://help.klaviyo.com/hc/en-us/articles/115005062267-How-to-Manage-Your-Account-s-API-Keys):
 
 
 
@@ -152,7 +152,7 @@ JavaScript
 
 `<script type="text/javascript" async=""
 
-src="https://static.klaviyo.com/onsite/js/PUBLIC\_API\_KEY/klaviyo.js"></script>;`
+src="https://static.klaviyo.com/onsite/js/PUBLIC_API_KEY/klaviyo.js"></script>;`
 
 
 
@@ -160,15 +160,15 @@ Once you’ve added the snippet above, an \*Active on Site\* metric will trigg
 
 
 
-\### \*\*Initialize the klaviyo object\*\*
+### **Initialize the klaviyo object**
 
 
 
-Ensure that you have \[initialized the klaviyo object](https://developers.klaviyo.com/en/docs/introduction\_to\_the\_klaviyo\_object#how-to-load-the-klaviyo-object) on your page before executing any of the following code snippets.
+Ensure that you have \[initialized the klaviyo object](https://developers.klaviyo.com/en/docs/introduction_to_the_klaviyo_object#how-to-load-the-klaviyo-object) on your page before executing any of the following code snippets.
 
 
 
-\### \*\*Viewed Product tracking snippet\*\*
+### **Viewed Product tracking snippet**
 
 
 
@@ -176,13 +176,13 @@ If you'd like to set up a \[browse abandonment flow](https://help.klaviyo.com/h
 
 
 
-> \*\*📘\*\*
+> **📘**
 
 > 
 
 > 
 
-> Make sure to replace `item.\_\_\_` in the below code snippet with whatever item object your platform uses for product properties.
+> Make sure to replace `item.___` in the below code snippet with whatever item object your platform uses for product properties.
 
 > 
 
@@ -268,7 +268,7 @@ JavaScript
 
 
 
-\### \*\*Added to Cart tracking snippet\*\*
+### **Added to Cart tracking snippet**
 
 
 
@@ -366,7 +366,7 @@ JavaScript
 
 
 
-\### \*\*Started Checkout\*\*
+### **Started Checkout**
 
 
 
@@ -392,7 +392,7 @@ JavaScript
 
 &nbsp;  klaviyo.track("Started Checkout", {
 
-&nbsp;    "$event\_id": "1000123\_1387299423",
+&nbsp;    "$event_id": "1000123_1387299423",
 
 &nbsp;    "$value": 29.98,
 
@@ -454,35 +454,35 @@ JavaScript
 
 
 
-The `$event\_id` should be a unique identifier for the cart combined with the UNIX formatted time when the event was triggered. This allows someone to trigger \*Started Checkout\* more than once when they return after adding additional items.
+The `$event_id` should be a unique identifier for the cart combined with the UNIX formatted time when the event was triggered. This allows someone to trigger \*Started Checkout\* more than once when they return after adding additional items.
 
 
 
-\## \*\*Server-side metrics\*\*
+## **Server-side metrics**
 
 
 
-We recommend tracking certain metrics on the server-side due to potential limitations of frontend code, security concerns, and general availability of data on the server-side versus the front-end. For example, if someone has a slow connection or a ad-blocking extension on their browser, the JavaScript API requests might not fire. In the case of more crucial metrics (e.g., transactional events and properties) or ones that may contain sensitive data, use our server-side POST \[create event](https://developers.klaviyo.com/en/reference/create\_event) API. For more information on this question, check out our \[custom integration FAQ on the topic](https://developers.klaviyo.com/en/docs/custom\_integration\_faqs#should-i-use-the-server-side-or-front-end-api).
+We recommend tracking certain metrics on the server-side due to potential limitations of frontend code, security concerns, and general availability of data on the server-side versus the front-end. For example, if someone has a slow connection or a ad-blocking extension on their browser, the JavaScript API requests might not fire. In the case of more crucial metrics (e.g., transactional events and properties) or ones that may contain sensitive data, use our server-side POST \[create event](https://developers.klaviyo.com/en/reference/create_event) API. For more information on this question, check out our \[custom integration FAQ on the topic](https://developers.klaviyo.com/en/docs/custom_integration_faqs#should-i-use-the-server-side-or-front-end-api).
 
 
 
-Klaviyo also has \[SDKs](https://developers.klaviyo.com/en/docs/sdk\_overview) in several languages.
+Klaviyo also has \[SDKs](https://developers.klaviyo.com/en/docs/sdk_overview) in several languages.
 
 
 
-\### \*\*Syncing historical data\*\*
+### **Syncing historical data**
 
 
 
-Along with your ongoing data, it is best practice to send your historical order data, which will enhance your ability to segment off past data and improve historical accuracy in revenue tracking and \[predictive analytics](https://help.klaviyo.com/hc/en-us/articles/360020919731-Guide-to-Klaviyo-s-Predictive-Analytics). Historical data can be sent to Klaviyo by iterating through your historical orders and generating POST \[create event](https://developers.klaviyo.com/en/reference/create\_event) API requests for each server-side event as needed. The special `time` property for these events should be in ISO 8601 `datetime` (i.e. `2023-10-15T00:00:00`) of when that order occurred.
+Along with your ongoing data, it is best practice to send your historical order data, which will enhance your ability to segment off past data and improve historical accuracy in revenue tracking and \[predictive analytics](https://help.klaviyo.com/hc/en-us/articles/360020919731-Guide-to-Klaviyo-s-Predictive-Analytics). Historical data can be sent to Klaviyo by iterating through your historical orders and generating POST \[create event](https://developers.klaviyo.com/en/reference/create_event) API requests for each server-side event as needed. The special `time` property for these events should be in ISO 8601 `datetime` (i.e. `2023-10-15T00:00:00`) of when that order occurred.
 
 
 
-\### \*\*Placed Order\*\*
+### **Placed Order**
 
 
 
-After an order is placed, make a call to to our server-side POST \[create event API](https://developers.klaviyo.com/en/reference/create\_event) to create a \*Placed Order\* event. Tracking \*Placed Order\* events is useful for calculating predictive analytics such as average order value and predicted CLV.
+After an order is placed, make a call to to our server-side POST \[create event API](https://developers.klaviyo.com/en/reference/create_event) to create a \*Placed Order\* event. Tracking \*Placed Order\* events is useful for calculating predictive analytics such as average order value and predicted CLV.
 
 
 
@@ -490,9 +490,9 @@ Send order data to Klaviyo in one of two ways: real-time or batch.
 
 
 
-\- \*\*Real-time\*\*Make requests as soon as an order is placed.
+\- **Real-time**Make requests as soon as an order is placed.
 
-\- \*\*Batch\*\*Write some code that will run (for example) at least every 30 minutes (e.g., on a cron) to send all order events that occurred in that past 30 minutes.
+\- **Batch**Write some code that will run (for example) at least every 30 minutes (e.g., on a cron) to send all order events that occurred in that past 30 minutes.
 
 
 
@@ -518,7 +518,7 @@ For each order, we recommend you send two types of events:
 
 
 
-Here’s an example POST \[create event](https://developers.klaviyo.com/en/reference/create\_event) request for `Placed Order`:
+Here’s an example POST \[create event](https://developers.klaviyo.com/en/reference/create_event) request for `Placed Order`:
 
 
 
@@ -678,9 +678,9 @@ cURL
 
 &nbsp;           "value": 29.98,
 
-&nbsp;           "value\_currency": "USD",
+&nbsp;           "value_currency": "USD",
 
-&nbsp;           "unique\_id": "d47aeda5-1751-4483-a81e-6fcc8ad48711",
+&nbsp;           "unique_id": "d47aeda5-1751-4483-a81e-6fcc8ad48711",
 
 &nbsp;           "metric": {
 
@@ -708,7 +708,7 @@ cURL
 
 &nbsp;                       "email": "sarah.mason@klaviyo-demo.com",
 
-&nbsp;                       "phone\_number": "+15005550006"
+&nbsp;                       "phone_number": "+15005550006"
 
 &nbsp;                   }
 
@@ -726,13 +726,13 @@ cURL
 
 
 
-> \*\*📘\*\*
+> **📘**
 
 > 
 
 > 
 
-> Creating an event requires at least one \[profile identifier](https://developers.klaviyo.com/en/reference/profiles\_api\_overview#profile-identifiers). For example, the \*Placed Order\* event from the POST Create Event call above uses `email` as a profile identifier. Providing every identifier is unnecessary. You should limit your provided identifiers to known values.
+> Creating an event requires at least one \[profile identifier](https://developers.klaviyo.com/en/reference/profiles_api_overview#profile-identifiers). For example, the \*Placed Order\* event from the POST Create Event call above uses `email` as a profile identifier. Providing every identifier is unnecessary. You should limit your provided identifiers to known values.
 
 > 
 
@@ -742,11 +742,11 @@ Key things to be aware of when tracking server-side events:
 
 
 
-\- Make sure to replace `PRIVATE\_API\_KEY` with a \[private key](https://help.klaviyo.com/hc/en-us/articles/7423954176283-How-to-create-a-private-API-key) from your Klaviyo account; this key must have write permissions to create events.
+\- Make sure to replace `PRIVATE_API_KEY` with a \[private key](https://help.klaviyo.com/hc/en-us/articles/7423954176283-How-to-create-a-private-API-key) from your Klaviyo account; this key must have write permissions to create events.
 
-\- The `unique\_id` should be a unique identifier for the order (e.g., Order ID).
+\- The `unique_id` should be a unique identifier for the order (e.g., Order ID).
 
-\- If the `unique\_id` is repeated for the same profile and metric, only the first processed event will be recorded. If the `unique\_id` is not present, it will default to the event's datetime value.
+\- If the `unique_id` is repeated for the same profile and metric, only the first processed event will be recorded. If the `unique_id` is not present, it will default to the event's datetime value.
 
 \- `value` is a special property that allows Klaviyo to track revenue; this should be the total numeric (not a string), monetary value of the event it’s associated with.
 
@@ -754,19 +754,19 @@ Key things to be aware of when tracking server-side events:
 
 \- `time` is a special property that should bean ISO 8601 `datetime` (i.e. `2023-10-15T00:00:00Z`) for the order date and time.
 
-\- Note that the billing address is not used to determine a profile's location. You'll need to set profiles' locations with the `location` object (\[Profiles API](https://developers.klaviyo.com/en/reference/profiles\_api\_overview)).
+\- Note that the billing address is not used to determine a profile's location. You'll need to set profiles' locations with the `location` object (\[Profiles API](https://developers.klaviyo.com/en/reference/profiles_api_overview)).
 
 
 
-\### \*\*Ordered Product\*\*
+### **Ordered Product**
 
 
 
-For each line item, you should also generate an \*Ordered Product\* event. This metric is useful if you plan to create any filters or triggers based on product-specific information (as opposed to the order as a whole) that isn't "\[top-level](https://developers.klaviyo.com/en/docs/custom\_integration\_faqs#how-should-i-structure-my-data-for-segmentation-and-flow-filtering)" for the \*Placed Order\* metric. This metric is also used in conjunction with your Catalog Feed in order to \[enable personalized recommendations](https://developers.klaviyo.com/en/docs/custom\_integration\_faqs#how-do-i-enable-personalized-recommendations) and in the benchmarks feature to calculate average item value and average cart size.
+For each line item, you should also generate an \*Ordered Product\* event. This metric is useful if you plan to create any filters or triggers based on product-specific information (as opposed to the order as a whole) that isn't "\[top-level](https://developers.klaviyo.com/en/docs/custom_integration_faqs#how-should-i-structure-my-data-for-segmentation-and-flow-filtering)" for the \*Placed Order\* metric. This metric is also used in conjunction with your Catalog Feed in order to \[enable personalized recommendations](https://developers.klaviyo.com/en/docs/custom_integration_faqs#how-do-i-enable-personalized-recommendations) and in the benchmarks feature to calculate average item value and average cart size.
 
 
 
-The remainder of the POST \[create event](https://developers.klaviyo.com/en/reference/create\_event) calls in this guide will use the same headers as the \*Placed Order\* call.
+The remainder of the POST \[create event](https://developers.klaviyo.com/en/reference/create_event) calls in this guide will use the same headers as the \*Placed Order\* call.
 
 
 
@@ -814,9 +814,9 @@ JSON
 
 &nbsp;           "value": 9.99,
 
-&nbsp;           "value\_currency": "USD",
+&nbsp;           "value_currency": "USD",
 
-&nbsp;           "unique\_id": "d47aeda5-1751-4483-a81e-6fcc8ad48711",
+&nbsp;           "unique_id": "d47aeda5-1751-4483-a81e-6fcc8ad48711",
 
 &nbsp;           "metric": {
 
@@ -844,7 +844,7 @@ JSON
 
 &nbsp;                       "email": "sarah.mason@klaviyo-demo.com",
 
-&nbsp;                       "phone\_number": "+15005550006"
+&nbsp;                       "phone_number": "+15005550006"
 
 &nbsp;                   }
 
@@ -860,7 +860,7 @@ JSON
 
 
 
-\### \*\*Fulfilled Order, Canceled Order, and Refunded Order\*\*
+### **Fulfilled Order, Canceled Order, and Refunded Order**
 
 
 
@@ -868,19 +868,19 @@ Depending on how your products are sent to the customer, and whether they are ab
 
 
 
-> \*\*📘\*\*
+> **📘**
 
 > 
 
 > 
 
-> For \*Canceled Order\* and \*Refunded Order\* to be included in CLV calculations, they must have `unique\_id`s that correspond to a previously tracked \*Placed Order\* event.
+> For \*Canceled Order\* and \*Refunded Order\* to be included in CLV calculations, they must have `unique_id`s that correspond to a previously tracked \*Placed Order\* event.
 
 > 
 
 
 
-\### \*\*Fulfilled Order example\*\*
+### **Fulfilled Order example**
 
 
 
@@ -1030,9 +1030,9 @@ JSON
 
 &nbsp;           "value": 29.98,
 
-&nbsp;           "value\_currency": "USD",
+&nbsp;           "value_currency": "USD",
 
-&nbsp;           "unique\_id": "d47aeda5-1751-4483-a81e-6fcc8ad48711",
+&nbsp;           "unique_id": "d47aeda5-1751-4483-a81e-6fcc8ad48711",
 
 &nbsp;           "metric": {
 
@@ -1060,7 +1060,7 @@ JSON
 
 &nbsp;                       "email": "sarah.mason@klaviyo-demo.com",
 
-&nbsp;                       "phone\_number": "+15005550006"
+&nbsp;                       "phone_number": "+15005550006"
 
 &nbsp;                   }
 
@@ -1076,7 +1076,7 @@ JSON
 
 
 
-\### \*\*Canceled Order example\*\*
+### **Canceled Order example**
 
 
 
@@ -1228,9 +1228,9 @@ JSON
 
 &nbsp;           "value": 29.98,
 
-&nbsp;           "value\_currency": "USD",
+&nbsp;           "value_currency": "USD",
 
-&nbsp;           "unique\_id": "d47aeda5-1751-4483-a81e-6fcc8ad48711",
+&nbsp;           "unique_id": "d47aeda5-1751-4483-a81e-6fcc8ad48711",
 
 &nbsp;           "metric": {
 
@@ -1258,7 +1258,7 @@ JSON
 
 &nbsp;                       "email": "sarah.mason@klaviyo-demo.com",
 
-&nbsp;                       "phone\_number": "+15005550006"
+&nbsp;                       "phone_number": "+15005550006"
 
 &nbsp;                   }
 
@@ -1274,7 +1274,7 @@ JSON
 
 
 
-\### \*\*Refunded Order example\*\*
+### **Refunded Order example**
 
 
 
@@ -1426,9 +1426,9 @@ JSON
 
 &nbsp;           "value": 29.98,
 
-&nbsp;           "value\_currency": "USD",
+&nbsp;           "value_currency": "USD",
 
-&nbsp;           "unique\_id": "d47aeda5-1751-4483-a81e-6fcc8ad48711",
+&nbsp;           "unique_id": "d47aeda5-1751-4483-a81e-6fcc8ad48711",
 
 &nbsp;           "metric": {
 
@@ -1456,7 +1456,7 @@ JSON
 
 &nbsp;                       "email": "sarah.mason@klaviyo-demo.com",
 
-&nbsp;                       "phone\_number": "+15005550006"
+&nbsp;                       "phone_number": "+15005550006"
 
 &nbsp;                   }
 
@@ -1472,9 +1472,9 @@ JSON
 
 
 
-\## \*\*Catalog feed integration\*\*
+## **Catalog feed integration**
 
 
 
-Integrating your catalog will allow you to utilize \[product blocks](https://help.klaviyo.com/hc/en-us/articles/115000219092-Insert-a-Product-Block) in emails. In order to set up a custom catalog integration, please follow the process outlined in \[Sync a custom catalog feed to Klaviyo](https://developers.klaviyo.com/en/docs/guide\_to\_syncing\_a\_custom\_catalog\_feed\_to\_klaviyo).
+Integrating your catalog will allow you to utilize \[product blocks](https://help.klaviyo.com/hc/en-us/articles/115000219092-Insert-a-Product-Block) in emails. In order to set up a custom catalog integration, please follow the process outlined in \[Sync a custom catalog feed to Klaviyo](https://developers.klaviyo.com/en/docs/guide_to_syncing_a_custom_catalog_feed_to_klaviyo).
 

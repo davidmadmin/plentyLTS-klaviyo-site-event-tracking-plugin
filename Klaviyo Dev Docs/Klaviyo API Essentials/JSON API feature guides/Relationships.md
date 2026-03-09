@@ -1,8 +1,8 @@
-\### \*\*Relationships\*\*Learn more about resource relationships available with the JSON:API standard.
+### **Relationships**Learn more about resource relationships available with the JSON:API standard.
 
 
 
-\## \*\*What are relationships?\*\*
+## **What are relationships?**
 
 
 
@@ -18,15 +18,15 @@ Because of the myriad ways our partners and customers model and sync data to and
 
 
 
-\## \*\*The `include` query parameter\*\*
+## **The `include` query parameter**
 
 
 
-You can use `?include=resource1,resource2` as a query parameter to include related resource(s) in a response. For example, a call to \[Get Event](https://developers.klaviyo.com/en/reference/get\_event) with `?include=profile,metric` will include related profile and metric data for each event in the response. To determine which relationships a specific resource supports, refer to the endpoint’s supported `include` values in the endpoint description.
+You can use `?include=resource1,resource2` as a query parameter to include related resource(s) in a response. For example, a call to \[Get Event](https://developers.klaviyo.com/en/reference/get_event) with `?include=profile,metric` will include related profile and metric data for each event in the response. To determine which relationships a specific resource supports, refer to the endpoint’s supported `include` values in the endpoint description.
 
 
 
-> \*\*🚧\*\*
+> **🚧**
 
 > 
 
@@ -42,17 +42,17 @@ Note that `include` values may be singular or plural depending on the relation
 
 
 
-\- \*\*Singular (to-one)\*\*`GET /api/events/?include=profile`Includes each profile related to each event.
+\- **Singular (to-one)**`GET /api/events/?include=profile`Includes each profile related to each event.
 
-\- \*\*Plural (to-many)\*\*`GET /api/profiles/{profile\_id}/?include=lists`Includes lists related to a single profile.
-
-
-
-\### \*\*Example request and response\*\*
+\- **Plural (to-many)**`GET /api/profiles/{profile_id}/?include=lists`Includes lists related to a single profile.
 
 
 
-In the example request to \[Get Profile](https://developers.klaviyo.com/en/v2023-09-15/reference/get\_profile) below, `?include=lists,segments` returns any related list and/or segment object(s) related to a specific profile in the `included` field of the response:
+### **Example request and response**
+
+
+
+In the example request to \[Get Profile](https://developers.klaviyo.com/en/v2023-09-15/reference/get_profile) below, `?include=lists,segments` returns any related list and/or segment object(s) related to a specific profile in the `included` field of the response:
 
 
 
@@ -72,7 +72,7 @@ RequestResponse
 
 
 
-\## \*\*Scopes\*\*
+## **Scopes**
 
 
 
@@ -80,7 +80,7 @@ When using relationships, you must use an API key with Read-only (for GET reques
 
 
 
-For example, to call `GET /api/profiles/{profile\_id}/?include=lists` the scope of your API key must include read access to both the profiles endpoint and the lists endpoint.
+For example, to call `GET /api/profiles/{profile_id}/?include=lists` the scope of your API key must include read access to both the profiles endpoint and the lists endpoint.
 
 
 
@@ -88,7 +88,7 @@ Check out the \[guide to API scopes](https://help.klaviyo.com/hc/en-us/articles
 
 
 
-\## \*\*Relationship support\*\*
+## **Relationship support**
 
 
 
@@ -96,7 +96,7 @@ When a relationship between two resources is defined, there are two main ways of
 
 
 
-\### \*\*Single resource relationship support\*\*
+### **Single resource relationship support**
 
 
 
@@ -104,15 +104,15 @@ Let's use `/profiles` and `/lists` as an example. A common use case for many
 
 
 
-\- `GET /api/profiles/{profile\_id}/lists`Get the lists for a single profile directly. Do this if you do not need the profile resource itself, you only need the list.
+\- `GET /api/profiles/{profile_id}/lists`Get the lists for a single profile directly. Do this if you do not need the profile resource itself, you only need the list.
 
-\- `GET /api/profiles/{profile\_id}/?include=lists`Include the lists for a single profile. Do this if you need both the profile resource, and its corresponding lists.
+\- `GET /api/profiles/{profile_id}/?include=lists`Include the lists for a single profile. Do this if you need both the profile resource, and its corresponding lists.
 
-\- `GET /api/profiles/{profile\_id}/relationships/lists`Get just the relationship object (the ID mapping) to the corresponding list ID.Do this if you only need the list IDs for a profile's lists, and do not need either the profile resource or its corresponding lists.This is also the endpoint you can use to create, update or delete relationships, if these operations are supported for the relationship in question.
+\- `GET /api/profiles/{profile_id}/relationships/lists`Get just the relationship object (the ID mapping) to the corresponding list ID.Do this if you only need the list IDs for a profile's lists, and do not need either the profile resource or its corresponding lists.This is also the endpoint you can use to create, update or delete relationships, if these operations are supported for the relationship in question.
 
 
 
-\### \*\*Example request \& response\*\*
+### **Example request \& response**
 
 
 
@@ -126,7 +126,7 @@ RequestResponse
 
 `curl --request GET \\
 
-&nbsp;    --url 'https://a.klaviyo.com/api/profiles/{profile\_id}/lists' \\
+&nbsp;    --url 'https://a.klaviyo.com/api/profiles/{profile_id}/lists' \\
 
 &nbsp;    --header 'Accept: application/json'
 
@@ -136,7 +136,7 @@ RequestResponse
 
 
 
-\### \*\*Collection-level relationship support\*\*
+### **Collection-level relationship support**
 
 
 
@@ -148,7 +148,7 @@ Use `include` if you need all resources from a particular endpoint (paginated)
 
 
 
-\### \*\*Example request \& response\*\*
+### **Example request \& response**
 
 
 
@@ -172,7 +172,7 @@ RequestResponse
 
 
 
-\## \*\*Modify a relationship\*\*
+## **Modify a relationship**
 
 
 
@@ -180,7 +180,7 @@ You can not only read relationships, you can also create and delete them.
 
 
 
-\### \*\*Create a relationship\*\*
+### **Create a relationship**
 
 
 
@@ -194,7 +194,7 @@ cURL
 
 `curl --request POST \\
 
-&nbsp;    --url 'https://a.klaviyo.com/api/profiles/{profile\_id}/relationships/lists' \\
+&nbsp;    --url 'https://a.klaviyo.com/api/profiles/{profile_id}/relationships/lists' \\
 
 &nbsp;    --header 'Accept: application/json'
 
@@ -208,7 +208,7 @@ cURL
 
 &nbsp;     "type": "list",
 
-&nbsp;     "id": "{list\_id}"
+&nbsp;     "id": "{list_id}"
 
 }
 
@@ -216,7 +216,7 @@ cURL
 
 
 
-\### \*\*Delete a relationship\*\*
+### **Delete a relationship**
 
 
 
@@ -230,7 +230,7 @@ cURL
 
 `curl --request DELETE \\
 
-&nbsp;    --url 'https://a.klaviyo.com/api/profiles/{profile\_id}/relationships/lists' \\
+&nbsp;    --url 'https://a.klaviyo.com/api/profiles/{profile_id}/relationships/lists' \\
 
 &nbsp;    --header 'Accept: application/json'
 
@@ -244,7 +244,7 @@ cURL
 
 &nbsp;     "type": "list",
 
-&nbsp;     "id": "{list\_id}"
+&nbsp;     "id": "{list_id}"
 
 }
 

@@ -1,8 +1,8 @@
-\### \*\*Use data in Klaviyo\*\*Learn how data is used in Klaviyo and how to get data in using integrations, APIs, and developer tools.
+### **Use data in Klaviyo**Learn how data is used in Klaviyo and how to get data in using integrations, APIs, and developer tools.
 
 
 
-> \*\*📘\*\*
+> **📘**
 
 > 
 
@@ -14,7 +14,7 @@
 
 
 
-\## \*\*Data objects\*\*
+## **Data objects**
 
 
 
@@ -38,7 +38,7 @@ Klaviyo also includes an object for data feeds, which is related to our catalogs
 
 
 
-\## \*\*How data is used\*\*
+## **How data is used**
 
 
 
@@ -80,7 +80,7 @@ Part of the power of Klaviyo is how these mechanisms work together and interact.
 
 
 
-\## \*\*Targeting\*\*
+## **Targeting**
 
 
 
@@ -88,7 +88,7 @@ Send an email one hour after someone adds an item into their cart, but only if t
 
 
 
-\## \*\*Personalization\*\*
+## **Personalization**
 
 
 
@@ -100,7 +100,7 @@ This table illustrates how different data objects are used in flows, segmentatio
 
 
 
-|  | \*\*Profiles\*\* | \*\*Metrics\*\* | \*\*Catalogs / Data Feeds\*\* |
+|  | **Profiles** | **Metrics** | **Catalogs / Data Feeds** |
 
 | --- | --- | --- | --- |
 
@@ -108,11 +108,11 @@ This table illustrates how different data objects are used in flows, segmentatio
 
 | Segmentation and conditional filters | Configure flow split Where `Country` equals `United States` | Define flow filter to include anyone who Has not Placed Order since starting this flow |  |
 
-| Dynamic content in messages | Configure template to reference`{{ person.first\\\_name }}` | Configure template to reference data from the Added to Cart event, such as`{{ event.line\\\_items.product\\\_name }}` | Configure template to include a Klaviyo product block, which renders recommended products from catalog |
+| Dynamic content in messages | Configure template to reference`{{ person.first_name }}` | Configure template to reference data from the Added to Cart event, such as`{{ event.line_items.product_name }}` | Configure template to include a Klaviyo product block, which renders recommended products from catalog |
 
 
 
-\## \*\*Getting data into Klaviyo\*\*
+## **Getting data into Klaviyo**
 
 
 
@@ -120,7 +120,7 @@ Once you understand Klaviyo’s data model and how data is used in Klaviyo, you 
 
 
 
-\### \*\*Native and third-party integrations\*\*
+### **Native and third-party integrations**
 
 
 
@@ -132,7 +132,7 @@ Additionally, because our APIs are open, many third-parties have productized int
 
 
 
-\### \*\*APIs\*\*
+### **APIs**
 
 
 
@@ -148,15 +148,15 @@ We’ve built Klaviyo to make it easy to push data to us and use it. Here are so
 
 \- Flexibility - We offer a very large allocation of unique event metrics, aggregate events, and event properties. We allow you to pass complex data structures as JSON payloads including nested complex objects..
 
-\- Simplicity - Pushing customer data typically requires interacting with just two endpoints, \[Events](https://developers.klaviyo.com/en/reference/create\_event) and \[Profiles](https://developers.klaviyo.com/en/reference/create\_profile). We have certain properties that have special meaning, which we have enumerated here. Additionally, Klaviyo will automatically parse and infer the data types: numbers, dates, booleans, or and text, without requiring specification.
+\- Simplicity - Pushing customer data typically requires interacting with just two endpoints, \[Events](https://developers.klaviyo.com/en/reference/create_event) and \[Profiles](https://developers.klaviyo.com/en/reference/create_profile). We have certain properties that have special meaning, which we have enumerated here. Additionally, Klaviyo will automatically parse and infer the data types: numbers, dates, booleans, or and text, without requiring specification.
 
 \- No data limitations - You have complete control over, and access to, all of your data. We don’t have any data retention limits nor any downstream filters on how you can query data in the UI. You have the ability to access every event, and all associated metadata for every user over all time.
 
 
 
-\## \*\*Other ways to upload data\*\*
+## **Other ways to upload data**
 
 
 
-Klaviyo also supports uploading \[Events and Profiles via SFTP](https://developers.klaviyo.com/en/docs/use\_klaviyos\_sftp\_import\_tool), \[uploading profiles into a List](https://help.klaviyo.com/hc/en-us/articles/115005078967-Create-and-Add-Contacts-to-a-New-List) as well as \[uploading historical metric data via a CSV file upload](https://help.klaviyo.com/hc/en-us/articles/115005081247-Manually-Import-Historical-Event-Data). Additionally, any individual profile property or list membership may be edited manually in the app.
+Klaviyo also supports uploading \[Events and Profiles via SFTP](https://developers.klaviyo.com/en/docs/use_klaviyos_sftp_import_tool), \[uploading profiles into a List](https://help.klaviyo.com/hc/en-us/articles/115005078967-Create-and-Add-Contacts-to-a-New-List) as well as \[uploading historical metric data via a CSV file upload](https://help.klaviyo.com/hc/en-us/articles/115005081247-Manually-Import-Historical-Event-Data). Additionally, any individual profile property or list membership may be edited manually in the app.
 

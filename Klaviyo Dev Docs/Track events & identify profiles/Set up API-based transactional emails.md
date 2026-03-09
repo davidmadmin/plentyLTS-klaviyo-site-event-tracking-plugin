@@ -1,4 +1,4 @@
-\# Set up API-based transactional events
+# Set up API-based transactional events
 
 
 
@@ -20,7 +20,7 @@ Transactional emails are essential communications triggered by a user action. Th
 
 
 
-In Klaviyo, \*\*transactional and marketing messages can be triggered from the same events (metrics)\*\*. The difference lies in how the resulting flow or email is configured. :contentReference\[oaicite:1]{index=1}
+In Klaviyo, **transactional and marketing messages can be triggered from the same events (metrics)**. The difference lies in how the resulting flow or email is configured. :contentReference\[oaicite:1]{index=1}
 
 
 
@@ -28,7 +28,7 @@ In Klaviyo, \*\*transactional and marketing messages can be triggered from the s
 
 
 
-\# Why use API-based transactional events?
+# Why use API-based transactional events?
 
 
 
@@ -42,7 +42,7 @@ You can send events to Klaviyo using either:
 
 
 
-For transactional messages, \*\*server-side events are strongly recommended\*\*.
+For transactional messages, **server-side events are strongly recommended**.
 
 
 
@@ -56,7 +56,7 @@ For transactional messages, \*\*server-side events are strongly recommended\*\*.
 
 
 
-\# Overview of the process
+# Overview of the process
 
 
 
@@ -92,7 +92,7 @@ Example use cases:
 
 
 
-\# Step 1 — Create a transactional event
+# Step 1 — Create a transactional event
 
 
 
@@ -116,11 +116,11 @@ Each event includes:
 
 
 
-\- A \*\*metric name\*\* (event type)
+\- A **metric name** (event type)
 
-\- A \*\*profile\*\*
+\- A **profile**
 
-\- Optional \*\*event properties\*\*
+\- Optional **event properties**
 
 
 
@@ -140,7 +140,7 @@ Reset Password Requested
 
 
 
-\# Step 2 — Send the event using the Events API
+# Step 2 — Send the event using the Events API
 
 
 
@@ -246,7 +246,7 @@ This event will be recorded in the user's activity timeline.
 
 
 
-\# Step 3 — Create a flow triggered by the event
+# Step 3 — Create a flow triggered by the event
 
 
 
@@ -254,11 +254,11 @@ Inside Klaviyo:
 
 
 
-1\. Go to \*\*Flows\*\*
+1\. Go to **Flows**
 
 2\. Create a new flow
 
-3\. Select \*\*Metric Trigger\*\*
+3\. Select **Metric Trigger**
 
 4\. Choose the event you created
 
@@ -284,7 +284,7 @@ This means the flow runs whenever that event is received.
 
 
 
-\# Step 4 — Add the transactional email
+# Step 4 — Add the transactional email
 
 
 
@@ -312,7 +312,7 @@ Click the link below to reset your password:
 
 
 
-Use \*\*event properties\*\* to dynamically populate links and data.
+Use **event properties** to dynamically populate links and data.
 
 
 
@@ -320,7 +320,7 @@ Use \*\*event properties\*\* to dynamically populate links and data.
 
 
 
-\# Example transactional events
+# Example transactional events
 
 
 
@@ -328,7 +328,7 @@ Common transactional event types include:
 
 
 
-\## Password reset
+## Password reset
 
 
 
@@ -348,7 +348,7 @@ Properties:
 
 
 
-\- reset\_url
+\- reset_url
 
 \- timestamp
 
@@ -358,7 +358,7 @@ Properties:
 
 
 
-\## Order confirmation
+## Order confirmation
 
 
 
@@ -378,11 +378,11 @@ Properties:
 
 
 
-\- order\_id
+\- order_id
 
-\- order\_total
+\- order_total
 
-\- product\_list
+\- product_list
 
 
 
@@ -390,7 +390,7 @@ Properties:
 
 
 
-\## Shipping notification
+## Shipping notification
 
 
 
@@ -410,11 +410,11 @@ Properties:
 
 
 
-\- tracking\_number
+\- tracking_number
 
 \- carrier
 
-\- estimated\_delivery
+\- estimated_delivery
 
 
 
@@ -422,11 +422,11 @@ Properties:
 
 
 
-\# Best practices
+# Best practices
 
 
 
-\### Use server-side events
+### Use server-side events
 
 
 
@@ -434,7 +434,7 @@ Always send transactional events from your backend to ensure delivery reliabilit
 
 
 
-\### Keep transactional content non-promotional
+### Keep transactional content non-promotional
 
 
 
@@ -454,7 +454,7 @@ Avoid including:
 
 
 
-\### Include structured event data
+### Include structured event data
 
 
 
@@ -480,7 +480,7 @@ This improves personalization and debugging.
 
 
 
-\# Summary
+# Summary
 
 
 

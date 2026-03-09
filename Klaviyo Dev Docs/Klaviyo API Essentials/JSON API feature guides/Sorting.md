@@ -1,12 +1,12 @@
-\### \*\*Sorting\*\*Learn how to use our JSON:API sorting feature.
+### **Sorting**Learn how to use our JSON:API sorting feature.
 
 
 
-\## \*\*Sort syntax\*\*
+## **Sort syntax**
 
 
 
-Klaviyo’s JSON:API sorting syntax can be used across all supported endpoints in our new APIs. Please note that support for given fields is unique to each endpoint. Refer to the `sort` query parameter in the \[API reference documentation](https://developers.klaviyo.com/en/reference/api\_overview).
+Klaviyo’s JSON:API sorting syntax can be used across all supported endpoints in our new APIs. Please note that support for given fields is unique to each endpoint. Refer to the `sort` query parameter in the \[API reference documentation](https://developers.klaviyo.com/en/reference/api_overview).
 
 
 
@@ -54,11 +54,11 @@ RequestResponse
 
 
 
-\## \*\*Example request and response\*\*
+## **Example request and response**
 
 
 
-In the following example, we make a request to get email campaigns and sort them in descending order (oldest to newest) with the `created\_at` field:
+In the following example, we make a request to get email campaigns and sort them in descending order (oldest to newest) with the `created_at` field:
 
 
 
@@ -68,7 +68,7 @@ RequestResponse
 
 `curl --request GET \\
 
-&nbsp;    --url 'https://a.klaviyo.com/api/campaigns/?filter=equals(messages.channel,’email’)\&sort=created\_at' \\
+&nbsp;    --url 'https://a.klaviyo.com/api/campaigns/?filter=equals(messages.channel,’email’)\&sort=created_at' \\
 
 &nbsp;    --header 'Authorization: Klaviyo-API-Key your-private-api-key' \\
 
@@ -78,7 +78,7 @@ RequestResponse
 
 
 
-> \*\*🚧\*\*
+> **🚧**
 
 > 
 
@@ -90,7 +90,7 @@ RequestResponse
 
 
 
-\## \*\*SDK example (Node, PHP, Python, Ruby)\*\*
+## **SDK example (Node, PHP, Python, Ruby)**
 
 
 

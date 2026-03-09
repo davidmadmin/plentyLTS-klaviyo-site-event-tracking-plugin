@@ -1,8 +1,8 @@
-\### \*\*Rate limits, status codes, and errors\*\*Refer to our list of status codes, error responses, rate limits, and ingestion limits for troubleshooting help.
+### **Rate limits, status codes, and errors**Refer to our list of status codes, error responses, rate limits, and ingestion limits for troubleshooting help.
 
 
 
-\## \*\*Rate limits\*\*
+## **Rate limits**
 
 
 
@@ -18,25 +18,25 @@ Unless otherwise documented, all API endpoints use one of the following rate lim
 
 
 
-\- \*\*XS\*\*: 1/s burst; 15/m steady
+\- **XS**: 1/s burst; 15/m steady
 
-\- \*\*S\*\*: 3/s burst; 60/m steady
+\- **S**: 3/s burst; 60/m steady
 
-\- \*\*M\*\*: 10/s burst; 150/m steady
+\- **M**: 10/s burst; 150/m steady
 
-\- \*\*L\*\*: 75/s burst; 700/m steady
+\- **L**: 75/s burst; 700/m steady
 
-\- \*\*XL\*\*: 350/s burst; 3500/m steady
+\- **XL**: 350/s burst; 3500/m steady
 
 
 
-> \*\*📘\*\*
-
-> 
+> **📘**
 
 > 
 
-> \[Rate limiting for OAuth apps](https://developers.klaviyo.com/en/docs/handle\_your\_apps\_oauth\_flow#rate-limits) differs from our standard API rate limiting for detailed above. OAuth apps receive their own rate limit quota per installed app instance (i.e., per account per app), while private key integrations share the same rate limit quota per account.
+> 
+
+> \[Rate limiting for OAuth apps](https://developers.klaviyo.com/en/docs/handle_your_apps_oauth_flow#rate-limits) differs from our standard API rate limiting for detailed above. OAuth apps receive their own rate limit quota per installed app instance (i.e., per account per app), while private key integrations share the same rate limit quota per account.
 
 > 
 
@@ -58,7 +58,7 @@ Treat these limits as maximums and don’t generate unnecessary load.
 
 
 
-> \*\*📘\*\*
+> **📘**
 
 > 
 
@@ -70,7 +70,7 @@ Treat these limits as maximums and don’t generate unnecessary load.
 
 
 
-\## \*\*Query Param Rate Limits\*\*
+## **Query Param Rate Limits**
 
 
 
@@ -78,15 +78,15 @@ As part of our recent release raising the rate limits for several endpoints, we 
 
 
 
-For example: If you're making an HTTP GET request to `/api/profiles?additional-fields\[profile]=predictive\_analytics`, your requests will be at a lower rate limit than if you had not requested that information. Similarly, a `GET` request to `/api/profiles/:profile-id:?include=lists` will result in a lower rate limit than a call to `/api/profiles/:profile-id:` without the query parameter.
+For example: If you're making an HTTP GET request to `/api/profiles?additional-fields\[profile]=predictive_analytics`, your requests will be at a lower rate limit than if you had not requested that information. Similarly, a `GET` request to `/api/profiles/:profile-id:?include=lists` will result in a lower rate limit than a call to `/api/profiles/:profile-id:` without the query parameter.
 
 
 
-These changes are enforced at a global level. A request to `/api/segments/:segment-id:/profiles?additional-fields\[profile]=predictive\_analytics` will hit the same lower rate limit on profile->additional-fields->predictive\_analytics as the call to `/api/profiles?additional-fields\[profile]=predictive\_analytics`.
+These changes are enforced at a global level. A request to `/api/segments/:segment-id:/profiles?additional-fields\[profile]=predictive_analytics` will hit the same lower rate limit on profile->additional-fields->predictive_analytics as the call to `/api/profiles?additional-fields\[profile]=predictive_analytics`.
 
 
 
-Note that each call now has multiple rate limits that apply. For example, let's assume we have 150 calls per minute on /api/profiles, 50 calls per minute on `additional-fields\[profile]=predictive\_analytics`, and 50 calls per minute on `/api/profiles/:profile-id:?include=lists`. We then make the following API calls:
+Note that each call now has multiple rate limits that apply. For example, let's assume we have 150 calls per minute on /api/profiles, 50 calls per minute on `additional-fields\[profile]=predictive_analytics`, and 50 calls per minute on `/api/profiles/:profile-id:?include=lists`. We then make the following API calls:
 
 
 
@@ -98,7 +98,7 @@ GET `/api/profiles/:profile-id:?include=lists` – we use 1 call on the GET Pr
 
 
 
-GET `/api/profiles/:profile-id:?include=lists\&additional-fields\[profile]=predictive\_analytics` – three calls
+GET `/api/profiles/:profile-id:?include=lists\&additional-fields\[profile]=predictive_analytics` – three calls
 
 
 
@@ -114,7 +114,7 @@ At the end of these three API calls, we now have:
 
 
 
-49 calls remaining on `additional-fields\[profile]=predictive\_analytics`
+49 calls remaining on `additional-fields\[profile]=predictive_analytics`
 
 
 
@@ -122,11 +122,11 @@ The rate limits on all of these calls reset at the same window. Similar rules ap
 
 
 
-\## \*\*Ingestion limits\*\*
+## **Ingestion limits**
 
 
 
-> \*\*📘Global payload limit\*\*
+> **📘Global payload limit**
 
 > 
 
@@ -138,7 +138,7 @@ The rate limits on all of these calls reset at the same window. Similar rules ap
 
 
 
-\*\*Endpoints with additional limits:\*\*
+**Endpoints with additional limits:**
 
 
 
@@ -154,7 +154,7 @@ Klaviyo's event tracking endpoints use ingestion limits to prevent processing de
 
 
 
-| \*\*Category\*\* | \*\*Limit\*\* |
+| **Category** | **Limit** |
 
 | --- | --- |
 
@@ -170,7 +170,7 @@ Klaviyo's event tracking endpoints use ingestion limits to prevent processing de
 
 
 
-\## \*\*Response status codes\*\*
+## **Response status codes**
 
 
 
@@ -190,7 +190,7 @@ See the table below for a list of error codes and their corresponding descriptio
 
 
 
-| \*\*Code\*\* | \*\*Summary\*\* | \*\*Description\*\* |
+| **Code** | **Summary** | **Description** |
 
 | --- | --- | --- |
 
@@ -204,9 +204,9 @@ See the table below for a list of error codes and their corresponding descriptio
 
 | 400 | Bad Request | Request is missing a required parameter or has an invalid parameter. |
 
-| 401 | Not Authorized | Request is lacking required authentication information.Please follow \[the guidance here](https://developers.klaviyo.com/en/reference/api\_overview#authentication) for more details on authenticating your API requests. |
+| 401 | Not Authorized | Request is lacking required authentication information.Please follow \[the guidance here](https://developers.klaviyo.com/en/reference/api_overview#authentication) for more details on authenticating your API requests. |
 
-| 403 | Forbidden | The request contains valid authentication information, but does not have permissions to perform the specified action.See \[API key scopes](https://developers.klaviyo.com/en/reference/api\_overview#api-key-scopes) for more information. |
+| 403 | Forbidden | The request contains valid authentication information, but does not have permissions to perform the specified action.See \[API key scopes](https://developers.klaviyo.com/en/reference/api_overview#api-key-scopes) for more information. |
 
 | 404 | Not Found | The requested resource doesn't exist. |
 
@@ -226,15 +226,15 @@ See the table below for a list of error codes and their corresponding descriptio
 
 
 
-\## \*\*Retries\*\*
+## **Retries**
 
 
 
-We recommend watching for 429 and 503 error codes and building in a retry mechanism. The retry mechanism should follow an \[exponential backoff](https://en.wikipedia.org/wiki/Exponential\_backoff) schedule to reduce request volume when necessary. Be sure to build in some randomness into the backoff schedule to avoid a \[thundering herd effect](https://en.wikipedia.org/wiki/Thundering\_herd\_problem).
+We recommend watching for 429 and 503 error codes and building in a retry mechanism. The retry mechanism should follow an \[exponential backoff](https://en.wikipedia.org/wiki/Exponential_backoff) schedule to reduce request volume when necessary. Be sure to build in some randomness into the backoff schedule to avoid a \[thundering herd effect](https://en.wikipedia.org/wiki/Thundering_herd_problem).
 
 
 
-> \*\*🚧\*\*
+> **🚧**
 
 > 
 
@@ -246,7 +246,7 @@ We recommend watching for 429 and 503 error codes and building in a retry mechan
 
 
 
-\## \*\*Errors\*\*
+## **Errors**
 
 
 

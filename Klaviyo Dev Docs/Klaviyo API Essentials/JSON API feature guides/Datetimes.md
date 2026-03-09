@@ -1,12 +1,12 @@
-\## \*\*Date and timestamp support\*\*
+## **Date and timestamp support**
 
 
 
-Note that event datetimes sent via the legacy v1/v2 endpoints support Unix timestamps in addition to datetime ISO 8601 formats. However, our new APIs do not support Unix timestamps. It is recommended that you convert the Unix timestamp to a supported ISO 8601 format. See the \[MDN docs on the toISOString() method](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global\_Objects/Date/toISOString) for more details on conversion.
+Note that event datetimes sent via the legacy v1/v2 endpoints support Unix timestamps in addition to datetime ISO 8601 formats. However, our new APIs do not support Unix timestamps. It is recommended that you convert the Unix timestamp to a supported ISO 8601 format. See the \[MDN docs on the toISOString() method](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString) for more details on conversion.
 
 
 
-\## \*\*Datetime formatting\*\*
+## **Datetime formatting**
 
 
 
@@ -24,19 +24,19 @@ All datetimes across all new APIs in URLs, requests, and response bodies must us
 
 
 
-For more information on recognized formats, refer to our \[acceptable date and timestamp formats guide](https://developers.klaviyo.com/en/docs/acceptable\_date\_and\_timestamp\_formats\_for\_profile\_and\_event\_properties) for profile and event properties.
+For more information on recognized formats, refer to our \[acceptable date and timestamp formats guide](https://developers.klaviyo.com/en/docs/acceptable_date_and_timestamp_formats_for_profile_and_event_properties) for profile and event properties.
 
 
 
-\## \*\*URI encoding\*\*
+## **URI encoding**
 
 
 
-Datetimes can contain non-URL-safe characters. To combat this, we recommend that you always URI-encode your datetime values. Refer to the \[MDN docs on encodeURIComponent](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global\_Objects/encodeURIComponent) for more details.
+Datetimes can contain non-URL-safe characters. To combat this, we recommend that you always URI-encode your datetime values. Refer to the \[MDN docs on encodeURIComponent](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/encodeURIComponent) for more details.
 
 
 
-\## \*\*Example request and response\*\*
+## **Example request and response**
 
 
 

@@ -1,4 +1,4 @@
-\### \*\*Klaviyo's architecture\*\*Learn the building blocks of Klaviyo's architecture.
+### **Klaviyo's architecture**Learn the building blocks of Klaviyo's architecture.
 
 
 
