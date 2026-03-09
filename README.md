@@ -14,29 +14,29 @@ This plugin is intended to implement **all commonly suggested Klaviyo on-site ev
 
 The table below is optimized for a quick implementation and product-status scan.
 
-| Event / Metric | Why it matters | Trigger (Plenty storefront) | Status |
+| Status | Event / Metric | Why it matters | Trigger (Plenty storefront) |
 |---|---|---|---|
-| **Active on Site** | Baseline site engagement and profile activity | Any meaningful page interaction/session heartbeat | 🔴 |
-| **Viewed Product** | Product interest and browse intent | PDP view with product identifiers and metadata | 🔴 |
-| **Added to Cart** | Purchase intent signal for abandoned-cart journeys | Add-to-cart action from PDP/listing/quick-buy | 🔴 |
-| **Removed from Cart** | Cart friction insight and drop-off analysis | Remove-line-item action in cart/minicart | 🔴 |
-| **Started Checkout** | Funnel entry and checkout abandonment flows | First transition from cart to checkout | 🔴 |
-| **Checkout Step Progression** | Diagnose checkout friction points | Movement between checkout steps (address, shipping, payment, review) | 🔴 |
-| **Placed Order** | Conversion tracking and post-purchase automation | Successful order placement confirmation | 🔴 |
-| **Refunded Order** | Revenue quality and customer lifecycle signals | Order status/payment reversal recognized by storefront/account event feed | 🔴 |
-| **Viewed Category / Listing** | Discovery behavior and merchandising effectiveness | Category/listing page view with category context | 🔴 |
-| **Submitted Search** | Demand and intent intelligence | On-site search submit with query + result count | 🔴 |
-| **Viewed Content Page** | Non-product engagement context | CMS/content page view (guides, service pages, etc.) | 🔴 |
-| **Clicked Promotion / Banner** | Campaign and merchandising interaction | Click on promo blocks, hero banners, teaser components | 🔴 |
-| **Signed Up for Newsletter** | Lead acquisition and welcome-flow trigger | Newsletter subscription success event | 🔴 |
-| **Identified Profile (Identify)** | Connect anonymous behavior to a known person | Login/registration/email capture updates profile identifiers | 🔴 |
-| **Logged In** | Lifecycle stage and re-engagement qualifier | Successful account login | 🔴 |
-| **Created Account** | New-customer lifecycle start | Successful account registration | 🔴 |
-| **Added to Wishlist** | High-intent product affinity signal | Wishlist add action | 🔴 |
-| **Removed from Wishlist** | Intent change / product preference shifts | Wishlist remove action | 🔴 |
-| **Viewed Cart** | Mid-funnel behavior context | Cart page or minicart expanded with line items present | 🔴 |
-| **Applied Coupon** | Promotion sensitivity and conversion quality | Coupon code accepted in cart/checkout | 🔴 |
-| **Failed Coupon Attempt** | Promotion friction and UX insight | Coupon code rejected/invalid | 🔴 |
+| 🔴 | **Active on Site** | Baseline site engagement and profile activity | Any meaningful page interaction/session heartbeat |
+| 🔴 | **Viewed Product** | Product interest and browse intent | PDP view with product identifiers and metadata |
+| 🔴 | **Added to Cart** | Purchase intent signal for abandoned-cart journeys | Add-to-cart action from PDP/listing/quick-buy |
+| 🔴 | **Removed from Cart** | Cart friction insight and drop-off analysis | Remove-line-item action in cart/minicart |
+| 🔴 | **Started Checkout** | Funnel entry and checkout abandonment flows | First transition from cart to checkout |
+| 🔴 | **Checkout Step Progression** | Diagnose checkout friction points | Movement between checkout steps (address, shipping, payment, review) |
+| 🔴 | **Placed Order** | Conversion tracking and post-purchase automation | Successful order placement confirmation |
+| 🔴 | **Refunded Order** | Revenue quality and customer lifecycle signals | Order status/payment reversal recognized by storefront/account event feed |
+| 🔴 | **Viewed Category / Listing** | Discovery behavior and merchandising effectiveness | Category/listing page view with category context |
+| 🔴 | **Submitted Search** | Demand and intent intelligence | On-site search submit with query + result count |
+| 🔴 | **Viewed Content Page** | Non-product engagement context | CMS/content page view (guides, service pages, etc.) |
+| 🔴 | **Clicked Promotion / Banner** | Campaign and merchandising interaction | Click on promo blocks, hero banners, teaser components |
+| 🔴 | **Signed Up for Newsletter** | Lead acquisition and welcome-flow trigger | Newsletter subscription success event |
+| 🔴 | **Identified Profile (Identify)** | Connect anonymous behavior to a known person | Login/registration/email capture updates profile identifiers |
+| 🔴 | **Logged In** | Lifecycle stage and re-engagement qualifier | Successful account login |
+| 🔴 | **Created Account** | New-customer lifecycle start | Successful account registration |
+| 🔴 | **Added to Wishlist** | High-intent product affinity signal | Wishlist add action |
+| 🔴 | **Removed from Wishlist** | Intent change / product preference shifts | Wishlist remove action |
+| 🔴 | **Viewed Cart** | Mid-funnel behavior context | Cart page or minicart expanded with line items present |
+| 🔴 | **Applied Coupon** | Promotion sensitivity and conversion quality | Coupon code accepted in cart/checkout |
+| 🔴 | **Failed Coupon Attempt** | Promotion friction and UX insight | Coupon code rejected/invalid |
 
 ## Current implementation state (repository)
 
