@@ -14,7 +14,8 @@
     {
       "key": "KlaviyoSiteEventTracking\\Containers\\KlaviyoTrackingContainer",
       "name": "Klaviyo Tracking Script Placeholder",
-      "description": "Injects the placeholder Klaviyo tracking entrypoint into a selected plentyShop container."
+      "description": "Injects the placeholder Klaviyo tracking entrypoint into a selected plentyShop container.",
+      "defaultLayoutContainer": "Ceres::Script.Loader"
     }
   ]
 }
