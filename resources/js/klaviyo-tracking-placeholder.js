@@ -7,6 +7,7 @@
   const logErrorsOnly = settings.logErrorsOnly === true;
   const logIdentifyCalls = settings.logIdentifyCalls === true;
   const logTrackCalls = settings.logTrackCalls === true;
+  const identifyDiagnosticsEnabled = logIdentifyCalls && !logErrorsOnly;
   const apiNamespaceName = "KlaviyoSiteEventTrackingApi";
   const retryDelayMs = 250;
   const maxRetryAttempts = 8;
@@ -28,6 +29,18 @@
 
   const klaviyoClientDiagnosticsState = window.__KlaviyoSiteEventTrackingDiagnosticsState || {
     profilesSucceeded: false,
+    eventsSucceeded: false,
+    lastProfilesStatus: 0,
+    lastEventsStatus: 0,
+    identifyAttempts: 0,
+    trackAttempts: 0,
+    lastIdentifyProfile: {},
+    lastIdentifyContext: {},
+    lastIdentifyTimestamp: "",
+    lastTrackMetric: "",
+    lastTrackProperties: {},
+    lastTrackContext: {},
+    lastTrackTimestamp: "",
   };
 
   window.__KlaviyoSiteEventTrackingDiagnosticsState = klaviyoClientDiagnosticsState;
@@ -56,6 +69,19 @@
     }
 
     console.error("[KlaviyoSiteEventTracking] " + message);
+  };
+
+  const identifyStatusLog = function (message, payload) {
+    if (!identifyDiagnosticsEnabled) {
+      return;
+    }
+
+    if (typeof payload !== "undefined") {
+      console.info("[KlaviyoSiteEventTracking] " + message, payload);
+      return;
+    }
+
+    console.info("[KlaviyoSiteEventTracking] " + message);
   };
 
   const sanitizeForLog = function (value, depth) {
@@ -142,7 +168,24 @@
 
     if (endpointPath === "/client/profiles" && status >= 200 && status < 300) {
       klaviyoClientDiagnosticsState.profilesSucceeded = true;
+      klaviyoClientDiagnosticsState.lastProfilesStatus = status;
+      identifyStatusLog("Klaviyo identity status update.", collectIdentityStatus("client-profiles-success"));
       return;
+    }
+
+    if (endpointPath === "/client/events" && status >= 200 && status < 300) {
+      klaviyoClientDiagnosticsState.eventsSucceeded = true;
+      klaviyoClientDiagnosticsState.lastEventsStatus = status;
+      identifyStatusLog("Klaviyo identity status update.", collectIdentityStatus("client-events-success"));
+      return;
+    }
+
+    if (endpointPath === "/client/profiles") {
+      klaviyoClientDiagnosticsState.lastProfilesStatus = status;
+    }
+
+    if (endpointPath === "/client/events") {
+      klaviyoClientDiagnosticsState.lastEventsStatus = status;
     }
 
     if (status < 400) {
@@ -165,6 +208,37 @@
 
   const isKlaviyoReady = function () {
     return !!window.klaviyo || !!window._learnq;
+  };
+
+  const collectIdentityStatus = function (trigger) {
+    return {
+      trigger: trigger,
+      pageUrl: window.location.href,
+      integrationMode: integrationMode,
+      hasPublicApiKey: !!publicApiKey,
+      hasKlaviyoObject: !!window.klaviyo,
+      hasLearnqQueue: !!window._learnq,
+      queueLength: pendingCalls.length,
+      identifyAttempts: klaviyoClientDiagnosticsState.identifyAttempts,
+      trackAttempts: klaviyoClientDiagnosticsState.trackAttempts,
+      profileRequestSucceeded: klaviyoClientDiagnosticsState.profilesSucceeded,
+      eventsRequestSucceeded: klaviyoClientDiagnosticsState.eventsSucceeded,
+      lastProfilesStatus: klaviyoClientDiagnosticsState.lastProfilesStatus,
+      lastEventsStatus: klaviyoClientDiagnosticsState.lastEventsStatus,
+      lastIdentify: {
+        at: klaviyoClientDiagnosticsState.lastIdentifyTimestamp,
+        profile: sanitizeForLog(klaviyoClientDiagnosticsState.lastIdentifyProfile, 0),
+        context: sanitizeForLog(klaviyoClientDiagnosticsState.lastIdentifyContext, 0),
+      },
+      lastTrack: {
+        at: klaviyoClientDiagnosticsState.lastTrackTimestamp,
+        metricName: klaviyoClientDiagnosticsState.lastTrackMetric,
+        properties: sanitizeForLog(klaviyoClientDiagnosticsState.lastTrackProperties, 0),
+        context: sanitizeForLog(klaviyoClientDiagnosticsState.lastTrackContext, 0),
+      },
+      note:
+        "Profile existence can only be inferred when /client/profiles succeeds after identify. This log reflects plugin/Klaviyo client activity, not a direct profile lookup.",
+    };
   };
 
   const invokeKlaviyo = function (call) {
@@ -246,28 +320,43 @@
 
   const identifyUser = function (profile, context) {
     const payload = profile && typeof profile === "object" ? profile : {};
+    const callContext = context || {};
+
+    klaviyoClientDiagnosticsState.identifyAttempts += 1;
+    klaviyoClientDiagnosticsState.lastIdentifyProfile = payload;
+    klaviyoClientDiagnosticsState.lastIdentifyContext = callContext;
+    klaviyoClientDiagnosticsState.lastIdentifyTimestamp = new Date().toISOString();
 
     if (debugEnabled && !logErrorsOnly && logIdentifyCalls) {
       debugLog("identifyUser called.", {
         profile: sanitizeForLog(payload, 0),
-        context: sanitizeForLog(context || {}, 0),
+        context: sanitizeForLog(callContext, 0),
       });
     }
+
+    identifyStatusLog("Klaviyo identity status update.", collectIdentityStatus("identify-call"));
 
     return queueOrInvoke({
       type: "identify",
       profile: payload,
-      context: context || {},
+      context: callContext,
     });
   };
 
   const trackEvent = function (metricName, properties, context) {
     const metric = typeof metricName === "string" ? metricName.trim() : "";
     const payload = properties && typeof properties === "object" ? properties : {};
+    const callContext = context || {};
+
+    klaviyoClientDiagnosticsState.trackAttempts += 1;
+    klaviyoClientDiagnosticsState.lastTrackMetric = metric;
+    klaviyoClientDiagnosticsState.lastTrackProperties = payload;
+    klaviyoClientDiagnosticsState.lastTrackContext = callContext;
+    klaviyoClientDiagnosticsState.lastTrackTimestamp = new Date().toISOString();
 
     if (!metric) {
       errorLog("trackEvent called without a valid metric name.", {
-        context: sanitizeForLog(context || {}, 0),
+        context: sanitizeForLog(callContext, 0),
       });
       return false;
     }
@@ -276,15 +365,17 @@
       debugLog("trackEvent called.", {
         metricName: metric,
         properties: sanitizeForLog(payload, 0),
-        context: sanitizeForLog(context || {}, 0),
+        context: sanitizeForLog(callContext, 0),
       });
     }
+
+    identifyStatusLog("Klaviyo identity status update.", collectIdentityStatus("track-call"));
 
     return queueOrInvoke({
       type: "track",
       metricName: metric,
       properties: payload,
-      context: context || {},
+      context: callContext,
     });
   };
 
@@ -918,6 +1009,7 @@
           attempts: attempts,
         });
         window.clearInterval(detector);
+        identifyStatusLog("Klaviyo identity status update.", collectIdentityStatus("gtm-klaviyo-detected"));
         return;
       }
 
@@ -925,9 +1017,15 @@
         debugLog(
           "No Klaviyo object detected during GTM-mode retry window."
         );
+        identifyStatusLog(
+          "Klaviyo identity status update.",
+          collectIdentityStatus("gtm-klaviyo-not-detected")
+        );
         window.clearInterval(detector);
       }
     }, intervalMs);
+
+    identifyStatusLog("Klaviyo identity status update.", collectIdentityStatus("page-bootstrap"));
 
     return;
   }
@@ -967,6 +1065,7 @@
       hasManagedScript: !!existingManagedScript,
       hasKlaviyoScript: !!existingKlaviyoScript,
     });
+    identifyStatusLog("Klaviyo identity status update.", collectIdentityStatus("script-already-present"));
     return;
   }
 
@@ -988,4 +1087,6 @@
   debugLog("Klaviyo onsite script bootstrap injected.", {
     source: scriptSource,
   });
+
+  identifyStatusLog("Klaviyo identity status update.", collectIdentityStatus("page-bootstrap"));
 })();
