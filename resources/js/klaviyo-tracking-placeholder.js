@@ -1,7 +1,21 @@
 (function () {
+  const hasSettingsObject = typeof window.KlaviyoSiteEventTracking === "object" && window.KlaviyoSiteEventTracking !== null;
   const settings = window.KlaviyoSiteEventTracking || {};
   const integrationMode = settings.integrationMode || "plugin";
   const publicApiKey = (settings.publicApiKey || "").trim();
+  const version = settings.version || "unknown";
+  const scriptTagPresent = !!document.querySelector('script[data-klaviyo-site-event-tracking-placeholder="true"]');
+
+  window.__KlaviyoSiteEventTrackingHealth = {
+    loadedAt: new Date().toISOString(),
+    version: version,
+    integrationMode: integrationMode,
+    hasSettingsObject: hasSettingsObject,
+    hasPublicApiKey: !!publicApiKey,
+    scriptTagPresent: scriptTagPresent,
+  };
+
+  console.info("[KlaviyoSiteEventTracking] bootstrap loaded", window.__KlaviyoSiteEventTrackingHealth);
 
   const debugEnabled = settings.enableDebugLogging === true;
   const logErrorsOnly = settings.logErrorsOnly === true;
