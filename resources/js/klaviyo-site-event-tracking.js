@@ -1094,6 +1094,7 @@
 
   const resolveBasketSnapshot = function (event) {
     const detail = event && event.detail && typeof event.detail === "object" ? event.detail : null;
+    let totalsOnlySnapshot = null;
     const candidates = [
       detail,
       detail && detail.basket,
@@ -1117,7 +1118,7 @@
       }
 
       if (i === 0 && hasBasketTotalsOnlyShape(candidate)) {
-        return {
+        totalsOnlySnapshot = {
           sourceLabel: 'afterBasketChanged.detail.totals_only',
           basket: candidate,
           items: [],
@@ -1126,7 +1127,7 @@
       }
     }
 
-    return null;
+    return totalsOnlySnapshot;
   };
 
   const resolveAddedToCartPayload = function (intent, basketResolution, options) {
