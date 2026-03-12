@@ -535,6 +535,51 @@
       return [];
     }
 
+    const extractCategoriesFromBreadcrumbDom = function () {
+      if (!window.document || typeof window.document.querySelectorAll !== "function") {
+        return [];
+      }
+
+      const breadcrumbSelectors = [
+        ".breadcrumb a",
+        ".breadcrumbs a",
+        "[data-testing='breadcrumb'] a",
+        "nav[aria-label*='breadcrumb' i] a",
+      ];
+      const ignoredLabels = {
+        home: true,
+        startseite: true,
+        "zur startseite gehen": true,
+      };
+      const categoryTrail = [];
+      const seenLabels = {};
+
+      for (let i = 0; i < breadcrumbSelectors.length; i += 1) {
+        const selector = breadcrumbSelectors[i];
+        const nodes = window.document.querySelectorAll(selector);
+
+        for (let j = 0; j < nodes.length; j += 1) {
+          const node = nodes[j];
+
+          if (!node || typeof node.textContent !== "string") {
+            continue;
+          }
+
+          const label = node.textContent.trim();
+          const normalizedLabel = label.toLowerCase();
+
+          if (!label || ignoredLabels[normalizedLabel] || seenLabels[normalizedLabel]) {
+            continue;
+          }
+
+          seenLabels[normalizedLabel] = true;
+          categoryTrail.push(label);
+        }
+      }
+
+      return categoryTrail;
+    };
+
     const categoryPaths = [
       ["defaultCategories"],
       ["categories"],
@@ -574,12 +619,50 @@
           });
 
         if (normalized.length > 0) {
+          if (normalized.length === 1 && /^category:/i.test(normalized[0])) {
+            const breadcrumbCategories = extractCategoriesFromBreadcrumbDom();
+
+            if (breadcrumbCategories.length > 0) {
+              return breadcrumbCategories;
+            }
+          }
+
           return normalized;
         }
       }
     }
 
+    const breadcrumbCategories = extractCategoriesFromBreadcrumbDom();
+
+    if (breadcrumbCategories.length > 0) {
+      return breadcrumbCategories;
+    }
+
     return [];
+  };
+
+  const extractCategoryHierarchy = function (candidate) {
+    const categories = extractCategories(candidate);
+
+    if (!Array.isArray(categories) || categories.length === 0) {
+      return {
+        categories: [],
+        topCategory: null,
+        categoryLevel1: null,
+        categoryLevel2: null,
+        categoryLevel3: null,
+        categoryLevel4: null,
+      };
+    }
+
+    return {
+      categories: categories,
+      topCategory: categories[0] || null,
+      categoryLevel1: categories[0] || null,
+      categoryLevel2: categories[1] || null,
+      categoryLevel3: categories[2] || null,
+      categoryLevel4: categories[3] || null,
+    };
   };
 
   const getNamespacedCurrentItemVariationCandidates = function () {
@@ -735,11 +818,19 @@
       return null;
     }
 
+    const categoryHierarchy = extractCategoryHierarchy(candidate);
+
     return {
       ProductName: productName,
       ProductID: productId,
       SKU: sku,
-      Categories: extractCategories(candidate),
+      Categories: categoryHierarchy.categories,
+      TopCategory: categoryHierarchy.topCategory,
+      CategoryLevel1: categoryHierarchy.categoryLevel1,
+      CategoryLevel2: categoryHierarchy.categoryLevel2,
+      CategoryLevel3: categoryHierarchy.categoryLevel3,
+      CategoryLevel4: categoryHierarchy.categoryLevel4,
+      CategoryPath: categoryHierarchy.categories.join(" > "),
       ImageURL: normalizedAbsoluteUrl(imageUrl, false),
       URL: normalizedAbsoluteUrl(window.location ? window.location.href : "", true),
       Brand: brand,
@@ -767,11 +858,19 @@
       return null;
     }
 
+    const categories = normalizedArray(root.getAttribute("data-kse-categories"));
+
     return {
       ProductName: productName,
       ProductID: productId,
       SKU: normalizedString(root.getAttribute("data-kse-sku")),
-      Categories: normalizedArray(root.getAttribute("data-kse-categories")),
+      Categories: categories,
+      TopCategory: categories[0] || null,
+      CategoryLevel1: categories[0] || null,
+      CategoryLevel2: categories[1] || null,
+      CategoryLevel3: categories[2] || null,
+      CategoryLevel4: categories[3] || null,
+      CategoryPath: categories.join(" > "),
       ImageURL: normalizedAbsoluteUrl(root.getAttribute("data-kse-image-url"), false),
       URL: normalizedAbsoluteUrl(root.getAttribute("data-kse-url") || window.location.href, true),
       Brand: normalizedString(root.getAttribute("data-kse-brand")),
