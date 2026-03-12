@@ -17,8 +17,8 @@ The table below is optimized for a quick implementation and product-status scan.
 | Status | Event / Metric | Why it matters | Trigger (Plenty storefront) |
 |---|---|---|---|
 | 🟢 | **Identified Profile (Identify)** | Connect anonymous behavior to a known person | Logged-in session or post-login resolution identifies profile by email |
+| 🟢 | **Active on Site** | Baseline site engagement and profile activity | Covered by the identify lifecycle because profile activity is established when identify resolves |
 | 🟢 | **Viewed Product** | Product interest and browse intent | PDP runtime-state detection plus variant/route changes dispatch product metadata |
-| 🔴 | **Active on Site** | Baseline site engagement and profile activity | Any meaningful page interaction/session heartbeat |
 | 🔴 | **Added to Cart** | Purchase intent signal for abandoned-cart journeys | Add-to-cart action from PDP/listing/quick-buy |
 | 🔴 | **Removed from Cart** | Cart friction insight and drop-off analysis | Remove-line-item action in cart/minicart |
 | 🔴 | **Started Checkout** | Funnel entry and checkout abandonment flows | First transition from cart to checkout |
