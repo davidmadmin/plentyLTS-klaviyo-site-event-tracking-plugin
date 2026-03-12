@@ -216,6 +216,17 @@ Once PDP detection passes, tracking dispatch proceeds when either:
 
 When getter candidates are present and `tracking.logTrackCalls = true`, the payload-resolution diagnostic includes `sourceLabel` to show exactly which runtime source won.
 
+For category payload quality on `Viewed Product`, category extraction now follows this order:
+
+1. Use runtime category labels (for example `name`, `details[0].name`, `path`, `url`, `label`, `value`) when available.
+2. If runtime categories only resolve to ID fallbacks (for example `category:534`) or no categories are present, use breadcrumb labels from the PDP DOM (`.breadcrumb a`, `.breadcrumbs a`, `[data-testing='breadcrumb'] a`, `nav[aria-label*='breadcrumb' i] a`) while filtering obvious home entries.
+3. If no breadcrumb labels can be resolved, retain ID fallback behavior.
+
+`Viewed Product` includes normalized category hierarchy fields:
+
+- `TopCategory`
+- `CategoryPath` (joined as `Level1 > Level2 > ...`)
+
 Variant transitions are handled through route/history hooks and delegated variant-control interactions (`change`/`click`); duplicate transitions are suppressed with a browser-session dedupe key.
 
 #### 2) Debug enabled, GTM mode
