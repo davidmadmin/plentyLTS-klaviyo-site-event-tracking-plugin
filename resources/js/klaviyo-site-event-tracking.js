@@ -535,6 +535,9 @@
       return [];
     }
 
+    const breadcrumbCategories = extractCategoriesFromBreadcrumbDom();
+    const fallbackCategoryIds = [];
+
     const categoryPaths = [
       ["defaultCategories"],
       ["categories"],
@@ -556,12 +559,15 @@
             }
 
             if (entry && typeof entry === "object") {
+              if (entry.id !== undefined && entry.id !== null && entry.id !== "") {
+                fallbackCategoryIds.push("category:" + entry.id);
+              }
+
               return normalizedString(
                 entry.name ||
                   entry.details && entry.details[0] && entry.details[0].name ||
                   entry.path ||
                   entry.url ||
-                  entry.id && "category:" + entry.id ||
                   entry.label ||
                   entry.value
               );
@@ -579,7 +585,77 @@
       }
     }
 
+    if (breadcrumbCategories.length > 0) {
+      return breadcrumbCategories;
+    }
+
+    if (fallbackCategoryIds.length > 0) {
+      return dedupedArray(fallbackCategoryIds);
+    }
+
     return [];
+  };
+
+  const extractCategoriesFromBreadcrumbDom = function () {
+    if (!window.document || !document.querySelectorAll) {
+      return [];
+    }
+
+    const selectors = [
+      ".breadcrumb a",
+      ".breadcrumbs a",
+      "[data-testing='breadcrumb'] a",
+      "nav[aria-label*='breadcrumb' i] a",
+    ];
+
+    const excludedLabels = {
+      home: true,
+      startseite: true,
+      "zur startseite gehen": true,
+    };
+    const entries = [];
+
+    for (let i = 0; i < selectors.length; i += 1) {
+      const nodes = document.querySelectorAll(selectors[i]);
+
+      for (let j = 0; j < nodes.length; j += 1) {
+        const text = normalizedString(nodes[j].textContent);
+
+        if (!text) {
+          continue;
+        }
+
+        const normalizedKey = text.toLowerCase();
+
+        if (excludedLabels[normalizedKey]) {
+          continue;
+        }
+
+        entries.push(text);
+      }
+    }
+
+    return dedupedArray(entries);
+  };
+
+  const getCategoryHierarchyFields = function (categories) {
+    if (!Array.isArray(categories) || categories.length === 0) {
+      return {
+        CategoryHierarchy: [],
+        TopCategory: "",
+        SubCategories: [],
+        LeafCategory: "",
+        CategoryPath: "",
+      };
+    }
+
+    return {
+      CategoryHierarchy: categories,
+      TopCategory: categories[0] || "",
+      SubCategories: categories.slice(1),
+      LeafCategory: categories[categories.length - 1] || "",
+      CategoryPath: categories.join(" > "),
+    };
   };
 
   const getNamespacedCurrentItemVariationCandidates = function () {
@@ -731,6 +807,9 @@
       normalizedNumber(getNestedValue(candidate, ["compareAtPrice"])),
     ]);
 
+    const categories = extractCategories(candidate);
+    const categoryHierarchyFields = getCategoryHierarchyFields(categories);
+
     if (!productId && !variationId && !productName) {
       return null;
     }
@@ -739,7 +818,12 @@
       ProductName: productName,
       ProductID: productId,
       SKU: sku,
-      Categories: extractCategories(candidate),
+      Categories: categories,
+      CategoryHierarchy: categoryHierarchyFields.CategoryHierarchy,
+      TopCategory: categoryHierarchyFields.TopCategory,
+      SubCategories: categoryHierarchyFields.SubCategories,
+      LeafCategory: categoryHierarchyFields.LeafCategory,
+      CategoryPath: categoryHierarchyFields.CategoryPath,
       ImageURL: normalizedAbsoluteUrl(imageUrl, false),
       URL: normalizedAbsoluteUrl(window.location ? window.location.href : "", true),
       Brand: brand,
@@ -763,6 +847,11 @@
     const parentProductId = normalizedString(root.getAttribute("data-kse-parent-product-id"));
     const productName = normalizedString(root.getAttribute("data-kse-product-name"));
 
+    const breadcrumbCategories = extractCategoriesFromBreadcrumbDom();
+    const normalizedCategories = normalizedArray(root.getAttribute("data-kse-categories"));
+    const categories = normalizedCategories.length > 0 ? normalizedCategories : breadcrumbCategories;
+    const categoryHierarchyFields = getCategoryHierarchyFields(categories);
+
     if (!productId && !variationId && !productName) {
       return null;
     }
@@ -771,7 +860,12 @@
       ProductName: productName,
       ProductID: productId,
       SKU: normalizedString(root.getAttribute("data-kse-sku")),
-      Categories: normalizedArray(root.getAttribute("data-kse-categories")),
+      Categories: categories,
+      CategoryHierarchy: categoryHierarchyFields.CategoryHierarchy,
+      TopCategory: categoryHierarchyFields.TopCategory,
+      SubCategories: categoryHierarchyFields.SubCategories,
+      LeafCategory: categoryHierarchyFields.LeafCategory,
+      CategoryPath: categoryHierarchyFields.CategoryPath,
       ImageURL: normalizedAbsoluteUrl(root.getAttribute("data-kse-image-url"), false),
       URL: normalizedAbsoluteUrl(root.getAttribute("data-kse-url") || window.location.href, true),
       Brand: normalizedString(root.getAttribute("data-kse-brand")),

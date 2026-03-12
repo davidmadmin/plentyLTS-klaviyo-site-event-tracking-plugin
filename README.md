@@ -214,6 +214,21 @@ Once PDP detection passes, tracking dispatch proceeds when either:
 - getter-first runtime payload resolution finds valid product data (`ProductID`, `ProductName`, `URL`) from `window.ceresStore.getters.currentItemVariation` first, then namespaced getter keys ending in `/currentItemVariation`, then existing fallback runtime objects, or
 - optional DOM fallback attributes (`data-kse-product-id`, `data-kse-variation-id`, `data-kse-product-name`, etc.) are present.
 
+Category payload resolution for `Viewed Product` now follows this order:
+
+1. category-like runtime values with readable names (`name`, `details[0].name`, `path`, `url`, `label`, `value`)
+2. breadcrumb DOM trail (top-level to deepest sub-category, with home/start-page labels filtered out)
+3. legacy category ID fallback values (`category:<id>`) when no readable labels are available.
+
+When breadcrumb categories are available, the payload includes hierarchy context fields:
+
+- `Categories` (ordered breadcrumb levels)
+- `CategoryHierarchy` (same ordered levels)
+- `TopCategory` (first level)
+- `SubCategories` (all levels after top)
+- `LeafCategory` (deepest level)
+- `CategoryPath` (`Top > ... > Leaf`)
+
 When getter candidates are present and `tracking.logTrackCalls = true`, the payload-resolution diagnostic includes `sourceLabel` to show exactly which runtime source won.
 
 Variant transitions are handled through route/history hooks and delegated variant-control interactions (`change`/`click`); duplicate transitions are suppressed with a browser-session dedupe key.
