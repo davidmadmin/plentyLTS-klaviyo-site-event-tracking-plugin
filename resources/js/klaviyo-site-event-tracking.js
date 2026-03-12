@@ -1091,18 +1091,18 @@
       });
 
     if (basketLines.length === 0) {
-      return null;
+      return {
+        payload: null,
+        reason: 'basket_lines_missing',
+      };
     }
 
     const nowTs = Date.now();
     const maxIntentAgeMs = 15000;
     const effectiveIntent = intent && nowTs - intent.timestamp <= maxIntentAgeMs ? intent : null;
 
-    if (!effectiveIntent) {
-      return null;
-    }
-
     let addedLine = null;
+    let matchedByIntent = false;
 
     if (effectiveIntent) {
       for (let i = 0; i < basketLines.length; i += 1) {
@@ -1112,17 +1112,24 @@
           (effectiveIntent.productId && line.ProductID === effectiveIntent.productId)
         ) {
           addedLine = line;
+          matchedByIntent = true;
           break;
         }
       }
     }
 
     if (!addedLine) {
-      addedLine = basketLines[basketLines.length - 1];
+      return {
+        payload: null,
+        reason: 'intent_snapshot_uncorrelated',
+      };
     }
 
-    if (!addedLine) {
-      return null;
+    if (effectiveIntent && !matchedByIntent) {
+      return {
+        payload: null,
+        reason: 'intent_snapshot_uncorrelated',
+      };
     }
 
     const checkoutUrl = normalizedAbsoluteUrl('/checkout', true);
@@ -1156,6 +1163,30 @@
   };
 
   let lastAddedToCartIntent = null;
+  let pendingAddedToCartSnapshot = null;
+  const maxPendingAddedToCartSnapshotAgeMs = 2000;
+
+  const storePendingAddedToCartSnapshot = function (basketResolution) {
+    pendingAddedToCartSnapshot = {
+      basketResolution: basketResolution,
+      timestamp: Date.now(),
+    };
+  };
+
+  const consumeRecentPendingAddedToCartSnapshot = function () {
+    if (!pendingAddedToCartSnapshot) {
+      return null;
+    }
+
+    if (Date.now() - pendingAddedToCartSnapshot.timestamp > maxPendingAddedToCartSnapshotAgeMs) {
+      pendingAddedToCartSnapshot = null;
+      return null;
+    }
+
+    const snapshot = pendingAddedToCartSnapshot.basketResolution;
+    pendingAddedToCartSnapshot = null;
+    return snapshot;
+  };
 
   const captureAddedToCartIntent = function (event) {
     const detail = event && event.detail && typeof event.detail === 'object' ? event.detail : {};
@@ -1187,7 +1218,7 @@
     });
   };
 
-  const trackAddedToCart = function (event, trigger) {
+  const trackAddedToCart = function (event, trigger, basketResolutionOverride, pathLabel) {
     if (!enableAddedToCartEvent) {
       trackLog('Added to Cart skipped (disabled by configuration).', {
         trigger: trigger,
@@ -1195,7 +1226,7 @@
       return;
     }
 
-    const basketResolution = resolveBasketSnapshot(event);
+    const basketResolution = basketResolutionOverride || resolveBasketSnapshot(event);
 
     if (!basketResolution) {
       trackLog('Added to Cart skipped (required payload fields missing).', {
@@ -1215,11 +1246,31 @@
     const payload = payloadResolution && payloadResolution.payload;
 
     if (!payload || !payload.AddedItemProductName || !payload.AddedItemProductID || payload.AddedItemPrice === null || !payload.AddedItemQuantity) {
+      if (payloadResolution && payloadResolution.reason === 'intent_snapshot_uncorrelated') {
+        trackLog('Added to Cart skipped (intent and snapshot could not be correlated).', {
+          trigger: trigger,
+          sourceLabel: basketResolution.sourceLabel,
+        });
+      }
+
       trackLog('Added to Cart skipped (required payload fields missing).', {
         trigger: trigger,
         hasPayload: !!payload,
+        reason: payloadResolution && payloadResolution.reason ? payloadResolution.reason : 'payload_missing',
       });
       return;
+    }
+
+    if (pathLabel === 'normal') {
+      trackLog('Added to Cart using normal event order.', {
+        trigger: trigger,
+      });
+    }
+
+    if (pathLabel === 'fallback') {
+      trackLog('Added to Cart using inverted event-order fallback.', {
+        trigger: trigger,
+      });
     }
 
     trackLog('Added to Cart payload resolved.', {
@@ -1481,10 +1532,22 @@
 
     document.addEventListener("afterBasketItemAdded", function (event) {
       captureAddedToCartIntent(event);
+
+      const pendingSnapshot = consumeRecentPendingAddedToCartSnapshot();
+
+      if (pendingSnapshot) {
+        trackAddedToCart(event, "afterBasketItemAdded", pendingSnapshot, 'fallback');
+      }
     });
 
     document.addEventListener("afterBasketChanged", function (event) {
-      trackAddedToCart(event, "afterBasketChanged");
+      const basketResolution = resolveBasketSnapshot(event);
+
+      if (basketResolution && !lastAddedToCartIntent) {
+        storePendingAddedToCartSnapshot(basketResolution);
+      }
+
+      trackAddedToCart(event, "afterBasketChanged", basketResolution, 'normal');
     });
 
     addLifecycleEventListener(document, "account:view-changed", "account_route");
