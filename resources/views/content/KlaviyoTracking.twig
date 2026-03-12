@@ -23,7 +23,7 @@
 {% set logErrorsOnlyNormalized = (logErrorsOnlyRaw ~ "")|trim|lower %}
 {% set logErrorsOnly = (logErrorsOnlyRaw is same as(true)) or (logErrorsOnlyRaw is same as(1)) or (logErrorsOnlyNormalized in checkboxEnabledValues) ? true : ((logErrorsOnlyRaw is same as(false)) or (logErrorsOnlyRaw is same as(0)) or (logErrorsOnlyNormalized in checkboxDisabledValues) ? false : false) %}
 
-{% set enableViewedProductEventRaw = config("KlaviyoSiteEventTracking.tracking.enableViewedProductEvent")|default("") %}
+{% set enableViewedProductEventRaw = config("KlaviyoSiteEventTracking.tracking.enableViewedProductEvent")|default(null) %}
 {% set enableViewedProductEventNormalized = (enableViewedProductEventRaw ~ "")|trim|lower %}
 {% set enableViewedProductEvent = (enableViewedProductEventRaw is same as(true)) or (enableViewedProductEventRaw is same as(1)) or (enableViewedProductEventNormalized in checkboxEnabledValues) ? true : ((enableViewedProductEventRaw is same as(false)) or (enableViewedProductEventRaw is same as(0)) or (enableViewedProductEventNormalized in checkboxDisabledValues) ? false : true) %}
 
