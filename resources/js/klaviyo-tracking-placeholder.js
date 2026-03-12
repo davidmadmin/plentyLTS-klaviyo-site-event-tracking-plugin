@@ -781,28 +781,115 @@
 
   const resolveViewedProductPayload = function () {
     const sources = getProductCandidateSources();
+    const mergedPayload = {
+      ProductName: "",
+      ProductID: "",
+      SKU: "",
+      Categories: [],
+      ImageURL: "",
+      URL: "",
+      Brand: "",
+      Price: null,
+      CompareAtPrice: null,
+      ParentProductID: "",
+      VariationID: "",
+      IsVariant: false,
+    };
+    const contributingSourceLabels = [];
+
+    const mergeOptionalProductFields = function (targetPayload, sourcePayload) {
+      const scalarFieldNames = ["Price", "CompareAtPrice", "ImageURL", "Brand", "SKU"];
+      let didContribute = false;
+
+      if (!Array.isArray(targetPayload.Categories) || targetPayload.Categories.length === 0) {
+        if (Array.isArray(sourcePayload.Categories) && sourcePayload.Categories.length > 0) {
+          targetPayload.Categories = sourcePayload.Categories.slice();
+          didContribute = true;
+        }
+      }
+
+      for (let i = 0; i < scalarFieldNames.length; i += 1) {
+        const fieldName = scalarFieldNames[i];
+        const sourceValue = sourcePayload[fieldName];
+        const targetValue = targetPayload[fieldName];
+
+        if (fieldName === "Price" || fieldName === "CompareAtPrice") {
+          if (targetValue === null && sourceValue !== null) {
+            targetPayload[fieldName] = sourceValue;
+            didContribute = true;
+          }
+
+          continue;
+        }
+
+        if (!normalizedString(targetValue) && normalizedString(sourceValue)) {
+          targetPayload[fieldName] = sourceValue;
+          didContribute = true;
+        }
+      }
+
+      return didContribute;
+    };
+
+    const mergeRequiredAndIdentityFields = function (targetPayload, sourcePayload) {
+      let didContribute = false;
+      const requiredAndIdentityFieldNames = [
+        "ProductName",
+        "ProductID",
+        "URL",
+        "ParentProductID",
+        "VariationID",
+      ];
+
+      for (let i = 0; i < requiredAndIdentityFieldNames.length; i += 1) {
+        const fieldName = requiredAndIdentityFieldNames[i];
+
+        if (!normalizedString(targetPayload[fieldName]) && normalizedString(sourcePayload[fieldName])) {
+          targetPayload[fieldName] = sourcePayload[fieldName];
+          didContribute = true;
+        }
+      }
+
+      if (!targetPayload.IsVariant && sourcePayload.IsVariant) {
+        targetPayload.IsVariant = true;
+        didContribute = true;
+      }
+
+      return didContribute;
+    };
+
+    const mergeSourcePayload = function (sourceLabel, sourcePayload) {
+      if (!sourcePayload) {
+        return;
+      }
+
+      const didContributeRequiredOrIdentity = mergeRequiredAndIdentityFields(mergedPayload, sourcePayload);
+      const didContributeOptional = mergeOptionalProductFields(mergedPayload, sourcePayload);
+
+      if ((didContributeRequiredOrIdentity || didContributeOptional) && sourceLabel) {
+        contributingSourceLabels.push(sourceLabel);
+      }
+    };
 
     for (let i = 0; i < sources.length; i += 1) {
       const source = sources[i];
       const sourcePayload = extractViewedProductCandidate(source.candidate);
-
-      if (sourcePayload && sourcePayload.ProductID && sourcePayload.ProductName) {
-        return {
-          payload: sourcePayload,
-          sourceLabel: source.sourceLabel,
-        };
-      }
+      mergeSourcePayload(source.sourceLabel, sourcePayload);
     }
 
     const domPayload = getViewedProductFromDom();
-    if (domPayload && domPayload.ProductID && domPayload.ProductName) {
-      return {
-        payload: domPayload,
-        sourceLabel: "dom_data_attributes",
-      };
+
+    mergeSourcePayload("dom_data_attributes", domPayload);
+
+    if (!mergedPayload.ProductID || !mergedPayload.ProductName || !mergedPayload.URL) {
+      return null;
     }
 
-    return null;
+    return {
+      payload: mergedPayload,
+      sourceLabel: contributingSourceLabels[0] || "unknown",
+      sourceLabels: contributingSourceLabels,
+    };
   };
 
   const buildViewedProductDedupKey = function (payload) {
@@ -904,6 +991,10 @@
     trackLog("Viewed Product payload resolved.", {
       trigger: trigger,
       sourceLabel: payloadResolution && payloadResolution.sourceLabel ? payloadResolution.sourceLabel : "unknown",
+      sourceLabels:
+        payloadResolution && Array.isArray(payloadResolution.sourceLabels)
+          ? payloadResolution.sourceLabels
+          : [],
       productId: payload.ProductID,
       productName: payload.ProductName,
     });
