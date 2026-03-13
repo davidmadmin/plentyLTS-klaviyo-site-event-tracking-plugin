@@ -234,7 +234,7 @@ If `tracking.logTrackCalls = true` and `tracking.logErrorsOnly = false`, expecte
 ```
 
 ```text
-[KlaviyoSiteEventTracking] Added to Cart payload resolved. { trigger: "afterBasketChanged|intent_followup", sourceLabel: "afterBasketChanged.detail"|"afterBasketChanged.detail.totals_only->runtime_basket.window.ceresStore.state.basket"|"afterBasketChanged.detail.totals_only->runtime_basket.window.ceresStore.getters.basket"|"afterBasketChanged.detail.totals_only->runtime_basket.window.App.basket"|"afterBasketChanged.detail.totals_only->runtime_basket.window.CeresApp.basket"|"afterBasketChanged.detail.totals_only->runtime_basket.window.ceresApp.basket", correlationMode: "intent_matched", addedItemProductId: "...", addedItemProductName: "...", addedItemQuantity: 1 }
+[KlaviyoSiteEventTracking] Added to Cart payload resolved. { trigger: "afterBasketChanged|intent_followup", sourceLabel: "afterBasketChanged.detail"|"afterBasketChanged.detail.totals_only->runtime_basket.window.ceresStore.state.basket"|"afterBasketChanged.detail.totals_only->runtime_basket.window.ceresStore.getters.basket"|"afterBasketChanged.detail.totals_only->runtime_basket.window.App.basket"|"afterBasketChanged.detail.totals_only->runtime_basket.window.CeresApp.basket"|"afterBasketChanged.detail.totals_only->runtime_basket.window.ceresApp.basket", basketValueSource: "basket_snapshot.afterBasketChanged.detail"|"runtime_basket.window.ceresStore.state.basket"|"runtime_basket.window.ceresStore.getters.basket"|"runtime_basket.window.App.basket"|"runtime_basket.window.CeresApp.basket"|"runtime_basket.window.ceresApp.basket"|"basket_lines_sum_fallback", basketValue: 123.45, correlationMode: "intent_matched", addedItemProductId: "...", addedItemProductName: "...", addedItemQuantity: 1 }
 ```
 
 ```text
@@ -272,7 +272,9 @@ If `tracking.logTrackCalls = true` and `tracking.logErrorsOnly = false`, expecte
 Added to Cart dispatch uses metric name `"Added to Cart"` and keeps filterable top-level properties (`$value`, `AddedItem*`, `ItemNames`, `CheckoutURL`, `Items`) as top-level keys for Klaviyo segment usability.
 
 
-When `afterBasketChanged.detail` only includes basket totals (for example `basketAmount`, `itemQuantity`, `currency`) and no line array, Added to Cart now resolves the matching line from runtime basket sources using the captured `variationId`; payload logs expose this via `sourceLabel` values such as `afterBasketChanged.detail.totals_only->runtime_basket.window.ceresStore.state.basket`.
+When `afterBasketChanged.detail` only includes basket totals (for example `basketAmount`, `itemQuantity`, `currency`) and no line array, Added to Cart now resolves the matching line and basket total from runtime basket sources using the captured `variationId`; payload logs expose this via `sourceLabel` and `basketValueSource` values such as `afterBasketChanged.detail.totals_only->runtime_basket.window.ceresStore.state.basket` and `runtime_basket.window.ceresStore.state.basket`.
+
+If the resolved basket total is `0` while priced `Items` are present, Added to Cart applies a final line-sum fallback (`basketValueSource: "basket_lines_sum_fallback"`) to derive a numeric `$value` from item row totals.
 
 Viewed Product tracking now first checks Plenty runtime item-view flags (`window.App.isItemView === true` or `window.App.templateType === "item"`, case-insensitive) and only then falls back to PDP URL heuristics.
 

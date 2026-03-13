@@ -934,6 +934,90 @@
     ]);
   };
 
+  const sumBasketLineTotals = function (basketLines) {
+    if (!Array.isArray(basketLines) || !basketLines.length) {
+      return null;
+    }
+
+    let total = 0;
+    let hasPricedLine = false;
+
+    for (let i = 0; i < basketLines.length; i += 1) {
+      const line = basketLines[i];
+      const lineTotal = firstDefinedNumber([
+        normalizedNumber(line && line.RowTotal),
+        normalizedNumber(line && line.ItemPrice) !== null
+          ? Number((normalizedNumber(line && line.ItemPrice) * normalizedInteger(line && line.Quantity, 1)).toFixed(4))
+          : null,
+      ]);
+
+      if (lineTotal === null) {
+        continue;
+      }
+
+      hasPricedLine = true;
+      total += lineTotal;
+    }
+
+    if (!hasPricedLine) {
+      return null;
+    }
+
+    return Number(total.toFixed(4));
+  };
+
+  const resolveAddedToCartBasketValue = function (basket, basketLines, basketResolution, resolvedSourceLabel) {
+    const initialValue = extractBasketTotal(basket);
+    let resolvedValue = initialValue;
+    let valueSource = 'basket_snapshot.' + (resolvedSourceLabel || 'unknown');
+    const isAfterBasketChangedDetail =
+      basketResolution &&
+      basketResolution.sourceLabel &&
+      basketResolution.sourceLabel.indexOf('afterBasketChanged.detail') === 0;
+    const shouldPreferRuntimeTotal = !!(basketResolution && basketResolution.totalsOnly) || initialValue === null;
+
+    const runtimeCandidates = getRuntimeBasketCandidates();
+    let runtimeTotalValue = null;
+    let runtimeTotalSource = null;
+
+    for (let i = 0; i < runtimeCandidates.length; i += 1) {
+      const runtimeCandidate = runtimeCandidates[i];
+      const runtimeTotal = extractBasketTotal(runtimeCandidate.basket);
+
+      if (runtimeTotal === null) {
+        continue;
+      }
+
+      runtimeTotalValue = runtimeTotal;
+      runtimeTotalSource = runtimeCandidate.sourceLabel;
+      break;
+    }
+
+    const isStaleAfterBasketChangedDetail =
+      isAfterBasketChangedDetail && runtimeTotalValue !== null && initialValue !== null && runtimeTotalValue !== initialValue;
+
+    if ((shouldPreferRuntimeTotal || isStaleAfterBasketChangedDetail) && runtimeTotalValue !== null) {
+      resolvedValue = runtimeTotalValue;
+      valueSource = runtimeTotalSource;
+    }
+
+    const lineTotalFallback = sumBasketLineTotals(basketLines);
+    if (resolvedValue === 0 && lineTotalFallback !== null && lineTotalFallback > 0) {
+      resolvedValue = lineTotalFallback;
+      valueSource = 'basket_lines_sum_fallback';
+    }
+
+    if (resolvedValue === null) {
+      resolvedValue = 0;
+      valueSource = valueSource + '->default_zero';
+    }
+
+    return {
+      value: resolvedValue,
+      source: valueSource,
+    };
+  };
+
   const extractBasketLine = function (item) {
     if (!item || typeof item !== "object") {
       return null;
@@ -1198,11 +1282,11 @@
     }
 
     const checkoutUrl = normalizedAbsoluteUrl('/checkout', true);
-    const basketValue = extractBasketTotal(basket);
+    const basketValueResolution = resolveAddedToCartBasketValue(basket, basketLines, basketResolution, resolvedSourceLabel);
 
     return {
       payload: {
-        $value: basketValue,
+        $value: basketValueResolution.value,
         AddedItemProductName: addedLine.ItemName,
         AddedItemProductID: addedLine.ProductID,
         AddedItemSKU: addedLine.SKU,
@@ -1217,6 +1301,8 @@
       },
       addedLine: addedLine,
       sourceLabel: resolvedSourceLabel,
+      basketValueSource: basketValueResolution.source,
+      basketValue: basketValueResolution.value,
       correlationMode: effectiveIntent ? 'intent_matched' : 'basket_fallback_no_intent',
     };
   };
@@ -1281,6 +1367,8 @@
     trackLog('Added to Cart payload resolved.', {
       trigger: trigger,
       sourceLabel: payloadResolution.sourceLabel,
+      basketValueSource: payloadResolution.basketValueSource,
+      basketValue: payloadResolution.basketValue,
       correlationMode: payloadResolution.correlationMode,
       addedItemProductId: payload.AddedItemProductID,
       addedItemProductName: payload.AddedItemProductName,
