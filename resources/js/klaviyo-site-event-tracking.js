@@ -936,18 +936,18 @@
 
   const extractBasketTotal = function (basket) {
     return firstDefinedNumber([
-      normalizedNumber(getNestedValue(basket, ["totals", "basketTotalGross"])),
-      normalizedNumber(getNestedValue(basket, ["totals", "total"])),
-      normalizedNumber(getNestedValue(basket, ["basketAmount"])),
-      normalizedNumber(getNestedValue(basket, ["basketAmountNet"])),
       normalizedNumber(getNestedValue(basket, ["data", "basketAmount"])),
       normalizedNumber(getNestedValue(basket, ["data", "basketAmountNet"])),
       normalizedNumber(getNestedValue(basket, ["data", "totals", "basketTotalGross"])),
       normalizedNumber(getNestedValue(basket, ["data", "totals", "total"])),
       normalizedNumber(getNestedValue(basket, ["data", "totals", "amount"])),
+      extractNumberFromPriceCandidate(getNestedValue(basket, ["data", "totals", "basketTotal"])),
+      normalizedNumber(getNestedValue(basket, ["totals", "basketTotalGross"])),
+      normalizedNumber(getNestedValue(basket, ["totals", "total"])),
+      normalizedNumber(getNestedValue(basket, ["basketAmount"])),
+      normalizedNumber(getNestedValue(basket, ["basketAmountNet"])),
       normalizedNumber(getNestedValue(basket, ["totalSum"])),
       normalizedNumber(getNestedValue(basket, ["totals", "amount"])),
-      extractNumberFromPriceCandidate(getNestedValue(basket, ["data", "totals", "basketTotal"])),
       extractNumberFromPriceCandidate(getNestedValue(basket, ["totals", "basketTotal"])),
     ]);
   };
@@ -962,7 +962,14 @@
 
     for (let i = 0; i < basketLines.length; i += 1) {
       const line = basketLines[i];
-      const rowTotal = normalizedNumber(line && line.RowTotal);
+      const rowTotal = firstDefinedNumber([
+        normalizedNumber(getNestedValue(line, ["RowTotal"])),
+        normalizedNumber(getNestedValue(line, ["rowTotal"])),
+        normalizedNumber(getNestedValue(line, ["total"])),
+        normalizedNumber(getNestedValue(line, ["totalGross"])),
+        extractNumberFromPriceCandidate(getNestedValue(line, ["basketItemOrderParams", "rowTotal"])),
+        extractNumberFromPriceCandidate(getNestedValue(line, ["basketItemOrderParams", "total"])),
+      ]);
 
       if (rowTotal === null) {
         continue;
@@ -1006,6 +1013,14 @@
       extractNumberFromPriceCandidate(getNestedValue(item, ["variation", "prices", "default", "price", "value"])),
       normalizedNumber(getNestedValue(item, ["priceGross"])),
     ]);
+    const explicitRowTotal = firstDefinedNumber([
+      normalizedNumber(getNestedValue(item, ["RowTotal"])),
+      normalizedNumber(getNestedValue(item, ["rowTotal"])),
+      normalizedNumber(getNestedValue(item, ["total"])),
+      normalizedNumber(getNestedValue(item, ["totalGross"])),
+      extractNumberFromPriceCandidate(getNestedValue(item, ["basketItemOrderParams", "rowTotal"])),
+      extractNumberFromPriceCandidate(getNestedValue(item, ["basketItemOrderParams", "total"])),
+    ]);
 
     const categories = extractCategories(item);
 
@@ -1027,7 +1042,7 @@
         normalizedString(getNestedValue(item, ["sku"])),
       Quantity: quantity,
       ItemPrice: price,
-      RowTotal: price !== null ? Number((price * quantity).toFixed(4)) : null,
+      RowTotal: explicitRowTotal !== null ? explicitRowTotal : (price !== null ? Number((price * quantity).toFixed(4)) : null),
       ImageURL: normalizedAbsoluteUrl(
         normalizedString(getNestedValue(item, ["image"])) ||
           normalizedString(getNestedValue(item, ["imageUrl"])) ||
