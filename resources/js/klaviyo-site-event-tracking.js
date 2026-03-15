@@ -1455,7 +1455,14 @@
       }
     }
 
-    return normalizedString(window.location && window.location.pathname) || 'checkout';
+    const existingAnonymousSessionIdentifier = normalizedString(window.__KlaviyoSiteEventTrackingAnonymousCheckoutSessionId);
+    if (existingAnonymousSessionIdentifier) {
+      return existingAnonymousSessionIdentifier;
+    }
+
+    const anonymousSessionIdentifier = ['anon_checkout', String(Date.now()), String(Math.floor(Math.random() * 1000000000))].join('_');
+    window.__KlaviyoSiteEventTrackingAnonymousCheckoutSessionId = anonymousSessionIdentifier;
+    return anonymousSessionIdentifier;
   };
 
   const resolveStartedCheckoutPayload = function () {
@@ -1526,6 +1533,8 @@
     });
 
     if (!pageDetection.isMatch) {
+      window.__KlaviyoSiteEventTrackingAnonymousCheckoutSessionId = null;
+      window.__KlaviyoSiteEventTrackingLastStartedCheckoutKey = null;
       return;
     }
 
