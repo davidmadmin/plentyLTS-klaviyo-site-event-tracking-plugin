@@ -1275,6 +1275,18 @@
         }
       }
 
+      if (!intent) {
+        addedLine = basketLines[basketLines.length - 1] || null;
+
+        return {
+          sourceLabel: runtimeCandidate.sourceLabel,
+          basket: runtimeCandidate.basket,
+          items: items,
+          basketLines: basketLines,
+          addedLine: addedLine,
+        };
+      }
+
       if (!addedLine) {
         continue;
       }
