@@ -34,10 +34,12 @@
   const logAddedToCartEventDebug = isEnabled(settings.logAddedToCartEventDebug, false);
   const logViewedHomepageEventDebug = isEnabled(settings.logViewedHomepageEventDebug, false);
   const logViewedCategoryEventDebug = isEnabled(settings.logViewedCategoryEventDebug, false);
+  const logStartedCheckoutEventDebug = isEnabled(settings.logStartedCheckoutEventDebug, false);
   const enableViewedProductEvent = isEnabled(settings.enableViewedProductEvent, true);
   const enableAddedToCartEvent = isEnabled(settings.enableAddedToCartEvent, true);
   const enableViewedHomepageEvent = isEnabled(settings.enableViewedHomepageEvent, true);
   const enableViewedCategoryEvent = isEnabled(settings.enableViewedCategoryEvent, true);
+  const enableStartedCheckoutEvent = isEnabled(settings.enableStartedCheckoutEvent, true);
   const identifyPollAttempts = 8;
   const identifyPollIntervalMs = 1500;
 
@@ -130,6 +132,19 @@
 
   const viewedCategoryLog = function (message, payload) {
     if (!logViewedCategoryEventDebug) {
+      return;
+    }
+
+    if (typeof payload !== "undefined") {
+      console.info("[KlaviyoSiteEventTracking] " + message, payload);
+      return;
+    }
+
+    console.info("[KlaviyoSiteEventTracking] " + message);
+  };
+
+  const startedCheckoutLog = function (message, payload) {
+    if (!logStartedCheckoutEventDebug) {
       return;
     }
 
@@ -501,6 +516,34 @@
     }
 
     return null;
+  };
+
+  const uniqueStringArray = function (entries) {
+    if (!Array.isArray(entries)) {
+      return [];
+    }
+
+    const seen = {};
+    const uniqueEntries = [];
+
+    for (let i = 0; i < entries.length; i += 1) {
+      const value = normalizedString(entries[i]);
+
+      if (!value) {
+        continue;
+      }
+
+      const normalizedKey = value.toLowerCase();
+
+      if (seen[normalizedKey]) {
+        continue;
+      }
+
+      seen[normalizedKey] = true;
+      uniqueEntries.push(value);
+    }
+
+    return uniqueEntries;
   };
 
   const extractNumberFromPriceCandidate = function (candidate) {
@@ -1286,8 +1329,8 @@
     return totalsOnlySnapshot;
   };
 
-  const resolveAddedToCartPayload = function (intent, basketResolution, options) {
-    const allowWithoutIntent = !!(options && options.allowWithoutIntent);
+  const resolveBasketLinesSnapshot = function (basketResolution, intent, options) {
+    const allowRuntimeLookup = !(options && options.allowRuntimeLookup === false);
     let basket = basketResolution && basketResolution.basket;
     const items = basketResolution && basketResolution.items ? basketResolution.items : [];
     let basketLines = items
@@ -1297,6 +1340,36 @@
       .filter(function (line) {
         return !!line && !!line.ProductID;
       });
+    let resolvedSourceLabel = basketResolution && basketResolution.sourceLabel ? basketResolution.sourceLabel : 'unknown';
+    let addedLine = null;
+
+    if (basketLines.length === 0 && allowRuntimeLookup) {
+      const runtimeResolution = resolveRuntimeBasketLines(intent || null);
+
+      if (runtimeResolution) {
+        basket = runtimeResolution.basket || basket;
+        basketLines = runtimeResolution.basketLines;
+        addedLine = runtimeResolution.addedLine;
+        resolvedSourceLabel = basketResolution && basketResolution.sourceLabel
+          ? basketResolution.sourceLabel + '->' + runtimeResolution.sourceLabel
+          : runtimeResolution.sourceLabel;
+      }
+    }
+
+    return {
+      basket: basket,
+      basketLines: basketLines,
+      addedLine: addedLine,
+      sourceLabel: resolvedSourceLabel,
+      totalsOnly: !!(basketResolution && basketResolution.totalsOnly),
+    };
+  };
+
+  const resolveAddedToCartPayload = function (intent, basketResolution, options) {
+    const allowWithoutIntent = !!(options && options.allowWithoutIntent);
+    const basketLinesResolution = resolveBasketLinesSnapshot(basketResolution, intent, options);
+    let basket = basketLinesResolution.basket;
+    let basketLines = basketLinesResolution.basketLines;
 
     const effectiveIntent = intent || null;
 
@@ -1304,21 +1377,8 @@
       return null;
     }
 
-    let addedLine = null;
-    let resolvedSourceLabel = basketResolution && basketResolution.sourceLabel ? basketResolution.sourceLabel : 'unknown';
-
-    if (basketLines.length === 0 && basketResolution && basketResolution.totalsOnly) {
-      const runtimeResolution = resolveRuntimeBasketLines(effectiveIntent);
-
-      if (!runtimeResolution) {
-        return null;
-      }
-
-      basket = runtimeResolution.basket || basket;
-      basketLines = runtimeResolution.basketLines;
-      addedLine = runtimeResolution.addedLine;
-      resolvedSourceLabel = (basketResolution.sourceLabel || 'afterBasketChanged.detail.totals_only') + '->' + runtimeResolution.sourceLabel;
-    }
+    let addedLine = basketLinesResolution.addedLine;
+    let resolvedSourceLabel = basketLinesResolution.sourceLabel;
 
     if (basketLines.length === 0) {
       return null;
@@ -1377,6 +1437,138 @@
       sourceLabel: resolvedSourceLabel,
       correlationMode: effectiveIntent ? 'intent_matched' : 'basket_fallback_no_intent',
     };
+  };
+
+  const getCheckoutSessionIdentifier = function () {
+    const runtimeCandidates = [
+      normalizedString(getNestedValue(window, ['App', 'basket', 'id'])),
+      normalizedString(getNestedValue(window, ['ceresStore', 'state', 'basket', 'id'])),
+      normalizedString(getNestedValue(window, ['ceresStore', 'state', 'basket', 'data', 'id'])),
+      normalizedString(getNestedValue(window, ['ceresStore', 'getters', 'basket', 'id'])),
+      normalizedString(getNestedValue(window, ['CeresApp', 'basket', 'id'])),
+      normalizedString(getNestedValue(window, ['ceresApp', 'basket', 'id'])),
+    ];
+
+    for (let i = 0; i < runtimeCandidates.length; i += 1) {
+      if (runtimeCandidates[i]) {
+        return runtimeCandidates[i];
+      }
+    }
+
+    const existingAnonymousSessionIdentifier = normalizedString(window.__KlaviyoSiteEventTrackingAnonymousCheckoutSessionId);
+    if (existingAnonymousSessionIdentifier) {
+      return existingAnonymousSessionIdentifier;
+    }
+
+    const anonymousSessionIdentifier = ['anon_checkout', String(Date.now()), String(Math.floor(Math.random() * 1000000000))].join('_');
+    window.__KlaviyoSiteEventTrackingAnonymousCheckoutSessionId = anonymousSessionIdentifier;
+    return anonymousSessionIdentifier;
+  };
+
+  const resolveStartedCheckoutPayload = function () {
+    const basketResolution = resolveBasketSnapshot();
+    const basketLinesResolution = resolveBasketLinesSnapshot(basketResolution, null, { allowRuntimeLookup: true });
+    const basketLines = basketLinesResolution.basketLines;
+
+    if (!basketLines || basketLines.length === 0) {
+      return null;
+    }
+
+    const checkoutUrl = normalizedAbsoluteUrl('/checkout', true);
+    const categories = uniqueStringArray(
+      basketLines.reduce(function (allCategories, line) {
+        const lineCategories = Array.isArray(line && line.Categories) ? line.Categories : [];
+        return allCategories.concat(lineCategories);
+      }, [])
+    );
+    const itemNames = uniqueStringArray(
+      basketLines.map(function (line) {
+        return line && line.ItemName;
+      })
+    );
+    const checkoutSessionIdentifier = getCheckoutSessionIdentifier();
+    const eventId = checkoutSessionIdentifier + '_started_checkout';
+
+    return {
+      payload: {
+        $event_id: eventId,
+        $value: firstDefinedNumber([
+          extractBasketTotal(basketLinesResolution.basket),
+          sumBasketLineRowTotals(basketLines),
+        ]),
+        ItemNames: itemNames,
+        CheckoutURL: checkoutUrl,
+        Categories: categories,
+        Items: basketLines.map(function (line) {
+          return {
+            ProductID: line.ProductID,
+            SKU: line.SKU,
+            ProductName: line.ItemName,
+            Quantity: line.Quantity,
+            ItemPrice: line.ItemPrice,
+            RowTotal: line.RowTotal,
+            ProductURL: line.URL,
+            ImageURL: line.ImageURL,
+            ProductCategories: Array.isArray(line.Categories) ? line.Categories : [],
+          };
+        }),
+      },
+      sourceLabel: basketLinesResolution.sourceLabel,
+    };
+  };
+
+  const trackStartedCheckout = function (trigger) {
+    if (!enableStartedCheckoutEvent) {
+      startedCheckoutLog('Started Checkout skipped (disabled by configuration).', { trigger: trigger });
+      return;
+    }
+
+    const pageDetection = isTemplatePageType('checkout');
+    startedCheckoutLog('Started Checkout page detection evaluated.', {
+      trigger: trigger,
+      isCheckout: pageDetection.isMatch,
+      detectionSource: pageDetection.detectionSource,
+      templateType: pageDetection.templateType,
+      path: window.location ? window.location.pathname : '',
+    });
+
+    if (!pageDetection.isMatch) {
+      window.__KlaviyoSiteEventTrackingAnonymousCheckoutSessionId = null;
+      window.__KlaviyoSiteEventTrackingLastStartedCheckoutKey = null;
+      return;
+    }
+
+    const payloadResolution = resolveStartedCheckoutPayload();
+    const payload = payloadResolution && payloadResolution.payload;
+
+    if (!payload || !payload.CheckoutURL || !Array.isArray(payload.Items) || payload.Items.length === 0) {
+      startedCheckoutLog('Started Checkout skipped (required payload fields missing).', { trigger: trigger });
+      return;
+    }
+
+    startedCheckoutLog('Started Checkout payload resolved.', {
+      trigger: trigger,
+      sourceLabel: payloadResolution.sourceLabel,
+      itemCount: payload.Items.length,
+      eventId: payload.$event_id,
+      value: payload.$value,
+    });
+
+    const dedupKey = [payload.CheckoutURL, getCheckoutSessionIdentifier()].join('|');
+
+    if (window.__KlaviyoSiteEventTrackingLastStartedCheckoutKey === dedupKey) {
+      startedCheckoutLog('Started Checkout skipped (deduped).', { trigger: trigger, dedupKey: dedupKey });
+      return;
+    }
+
+    const didTrack = trackEvent('Started Checkout', payload, trigger + '|' + dedupKey);
+
+    if (!didTrack) {
+      startedCheckoutLog('Started Checkout dedupe key not updated because track dispatch failed.', { trigger: trigger, dedupKey: dedupKey });
+      return;
+    }
+
+    window.__KlaviyoSiteEventTrackingLastStartedCheckoutKey = dedupKey;
   };
 
   const buildAddedToCartDedupKey = function (payload, bucketTimestamp) {
@@ -1625,6 +1817,14 @@
         });
       }
 
+      if (metricName === "Started Checkout") {
+        startedCheckoutLog("Klaviyo track executed.", {
+          metric: metricName,
+          trigger: context,
+          payload: payload,
+        });
+      }
+
       return true;
     } catch (error) {
       warn("Failed to execute Klaviyo track call.", {
@@ -1835,6 +2035,7 @@
       trackViewedProduct(trigger);
       trackViewedHomepage(trigger);
       trackViewedCategory(trigger);
+      trackStartedCheckout(trigger);
     }, waitMs);
   };
 
