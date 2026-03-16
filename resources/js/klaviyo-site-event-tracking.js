@@ -572,7 +572,10 @@
     ]);
   };
 
-  const extractCategories = function (candidate) {
+  const extractCategories = function (candidate, options) {
+    const resolvedOptions = options && typeof options === "object" ? options : {};
+    const includeBreadcrumbFallback = resolvedOptions.includeBreadcrumbFallback !== false;
+
     if (!candidate || typeof candidate !== "object") {
       return [];
     }
@@ -666,6 +669,10 @@
           });
 
           if (hasOnlyCategoryIdFallbacks) {
+            if (!includeBreadcrumbFallback) {
+              return normalized;
+            }
+
             const breadcrumbCategories = extractCategoriesFromBreadcrumbDom();
 
             if (breadcrumbCategories.length > 0) {
@@ -676,6 +683,10 @@
           return normalized;
         }
       }
+    }
+
+    if (!includeBreadcrumbFallback) {
+      return [];
     }
 
     const breadcrumbCategories = extractCategoriesFromBreadcrumbDom();
@@ -1159,8 +1170,8 @@
 
     const categories = uniqueStringArray(
       (extractCategories(item) || [])
-        .concat(extractCategories(getNestedValue(item, ["variation", "data"])) || [])
-        .concat(extractCategories(getNestedValue(item, ["variation", "data", "item"])) || [])
+        .concat(extractCategories(getNestedValue(item, ["variation", "data"]), { includeBreadcrumbFallback: false }) || [])
+        .concat(extractCategories(getNestedValue(item, ["variation", "data", "item"]), { includeBreadcrumbFallback: false }) || [])
     );
 
     const itemName =
