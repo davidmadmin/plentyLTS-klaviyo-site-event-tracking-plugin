@@ -1457,8 +1457,8 @@
 
     const checkoutUrl = normalizedAbsoluteUrl('/checkout', true);
     const basketValue = firstDefinedNumber([
-      extractBasketTotal(basket),
       sumBasketLineRowTotals(basketLines),
+      extractBasketTotal(basket),
       (addedLine && addedLine.ItemPrice !== null)
         ? Number((addedLine.ItemPrice * (effectiveIntent && effectiveIntent.requestedQuantity ? effectiveIntent.requestedQuantity : addedLine.Quantity)).toFixed(4))
         : null,

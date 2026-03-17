@@ -229,6 +229,8 @@ If `tracking.logViewedCategoryEventDebug = true`, expected Viewed Category diagn
 
 If `tracking.logAddedToCartEventDebug = true`, expected Added to Cart diagnostics include:
 
+Added to Cart payload value semantics: `$value` is resolved from the current basket line-item subtotal (`sum of Items[].RowTotal`) first, with basket-level totals only used as fallback when line subtotals are unavailable.
+
 ```text
 [KlaviyoSiteEventTracking] Added to Cart listener attached. { target: "document", event: "afterBasketItemAdded" }
 ```
