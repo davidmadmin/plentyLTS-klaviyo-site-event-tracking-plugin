@@ -179,6 +179,46 @@
     return trimmedValue;
   };
 
+  const normalizedText = function (value) {
+    if (typeof value === "string") {
+      return value.trim();
+    }
+
+    if (typeof value === "number" || typeof value === "boolean") {
+      return String(value).trim();
+    }
+
+    return "";
+  };
+
+  const normalizedPhoneNumber = function (value) {
+    const candidate = normalizedText(value);
+
+    if (!candidate) {
+      return "";
+    }
+
+    let compact = candidate.replace(/[\s().-]+/g, "");
+
+    if (compact.indexOf("00") === 0) {
+      compact = "+" + compact.slice(2);
+    }
+
+    if (compact.indexOf("+") === 0) {
+      if (/^\+[1-9][0-9]{6,19}$/.test(compact)) {
+        return compact;
+      }
+
+      return "";
+    }
+
+    if (/^[1-9][0-9]{6,19}$/.test(compact)) {
+      return "+" + compact;
+    }
+
+    return "";
+  };
+
   const getNestedValue = function (source, path) {
     try {
       let cursor = source;
@@ -195,6 +235,25 @@
     } catch (error) {
       return null;
     }
+  };
+
+  const extractStringFromPaths = function (candidate, paths, normalizer) {
+    if (!candidate || typeof candidate !== "object" || !Array.isArray(paths)) {
+      return "";
+    }
+
+    for (let i = 0; i < paths.length; i += 1) {
+      const rawValue = getNestedValue(candidate, paths[i]);
+      const normalizedValue = normalizer
+        ? normalizer(rawValue)
+        : normalizedText(rawValue);
+
+      if (normalizedValue) {
+        return normalizedValue;
+      }
+    }
+
+    return "";
   };
 
   const extractEmailFromObject = function (candidate) {
@@ -254,17 +313,221 @@
     return "";
   };
 
-  const identifyWithEmail = function (email, source) {
-    const candidateEmail = normalizedEmail(email);
+  const buildIdentifyPayload = function (email) {
+    const normalizedResolvedEmail = normalizedEmail(email);
+
+    if (!normalizedResolvedEmail) {
+      return null;
+    }
+
+    const inMemorySources = [
+      window.KlaviyoSiteEventTracking,
+      window.ceresStore && window.ceresStore.state,
+      window.ceresStore && window.ceresStore.state && window.ceresStore.state.user,
+      window.App,
+      window.CeresApp,
+    ];
+
+    const firstValueFromSources = function (paths, normalizer) {
+      for (let i = 0; i < inMemorySources.length; i += 1) {
+        const source = inMemorySources[i];
+        const resolvedValue = extractStringFromPaths(source, paths, normalizer);
+
+        if (resolvedValue) {
+          return resolvedValue;
+        }
+      }
+
+      return "";
+    };
+
+    const addressState = window.ceresStore && window.ceresStore.state && window.ceresStore.state.address;
+    const billingAddress = addressState && addressState.billingAddress && typeof addressState.billingAddress === "object"
+      ? addressState.billingAddress
+      : null;
+    const deliveryAddress = addressState && addressState.deliveryAddress && typeof addressState.deliveryAddress === "object"
+      ? addressState.deliveryAddress
+      : null;
+    const addressSource = billingAddress || deliveryAddress || null;
+
+    return {
+      email: normalizedResolvedEmail,
+      first_name: firstValueFromSources([["first_name"], ["firstName"], ["contact", "firstName"], ["userData", "firstName"]], normalizedText),
+      last_name: firstValueFromSources([["last_name"], ["lastName"], ["contact", "lastName"], ["userData", "lastName"]], normalizedText),
+      phone_number: firstValueFromSources(
+        [["phone_number"], ["phoneNumber"], ["phone"], ["privatePhone"], ["privateMobile"], ["contact", "phone"], ["userData", "privatePhone"], ["userData", "privateMobile"]],
+        normalizedPhoneNumber
+      ),
+      organization: firstValueFromSources([["organization"], ["company"], ["companyName"], ["contactPerson"], ["userData", "contactPerson"]], normalizedText),
+      title: firstValueFromSources([["title"], ["userData", "title"]], normalizedText),
+      customer_number: firstValueFromSources([["number"], ["customerNumber"], ["userData", "number"]], normalizedText),
+      plenty_user_id: firstValueFromSources([["userId"], ["id"], ["userData", "userId"]], normalizedText),
+      location: {
+        address1: normalizedText(addressSource && (addressSource.address1 || addressSource.addressLine1)),
+        address2: normalizedText(addressSource && (addressSource.address2 || addressSource.addressLine2)),
+        city: normalizedText(addressSource && (addressSource.town || addressSource.city)),
+        zip: normalizedText(addressSource && (addressSource.postalCode || addressSource.zip)),
+        region: extractStringFromPaths(addressSource, [["stateName"], ["stateId"], ["state"]], normalizedText),
+        country: extractStringFromPaths(addressSource, [["countryName"], ["countryId"], ["country"]], normalizedText),
+      },
+    };
+  };
+
+  const buildIdentifyPayloadHash = function (payload) {
+    if (!payload || typeof payload !== "object") {
+      return "";
+    }
+
+    const location = payload.location && typeof payload.location === "object" ? payload.location : {};
+    const orderedValues = [
+      payload.email || "",
+      payload.first_name || "",
+      payload.last_name || "",
+      payload.phone_number || "",
+      payload.organization || "",
+      payload.title || "",
+      payload.customer_number || "",
+      payload.plenty_user_id || "",
+      location.address1 || "",
+      location.address2 || "",
+      location.city || "",
+      location.zip || "",
+      location.region || "",
+      location.country || "",
+    ];
+
+    return orderedValues.join("|");
+  };
+
+  const compactIdentifyPayload = function (payload) {
+    if (!payload || typeof payload !== "object") {
+      return null;
+    }
+
+    const compactedPayload = {
+      email: normalizedEmail(payload.email),
+    };
+
+    if (!compactedPayload.email) {
+      return null;
+    }
+
+    const optionalProfileFields = [
+      "first_name",
+      "last_name",
+      "phone_number",
+      "organization",
+      "title",
+      "customer_number",
+      "plenty_user_id",
+    ];
+
+    for (let i = 0; i < optionalProfileFields.length; i += 1) {
+      const field = optionalProfileFields[i];
+      const normalizedValue = normalizedText(payload[field]);
+
+      if (normalizedValue) {
+        compactedPayload[field] = normalizedValue;
+      }
+    }
+
+    const rawLocation = payload.location && typeof payload.location === "object"
+      ? payload.location
+      : null;
+    const compactedLocation = {};
+
+    if (rawLocation) {
+      const locationFields = ["address1", "address2", "city", "zip", "region", "country"];
+
+      for (let i = 0; i < locationFields.length; i += 1) {
+        const field = locationFields[i];
+        const normalizedValue = normalizedText(rawLocation[field]);
+
+        if (normalizedValue) {
+          compactedLocation[field] = normalizedValue;
+        }
+      }
+    }
+
+    if (Object.keys(compactedLocation).length > 0) {
+      compactedPayload.location = compactedLocation;
+    }
+
+    return compactedPayload;
+  };
+
+  const buildLearnqIdentifyPayload = function (payload) {
+    if (!payload || typeof payload !== "object") {
+      return null;
+    }
+
+    const compactedPayload = compactIdentifyPayload(payload);
+
+    if (!compactedPayload || !compactedPayload.email) {
+      return null;
+    }
+
+    const learnqPayload = {
+      $email: compactedPayload.email,
+    };
+
+    if (compactedPayload.first_name) {
+      learnqPayload.$first_name = compactedPayload.first_name;
+    }
+
+    if (compactedPayload.last_name) {
+      learnqPayload.$last_name = compactedPayload.last_name;
+    }
+
+    if (compactedPayload.phone_number) {
+      learnqPayload.$phone_number = compactedPayload.phone_number;
+    }
+
+    if (compactedPayload.organization) {
+      learnqPayload.organization = compactedPayload.organization;
+    }
+
+    if (compactedPayload.title) {
+      learnqPayload.title = compactedPayload.title;
+    }
+
+    if (compactedPayload.customer_number) {
+      learnqPayload.customer_number = compactedPayload.customer_number;
+    }
+
+    if (compactedPayload.plenty_user_id) {
+      learnqPayload.plenty_user_id = compactedPayload.plenty_user_id;
+    }
+
+    if (compactedPayload.location) {
+      learnqPayload.location = compactedPayload.location;
+    }
+
+    return learnqPayload;
+  };
+
+  const identifyWithPayload = function (payload, source) {
+    if (!payload || typeof payload !== "object") {
+      return false;
+    }
+
+    const compactedPayload = compactIdentifyPayload(payload);
+    const candidateEmail = normalizedEmail(compactedPayload && compactedPayload.email);
 
     if (!candidateEmail) {
       return false;
     }
 
-    if (window.__KlaviyoSiteEventTrackingLastIdentifiedEmail === candidateEmail) {
-      identifyLog("Identify skipped (already identified for this browser session).", {
+    const payloadHash = buildIdentifyPayloadHash(compactedPayload);
+
+    if (
+      payloadHash &&
+      window.__KlaviyoSiteEventTrackingLastIdentifyPayloadHash === payloadHash
+    ) {
+      identifyLog("Identify skipped (payload hash unchanged for this browser session).", {
         email: candidateEmail,
         source: source,
+        payloadHash: payloadHash,
       });
       return false;
     }
@@ -273,15 +536,18 @@
       const usingKlaviyoObject = !!(window.klaviyo && typeof window.klaviyo.identify === "function");
 
       if (window.klaviyo && typeof window.klaviyo.identify === "function") {
-        window.klaviyo.identify({ email: candidateEmail });
+        window.klaviyo.identify(compactedPayload);
       } else {
-        window._learnq.push(["identify", { $email: candidateEmail }]);
+        window._learnq.push(["identify", buildLearnqIdentifyPayload(compactedPayload)]);
       }
 
       window.__KlaviyoSiteEventTrackingLastIdentifiedEmail = candidateEmail;
+      window.__KlaviyoSiteEventTrackingLastIdentifyPayloadHash = payloadHash;
       identifyLog("Klaviyo identify accepted client-side (SDK call invoked or queue push completed).", {
         email: candidateEmail,
         source: source,
+        payloadHash: payloadHash,
+        payload: compactedPayload,
         usingKlaviyoObject: usingKlaviyoObject,
         deliveryConfirmed: false,
       });
@@ -385,7 +651,16 @@
         return false;
       }
 
-      return identifyWithEmail(result.email, result.source + ":" + trigger);
+      const identifyPayload = buildIdentifyPayload(result.email);
+      if (!identifyPayload) {
+        identifyLog("Identify skipped (profile payload could not be built from resolved identity).", {
+          trigger: trigger,
+          source: result.source,
+        });
+        return false;
+      }
+
+      return identifyWithPayload(identifyPayload, result.source + ":" + trigger);
     });
   };
 
