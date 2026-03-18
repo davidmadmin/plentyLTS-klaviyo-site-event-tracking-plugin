@@ -367,8 +367,8 @@
         address2: normalizedText(addressSource && (addressSource.address2 || addressSource.addressLine2)),
         city: normalizedText(addressSource && (addressSource.town || addressSource.city)),
         zip: normalizedText(addressSource && (addressSource.postalCode || addressSource.zip)),
-        region: normalizedText(addressSource && (addressSource.state || addressSource.stateName || addressSource.stateId)),
-        country: normalizedText(addressSource && (addressSource.country || addressSource.countryName || addressSource.countryId)),
+        region: extractStringFromPaths(addressSource, [["stateName"], ["stateId"], ["state"]], normalizedText),
+        country: extractStringFromPaths(addressSource, [["countryName"], ["countryId"], ["country"]], normalizedText),
       },
     };
   };
