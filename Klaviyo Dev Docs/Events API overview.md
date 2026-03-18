@@ -953,18 +953,12 @@ Querying events with the Events API can help you achieve many use cases, such as
 
 
 | **Parameter** | **Description** | **Query example** |
-
 | --- | --- | --- |
-
-| `filter` | Retrieve a subset of events, e.g., events for a specific `profile_id` and/or `metric_id` Learn about the \[filter query parameter](https://developers.klaviyo.com/en/docs/filtering_). | `GET /api/events?filter=and(equals(profile_id,"PROFILE_ID") ,equals(metric_id,"METRIC_ID")` |
-
-| `sort` | Sort events, e.g., by `datetime` in ascending order (oldest to newest). Learn about the \[sort query parameter](https://developers.klaviyo.com/en/docs/sorting_). | `GET /api/events?sort=datetime` |
-
-| `fields` | Request for only specified event data, e.g., timestamp attributes. You can also request for only specified related resource data. Learn more about \[sparse fieldsets](https://developers.klaviyo.com/en/docs/sparse_fieldsets). | `GET /api/events?fields\[event]=timestampGET /api/events?include=profile\&fields\[profile]=email` |
-
-| `include` | Include related resources in the response, e.g., profile data. Learn about the \[include query parameter](https://developers.klaviyo.com/en/docs/relationships_#the-include-query-parameter). | `GET /api/events?include=profile` |
-
-| `has` | Request for events that are related to existing profiles. This is useful for filtering out events that do not have any existing profile data (i.e., deleted profiles). | `GET /api/events?filter=has(profile)` |
+| `filter` | Retrieve a subset of events, e.g., events for a specific `profile_id` and/or `metric_id`. Learn about the [filter query parameter](https://developers.klaviyo.com/en/docs/filtering_). | `GET /api/events?filter=and(equals(profile_id,"PROFILE_ID"),equals(metric_id,"METRIC_ID"))` |
+| `sort` | Sort events, e.g., by `datetime` in ascending order (oldest to newest). Learn about the [sort query parameter](https://developers.klaviyo.com/en/docs/sorting_). | `GET /api/events?sort=datetime` |
+| `fields` | Request only specified event data, e.g., timestamp attributes. You can also request only specified related resource data. Learn more about [sparse fieldsets](https://developers.klaviyo.com/en/docs/sparse_fieldsets). | `GET /api/events?fields[event]=timestamp`<br>`GET /api/events?include=profile&fields[profile]=email` |
+| `include` | Include related resources in the response, e.g., profile data. Learn about the [include query parameter](https://developers.klaviyo.com/en/docs/relationships_#the-include-query-parameter). | `GET /api/events?include=profile` |
+| `has` | Request events that are related to existing profiles. This is useful for filtering out events that do not have any existing profile data (i.e., deleted profiles). | `GET /api/events?filter=has(profile)` |
 
 
 
@@ -1011,25 +1005,15 @@ A set limit is allotted for each unique data identifier or digested piece of inf
 
 
 | **Limitation type** | **Description** | **Limit** |
-
 | --- | --- | --- |
-
-| Max payload size (includes `$extra`) | Applies to custom event data; excludes profile data | 5 MB decompressed |
-
+| Max payload size (includes `$extra`) | Applies to custom event data; excludes profile data | 5 MB decompressed |
 | Max number of event properties per event | The number of pieces of data within an event | 400 |
-
 | Max string size | Any string value | 100 KB |
-
-| Max number of items in arrays | Event data in a list format, see \[understanding data types](https://help.klaviyo.com/hc/en-us/articles/115005237648) | 4000 |
-
+| Max number of items in arrays | Event data in a list format, see [understanding data types](https://help.klaviyo.com/hc/en-us/articles/115005237648) | 4000 |
 | Max levels of nested objects | Any combination of objects and arrays within event properties; currently only applies to objects | 10 |
-
-| Timestamp of events | The time an event occurred; learn more about \[acceptable date and timestamp formats for profile and event properties](https://developers.klaviyo.com/en/docs/acceptable_date_and_timestamp_formats_for_profile_and_event_properties) | Between 2000 and “now”+1 year (e.g., max 2026, minimum 2000) |
-
-| Field length for `$event_id` (`unique_id`) | Allowed characters for the unique identifier of an event | 1-255 characters |
-
-| Max integers | Applies anywhere there's an integer | 64 bits (-9,223,372,036,854,775,808 \& +9,223,372,036,854,775,807) |
-
+| Timestamp of events | The time an event occurred; learn more about [acceptable date and timestamp formats for profile and event properties](https://developers.klaviyo.com/en/docs/acceptable_date_and_timestamp_formats_for_profile_and_event_properties) | Between 2000 and “now” + 1 year (e.g., max 2026, minimum 2000) |
+| Field length for `$event_id` (`unique_id`) | Allowed characters for the unique identifier of an event | 1-255 characters |
+| Max integers | Applies anywhere there's an integer | 64 bits (-9,223,372,036,854,775,808 & +9,223,372,036,854,775,807) |
 | Max size of an event's profile object | Profile objects created or updated via Events API | 95 KB |
 
 ## Source
