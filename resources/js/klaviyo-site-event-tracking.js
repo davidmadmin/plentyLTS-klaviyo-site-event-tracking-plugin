@@ -359,9 +359,7 @@
         normalizedPhoneNumber
       ),
       organization: firstValueFromSources([["organization"], ["company"], ["companyName"], ["contactPerson"], ["userData", "contactPerson"]], normalizedText),
-      locale: firstValueFromSources([["locale"], ["lang"], ["language"], ["userData", "lang"]], normalizedText),
       title: firstValueFromSources([["title"], ["userData", "title"]], normalizedText),
-      full_name: firstValueFromSources([["fullName"], ["name"], ["userData", "fullName"]], normalizedText),
       customer_number: firstValueFromSources([["number"], ["customerNumber"], ["userData", "number"]], normalizedText),
       plenty_user_id: firstValueFromSources([["userId"], ["id"], ["userData", "userId"]], normalizedText),
       location: {
@@ -387,9 +385,7 @@
       payload.last_name || "",
       payload.phone_number || "",
       payload.organization || "",
-      payload.locale || "",
       payload.title || "",
-      payload.full_name || "",
       payload.customer_number || "",
       payload.plenty_user_id || "",
       location.address1 || "",
@@ -414,9 +410,7 @@
       $last_name: payload.last_name || "",
       $phone_number: payload.phone_number || "",
       organization: payload.organization || "",
-      locale: payload.locale || "",
       title: payload.title || "",
-      full_name: payload.full_name || "",
       customer_number: payload.customer_number || "",
       plenty_user_id: payload.plenty_user_id || "",
       location: payload.location || {
