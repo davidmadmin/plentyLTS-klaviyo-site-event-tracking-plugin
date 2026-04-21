@@ -32,6 +32,7 @@
   const logIdentifyEventDebug = isEnabled(settings.logIdentifyEventDebug, false);
   const logViewedProductEventDebug = isEnabled(settings.logViewedProductEventDebug, false);
   const logAddedToCartEventDebug = isEnabled(settings.logAddedToCartEventDebug, false);
+  const logRemovedFromCartEventDebug = isEnabled(settings.logRemovedFromCartEventDebug, false);
   const logAddedToWishlistEventDebug = isEnabled(settings.logAddedToWishlistEventDebug, false);
   const logRemovedFromWishlistEventDebug = isEnabled(settings.logRemovedFromWishlistEventDebug, false);
   const logViewedHomepageEventDebug = isEnabled(settings.logViewedHomepageEventDebug, false);
@@ -41,6 +42,7 @@
   const logStartedCheckoutEventDebug = isEnabled(settings.logStartedCheckoutEventDebug, false);
   const enableViewedProductEvent = isEnabled(settings.enableViewedProductEvent, true);
   const enableAddedToCartEvent = isEnabled(settings.enableAddedToCartEvent, true);
+  const enableRemovedFromCartEvent = isEnabled(settings.enableRemovedFromCartEvent, true);
   const enableAddedToWishlistEvent = isEnabled(settings.enableAddedToWishlistEvent, true);
   const enableRemovedFromWishlistEvent = isEnabled(settings.enableRemovedFromWishlistEvent, true);
   const enableViewedHomepageEvent = isEnabled(settings.enableViewedHomepageEvent, true);
@@ -114,6 +116,19 @@
 
   const addedToCartLog = function (message, payload) {
     if (!logAddedToCartEventDebug) {
+      return;
+    }
+
+    if (typeof payload !== "undefined") {
+      console.info("[KlaviyoSiteEventTracking] " + message, payload);
+      return;
+    }
+
+    console.info("[KlaviyoSiteEventTracking] " + message);
+  };
+
+  const removedFromCartLog = function (message, payload) {
+    if (!logRemovedFromCartEventDebug) {
       return;
     }
 
@@ -2444,6 +2459,290 @@
     attemptAddedToCartDispatch(trigger, basketResolution, { allowWithoutIntent: false });
   };
 
+  const buildRemovedFromCartDedupKey = function (payload) {
+    const productId = normalizedString(payload && payload.RemovedItemProductID);
+    const variationId = normalizedString(payload && payload.RemovedItemVariationID);
+    const qty = normalizedString(payload && payload.RemovedItemQuantity);
+    const value = normalizedString(payload && payload.$value);
+    let cartQuantityTotal = 0;
+    let cartValueTotal = 0;
+    let hasCartValueTotal = false;
+    const itemsSignature = Array.isArray(payload && payload.Items)
+      ? payload.Items
+        .map(function (line) {
+          const lineProductId = normalizedString(line && (line.ProductID || line.productId || line.itemId));
+          const lineVariationId = normalizedString(line && (line.VariationID || line.variationId || getNestedValue(line, ['variation', 'id'])));
+          const lineQty = normalizedInteger(line && (line.Quantity || line.quantity), 0);
+          const lineRowTotal = firstDefinedNumber([
+            normalizedNumber(line && line.RowTotal),
+            normalizedNumber(line && line.rowTotal),
+            normalizedNumber(line && line.total),
+            normalizedNumber(line && line.totalGross),
+          ]);
+          cartQuantityTotal += lineQty;
+          if (lineRowTotal !== null) {
+            hasCartValueTotal = true;
+            cartValueTotal += lineRowTotal;
+          }
+          return [lineVariationId || lineProductId, String(lineQty)].join(':');
+        })
+        .filter(function (entry) { return !!entry; })
+        .sort()
+        .join(',')
+      : '';
+    const cartDistinctCount = Array.isArray(payload && payload.Items) ? payload.Items.length : 0;
+    const roundedCartValueTotal = hasCartValueTotal ? Number(cartValueTotal.toFixed(4)) : '';
+    return [variationId || productId, qty, value, itemsSignature, String(cartDistinctCount), String(cartQuantityTotal), String(roundedCartValueTotal)].join('|');
+  };
+
+  const buildBasketLineMap = function (basketLines) {
+    const map = {};
+
+    if (!Array.isArray(basketLines)) {
+      return map;
+    }
+
+    for (let i = 0; i < basketLines.length; i += 1) {
+      const line = basketLines[i];
+      const lineKey = normalizedString(line && line.VariationID) || normalizedString(line && line.ProductID);
+
+      if (!lineKey) {
+        continue;
+      }
+
+      if (!map[lineKey]) {
+        map[lineKey] = {
+          key: lineKey,
+          quantity: 0,
+          line: line,
+          lines: [],
+        };
+      }
+
+      map[lineKey].quantity += normalizedInteger(line && line.Quantity, 0);
+      map[lineKey].lines.push(line);
+
+      if (!map[lineKey].line) {
+        map[lineKey].line = line;
+      }
+    }
+
+    return map;
+  };
+
+  const resolveRemovedFromCartLineFromDetail = function (event) {
+    const detail = event && event.detail && typeof event.detail === 'object' ? event.detail : null;
+
+    if (!detail) {
+      return null;
+    }
+
+    const extracted = extractBasketLine(detail);
+    if (extracted && extracted.ProductID) {
+      return extracted;
+    }
+
+    return null;
+  };
+
+  const buildRemovedFromCartPayload = function (removedLine, removedQuantity, basketLines, triggerSource, sourceLabel) {
+    if (!removedLine) {
+      return null;
+    }
+
+    const quantity = normalizedInteger(removedQuantity, 0);
+    if (quantity <= 0) {
+      return null;
+    }
+
+    const itemPrice = firstDefinedNumber([
+      normalizedNumber(removedLine.ItemPrice),
+      normalizedNumber(getNestedValue(removedLine, ['Price'])),
+      normalizedNumber(getNestedValue(removedLine, ['price'])),
+    ]);
+    const computedValue = itemPrice !== null
+      ? Number((itemPrice * quantity).toFixed(4))
+      : null;
+
+    return {
+      payload: {
+        $value: computedValue,
+        RemovedItemProductName: removedLine.ProductName || removedLine.ItemName || '',
+        RemovedItemProductID: removedLine.ProductID || '',
+        RemovedItemVariationID: removedLine.VariationID || '',
+        RemovedItemSKU: removedLine.SKU || '',
+        RemovedItemCategories: Array.isArray(removedLine.Categories) ? removedLine.Categories : [],
+        RemovedItemImageURL: removedLine.ImageURL || '',
+        RemovedItemURL: removedLine.URL || removedLine.ProductURL || '',
+        RemovedItemPrice: itemPrice,
+        RemovedItemQuantity: quantity,
+        ItemNames: Array.isArray(basketLines)
+          ? basketLines.map(function (line) { return line.ItemName; }).filter(function (v) { return !!v; })
+          : [],
+        CheckoutURL: normalizedAbsoluteUrl('/checkout', true),
+        Items: Array.isArray(basketLines) ? basketLines : [],
+      },
+      sourceLabel: sourceLabel || 'unknown',
+      triggerSource: triggerSource || 'unknown',
+    };
+  };
+
+  const dispatchRemovedFromCartPayload = function (payloadResolution, trigger) {
+    const payload = payloadResolution && payloadResolution.payload;
+
+    if (!payload || !payload.RemovedItemProductID || !payload.RemovedItemProductName || payload.RemovedItemPrice === null || !payload.RemovedItemQuantity) {
+      removedFromCartLog('Removed from Cart skipped (required payload fields missing).', {
+        trigger: trigger,
+        hasPayload: !!payload,
+      });
+      return false;
+    }
+
+    removedFromCartLog('Removed from Cart payload resolved.', {
+      trigger: trigger,
+      sourceLabel: payloadResolution.sourceLabel,
+      triggerSource: payloadResolution.triggerSource,
+      removedItemProductId: payload.RemovedItemProductID,
+      removedItemProductName: payload.RemovedItemProductName,
+      removedItemQuantity: payload.RemovedItemQuantity,
+    });
+
+    const dedupKey = buildRemovedFromCartDedupKey(payload);
+    const dedupeWindowMs = 1200;
+    const dedupeState = window.__KlaviyoSiteEventTrackingLastRemovedFromCartState;
+    const isDuplicateWithinWindow = !!(
+      dedupeState &&
+      dedupeState.key === dedupKey &&
+      (Date.now() - normalizedInteger(dedupeState.timestamp, 0)) <= dedupeWindowMs
+    );
+
+    if (isDuplicateWithinWindow) {
+      removedFromCartLog('Removed from Cart skipped (deduped).', {
+        trigger: trigger,
+        dedupKey: dedupKey,
+        dedupeWindowMs: dedupeWindowMs,
+      });
+      return true;
+    }
+
+    const didTrack = trackEvent('Removed from Cart', payload, trigger + '|' + dedupKey);
+
+    if (!didTrack) {
+      removedFromCartLog('Removed from Cart dedupe key not updated because track dispatch failed.', {
+        trigger: trigger,
+        dedupKey: dedupKey,
+      });
+      return false;
+    }
+
+    window.__KlaviyoSiteEventTrackingLastRemovedFromCartState = {
+      key: dedupKey,
+      timestamp: Date.now(),
+    };
+    return true;
+  };
+
+  let lastTrackedBasketLineMap = null;
+
+  const primeRemovedFromCartBasketBaseline = function (trigger) {
+    if (lastTrackedBasketLineMap) {
+      return true;
+    }
+
+    const basketResolution = resolveBasketSnapshot();
+    const basketLinesResolution = resolveBasketLinesSnapshot(basketResolution, null, { allowRuntimeLookup: true });
+    const basketLines = Array.isArray(basketLinesResolution && basketLinesResolution.basketLines)
+      ? basketLinesResolution.basketLines
+      : [];
+
+    if (basketLines.length === 0) {
+      return false;
+    }
+
+    lastTrackedBasketLineMap = buildBasketLineMap(basketLines);
+    removedFromCartLog('Removed from Cart basket baseline initialized.', {
+      trigger: trigger || 'baseline_prime',
+      sourceLabel: basketLinesResolution.sourceLabel,
+      itemCount: basketLines.length,
+    });
+    return true;
+  };
+
+  const trackRemovedFromCartByBasketDiff = function (event, trigger) {
+    const basketResolution = resolveBasketSnapshot(event);
+    const basketLinesResolution = resolveBasketLinesSnapshot(basketResolution, null, { allowRuntimeLookup: true });
+    const basketLines = Array.isArray(basketLinesResolution && basketLinesResolution.basketLines)
+      ? basketLinesResolution.basketLines
+      : [];
+    const currentLineMap = buildBasketLineMap(basketLines);
+
+    if (!lastTrackedBasketLineMap && !primeRemovedFromCartBasketBaseline(trigger + '|prime')) {
+      lastTrackedBasketLineMap = currentLineMap;
+      removedFromCartLog('Removed from Cart basket baseline initialized.', {
+        trigger: trigger,
+        sourceLabel: basketLinesResolution.sourceLabel,
+        itemCount: basketLines.length,
+      });
+      return;
+    }
+
+    const previousMap = lastTrackedBasketLineMap;
+    const keys = Object.keys(previousMap);
+
+    for (let i = 0; i < keys.length; i += 1) {
+      const lineKey = keys[i];
+      const previousEntry = previousMap[lineKey];
+      const currentEntry = currentLineMap[lineKey];
+      const previousQuantity = normalizedInteger(previousEntry && previousEntry.quantity, 0);
+      const currentQuantity = normalizedInteger(currentEntry && currentEntry.quantity, 0);
+      const quantityDelta = previousQuantity - currentQuantity;
+
+      if (quantityDelta <= 0) {
+        continue;
+      }
+
+      dispatchRemovedFromCartPayload(
+        buildRemovedFromCartPayload(
+          previousEntry && previousEntry.line,
+          quantityDelta,
+          basketLines,
+          'basket_diff',
+          basketLinesResolution.sourceLabel
+        ),
+        trigger + '|basket_diff'
+      );
+    }
+
+    lastTrackedBasketLineMap = currentLineMap;
+  };
+
+  const trackRemovedFromCartByRemoveEvent = function (event, trigger) {
+    const removedLine = resolveRemovedFromCartLineFromDetail(event);
+    const basketResolution = resolveBasketSnapshot(event);
+    const basketLinesResolution = resolveBasketLinesSnapshot(basketResolution, null, { allowRuntimeLookup: true });
+    const basketLines = Array.isArray(basketLinesResolution && basketLinesResolution.basketLines)
+      ? basketLinesResolution.basketLines
+      : [];
+
+    if (!removedLine) {
+      removedFromCartLog('Removed from Cart skipped (remove intent payload missing).', {
+        trigger: trigger,
+      });
+      return;
+    }
+
+    dispatchRemovedFromCartPayload(
+      buildRemovedFromCartPayload(
+        removedLine,
+        normalizedInteger(removedLine.Quantity, 1),
+        basketLines,
+        'remove_event_detail',
+        basketLinesResolution.sourceLabel
+      ),
+      trigger + '|remove_event'
+    );
+  };
+
   const buildWishlistDedupKey = function (payload, bucketTimestamp) {
     const variationId = normalizedString(payload && payload.VariationID);
     const productId = normalizedString(payload && payload.ProductID);
@@ -2544,6 +2843,16 @@
 
       if (metricName === "Added to Cart") {
         addedToCartLog("Klaviyo track accepted client-side (SDK call invoked or queue push completed).", {
+          metric: metricName,
+          trigger: context,
+          payload: payload,
+          usingKlaviyoObject: usingKlaviyoObject,
+          deliveryConfirmed: false,
+        });
+      }
+
+      if (metricName === "Removed from Cart") {
+        removedFromCartLog("Klaviyo track accepted client-side (SDK call invoked or queue push completed).", {
           metric: metricName,
           trigger: context,
           payload: payload,
@@ -3042,6 +3351,49 @@
   };
 
   registerAddedToCartListeners();
+
+  const registerRemovedFromCartListeners = function () {
+    if (window.__KlaviyoSiteEventTrackingRemovedFromCartListenersRegistered === true) {
+      removedFromCartLog('Removed from Cart listeners already registered. Skipping duplicate registration.');
+      return;
+    }
+
+    primeRemovedFromCartBasketBaseline('listener_registration');
+
+    document.addEventListener('afterBasketChanged', function (event) {
+      if (!enableRemovedFromCartEvent) {
+        removedFromCartLog('Removed from Cart skipped (disabled by configuration).', {
+          trigger: 'afterBasketChanged',
+        });
+        return;
+      }
+
+      trackRemovedFromCartByBasketDiff(event, 'afterBasketChanged');
+    });
+    removedFromCartLog('Removed from Cart listener attached.', {
+      target: 'document',
+      event: 'afterBasketChanged',
+    });
+
+    document.addEventListener('afterBasketItemRemoved', function (event) {
+      if (!enableRemovedFromCartEvent) {
+        removedFromCartLog('Removed from Cart skipped (disabled by configuration).', {
+          trigger: 'afterBasketItemRemoved',
+        });
+        return;
+      }
+
+      trackRemovedFromCartByRemoveEvent(event, 'afterBasketItemRemoved');
+    });
+    removedFromCartLog('Removed from Cart listener attached.', {
+      target: 'document',
+      event: 'afterBasketItemRemoved',
+    });
+
+    window.__KlaviyoSiteEventTrackingRemovedFromCartListenersRegistered = true;
+  };
+
+  registerRemovedFromCartListeners();
 
   const registerWishlistListeners = function () {
     if (window.__KlaviyoSiteEventTrackingWishlistListenersRegistered === true) {
