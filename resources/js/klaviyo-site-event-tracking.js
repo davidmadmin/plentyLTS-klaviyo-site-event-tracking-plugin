@@ -2459,12 +2459,24 @@
     attemptAddedToCartDispatch(trigger, basketResolution, { allowWithoutIntent: false });
   };
 
-  const buildRemovedFromCartDedupKey = function (payload, bucketTimestamp) {
+  const buildRemovedFromCartDedupKey = function (payload) {
     const productId = normalizedString(payload && payload.RemovedItemProductID);
     const variationId = normalizedString(payload && payload.RemovedItemVariationID);
     const qty = normalizedString(payload && payload.RemovedItemQuantity);
     const value = normalizedString(payload && payload.$value);
-    return [variationId || productId, qty, value, String(bucketTimestamp)].join('|');
+    const itemsSignature = Array.isArray(payload && payload.Items)
+      ? payload.Items
+        .map(function (line) {
+          const lineProductId = normalizedString(line && (line.ProductID || line.productId || line.itemId));
+          const lineVariationId = normalizedString(line && (line.VariationID || line.variationId || getNestedValue(line, ['variation', 'id'])));
+          const lineQty = normalizedInteger(line && (line.Quantity || line.quantity), 0);
+          return [lineVariationId || lineProductId, String(lineQty)].join(':');
+        })
+        .filter(function (entry) { return !!entry; })
+        .sort()
+        .join(',')
+      : '';
+    return [variationId || productId, qty, value, itemsSignature].join('|');
   };
 
   const buildBasketLineMap = function (basketLines) {
@@ -2569,13 +2581,20 @@
       removedItemQuantity: payload.RemovedItemQuantity,
     });
 
-    const dedupeBucket = Math.floor(Date.now() / 5000);
-    const dedupKey = buildRemovedFromCartDedupKey(payload, dedupeBucket);
+    const dedupKey = buildRemovedFromCartDedupKey(payload);
+    const dedupeWindowMs = 1200;
+    const dedupeState = window.__KlaviyoSiteEventTrackingLastRemovedFromCartState;
+    const isDuplicateWithinWindow = !!(
+      dedupeState &&
+      dedupeState.key === dedupKey &&
+      (Date.now() - normalizedInteger(dedupeState.timestamp, 0)) <= dedupeWindowMs
+    );
 
-    if (window.__KlaviyoSiteEventTrackingLastRemovedFromCartKey === dedupKey) {
+    if (isDuplicateWithinWindow) {
       removedFromCartLog('Removed from Cart skipped (deduped).', {
         trigger: trigger,
         dedupKey: dedupKey,
+        dedupeWindowMs: dedupeWindowMs,
       });
       return true;
     }
@@ -2590,7 +2609,10 @@
       return false;
     }
 
-    window.__KlaviyoSiteEventTrackingLastRemovedFromCartKey = dedupKey;
+    window.__KlaviyoSiteEventTrackingLastRemovedFromCartState = {
+      key: dedupKey,
+      timestamp: Date.now(),
+    };
     return true;
   };
 
